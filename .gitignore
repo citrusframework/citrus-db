@@ -1,0 +1,21 @@
+target
+.project
+.classpath
+.settings
+.idea
+.DS_Store
+*.iml
+*.ipr
+*.iws
+.metadata
+bin
+.codepro
+.pmd
+
+### Angular ###
+node_modules
+typings
+**/app/**/*.js
+**/app/**/*.js.map
+**/systemjs-config.js.map
+**/systemjs-config.js

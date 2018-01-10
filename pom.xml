@@ -22,8 +22,7 @@
     <spring.boot.version>1.5.7.RELEASE</spring.boot.version>
     <slf4j.version>1.7.25</slf4j.version>
     <logback.classic.version>1.2.3</logback.classic.version>
-    <junit.version>5.0.2</junit.version>
-    <junit.platform.version>1.0.2</junit.platform.version>
+    <testng.version>6.11</testng.version>
 
     <javadoc.options>-Xdoclint:none</javadoc.options>
 
@@ -158,9 +157,9 @@
 
       <!-- Test scoped -->
       <dependency>
-        <groupId>org.junit.jupiter</groupId>
-        <artifactId>junit-jupiter-engine</artifactId>
-        <version>${junit.version}</version>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>${testng.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -189,8 +188,8 @@
 
     <!-- Test scoped dependencies -->
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -274,13 +273,6 @@
             <forkMode>once</forkMode>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.junit.platform</groupId>
-              <artifactId>junit-platform-surefire-provider</artifactId>
-              <version>${junit.platform.version}</version>
-            </dependency>
-          </dependencies>
         </plugin>
 
         <plugin>
@@ -289,13 +281,6 @@
           <configuration>
             <failIfNoTests>false</failIfNoTests>
           </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>org.junit.platform</groupId>
-              <artifactId>junit-platform-surefire-provider</artifactId>
-              <version>${junit.platform.version}</version>
-            </dependency>
-          </dependencies>
         </plugin>
 
         <plugin>

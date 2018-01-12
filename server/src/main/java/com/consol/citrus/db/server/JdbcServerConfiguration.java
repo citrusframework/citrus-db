@@ -31,6 +31,9 @@ public class JdbcServerConfiguration {
     /** Maximum number of parallel connections */
     private int maxConnections = 20;
 
+    /** Server time to live in milliseconds */
+    private long timeToLive = -1;
+
     public String getHost() {
         return host;
     }
@@ -83,4 +86,21 @@ public class JdbcServerConfiguration {
         this.maxConnections = maxConnections;
     }
 
+    /**
+     * Gets the timeToLive.
+     *
+     * @return
+     */
+    public long getTimeToLive() {
+        return timeToLive;
+    }
+
+    /**
+     * Sets the timeToLive.
+     *
+     * @param timeToLive
+     */
+    public void setTimeToLive(long timeToLive) {
+        this.timeToLive = timeToLive;
+    }
 }

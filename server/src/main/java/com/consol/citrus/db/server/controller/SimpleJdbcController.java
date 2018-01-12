@@ -34,7 +34,7 @@ public class SimpleJdbcController implements JdbcController {
 
     @Override
     public void getConnection(Map<String, String> properties) throws JdbcServerException {
-        log.info("Open connection with properties: " + properties.entrySet()
+        log.info("OPEN CONNECTION with properties: " + properties.entrySet()
                                                                     .stream()
                                                                     .map(entry -> entry.getKey() + "=" + entry.getValue())
                                                                     .collect(Collectors.joining(" | ")));
@@ -42,40 +42,40 @@ public class SimpleJdbcController implements JdbcController {
 
     @Override
     public void createStatement() throws JdbcServerException {
-        log.info("Create statement");
+        log.info("CREATE STATEMENT");
     }
 
     @Override
     public void closeConnection() throws JdbcServerException {
-        log.info("Close connection");
+        log.info("CLOSE CONNECTION");
     }
 
     @Override
     public void createPreparedStatement(String stmt) throws JdbcServerException {
-        log.info("Create prepared statement: " + stmt);
+        log.info("CREATE PREPARED STATEMENT: " + stmt);
     }
 
     @Override
     public ResultSet executeQuery(String stmt) throws JdbcServerException {
-        log.info("Execute query: " + stmt);
+        log.info("EXECUTE QUERY: " + stmt);
         log.info("Return empty result set");
         return new ResultSet();
     }
 
     @Override
     public void execute(String stmt) throws JdbcServerException {
-        log.info("Execute statement: " + stmt);
+        log.info("EXECUTE STATEMENT: " + stmt);
     }
 
     @Override
     public int executeUpdate(String stmt) throws JdbcServerException {
-        log.info("Execute update: " + stmt);
+        log.info("EXECUTE UPDATE: " + stmt);
         log.info("Return 0 affected rows");
         return 0;
     }
 
     @Override
     public void closeStatement() throws JdbcServerException {
-        log.info("Close statement");
+        log.info("CLOSE STATEMENT");
     }
 }

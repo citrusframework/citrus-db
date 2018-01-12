@@ -48,9 +48,14 @@ public class JdbcDriver implements Driver {
     /** Connection timeout */
     private static int timeout = 5000;
 
+    /** Default port for server connection */
+    private int defaultPort = 4567;
+
+    private static final String DEFAULT_PORT_PROPERTY = "citrus.db.server.port";
+    private static final String DEFAULT_PORT_ENV = "CITRUS_DB_SERVER_PORT";
+
     /** Driver URL prefix */
     private static final String[] URL_PREFIX_SET = { "jdbc:citrus:",
-            "jdbc:odbc:",
             "jdbc:hsql",
             "jdbc:weblogic:",
             "jdbc:microsoft:",
@@ -86,6 +91,7 @@ public class JdbcDriver implements Driver {
      */
     public JdbcDriver(HttpClient httpClient) {
         this.httpClient = httpClient;
+        this.defaultPort = Integer.valueOf(System.getProperty(DEFAULT_PORT_PROPERTY, (System.getenv(DEFAULT_PORT_ENV) != null ? System.getenv(DEFAULT_PORT_ENV) : String.valueOf(defaultPort))));
     }
 
     static {
@@ -121,7 +127,7 @@ public class JdbcDriver implements Driver {
         HttpResponse response = null;
         try {
             URI uri = new URI(getServerUri(connectionString));
-            serverUrl = "http://" + Optional.ofNullable(uri.getHost()).orElse("localhost") + (uri.getPort() > 0 ? ":" + uri.getPort() : ":4567");
+            serverUrl = "http://" + Optional.ofNullable(uri.getHost()).orElse("localhost") + (uri.getPort() > 0 ? ":" + uri.getPort() : ":" + defaultPort);
 
             response = httpClient.execute(RequestBuilder.get(serverUrl + "/connection")
                     .addParameter("database", getDatabaseName(uri))
@@ -152,14 +158,20 @@ public class JdbcDriver implements Driver {
      * @return
      */
     private String getDatabaseName(URI uri) {
-        if (uri.getSchemeSpecificPart().contains("?database=")) {
-            return uri.getSchemeSpecificPart().substring(uri.getSchemeSpecificPart().indexOf("?database=") + "?database=".length());
-        } else if (uri.getSchemeSpecificPart().contains(";DatabaseName=")) {
-            return uri.getSchemeSpecificPart().substring(uri.getSchemeSpecificPart().indexOf(";DatabaseName=") + ";DatabaseName=".length());
-        } else if (uri.getSchemeSpecificPart().contains("/")) {
-            return uri.getSchemeSpecificPart().substring(uri.getSchemeSpecificPart().lastIndexOf('/') + 1);
+        String resourcePath = uri.getSchemeSpecificPart();
+
+        if (resourcePath.startsWith("//")) {
+            resourcePath = resourcePath.substring(2);
+        }
+
+        if (resourcePath.contains("?database=")) {
+            return resourcePath.substring(resourcePath.indexOf("?database=") + "?database=".length());
+        } else if (resourcePath.contains("/jdbc:cloudscape:")) {
+            return resourcePath.substring(resourcePath.indexOf("/jdbc:cloudscape:") + "/jdbc:cloudscape:".length());
+        } else if (resourcePath.contains("/")) {
+            return resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
         } else {
-            return uri.getSchemeSpecificPart();
+            return "";
         }
     }
 
@@ -170,6 +182,8 @@ public class JdbcDriver implements Driver {
      */
     private String getServerUri(String connectionString) {
         String url = connectionString.substring(Stream.of(URL_PREFIX_SET).filter(connectionString::startsWith).findFirst().orElse("").length());
+        String localhost = "localhost/";
+
         if (url.startsWith("@")) {
             String[] tokens = url.substring(1).split(":");
 
@@ -178,13 +192,29 @@ public class JdbcDriver implements Driver {
             } else if (tokens.length > 1) {
                 url = tokens[0] + "/" + tokens[1];
             } else {
-                url = "localhost/" + tokens[0];
+                url = localhost + tokens[0];
             }
         }
 
         if (url.startsWith("mssqlserver4:")) {
             String[] tokens = url.substring("mssqlserver4:".length()).split("@");
             url = tokens[1] + "/" + tokens[0];
+        } else if (url.startsWith("odbc:")) {
+            url = localhost + url.substring("odbc:".length());
+        } else if (url.startsWith("idb:")) {
+            url = localhost + url.substring("idb:".length());
+        } else if (url.startsWith("HypersonicSQL:")) {
+            url = localhost + url.substring("HypersonicSQL:".length());
+        } else if (url.startsWith("cloudscape:")) {
+            url = localhost + url.substring("cloudscape:".length());
+        }
+
+        if (!url.contains("://")) {
+            url = "http://" + url;
+        }
+
+        if (url.contains(";DatabaseName=")) {
+            url = url.replace(";DatabaseName=", "/");
         }
 
         return url;

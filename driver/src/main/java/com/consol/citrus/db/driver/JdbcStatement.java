@@ -36,7 +36,7 @@ import java.sql.*;
  */
 public class JdbcStatement implements Statement {
 
-    private final HttpClient httpClient;
+    protected final HttpClient httpClient;
     private final String serverUrl;
 
     protected ResultSet resultSet;

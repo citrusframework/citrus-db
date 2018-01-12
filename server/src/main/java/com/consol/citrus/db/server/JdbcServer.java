@@ -17,16 +17,16 @@
 package com.consol.citrus.db.server;
 
 import com.consol.citrus.db.driver.model.ResultSet;
-import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Spark;
 
 import javax.xml.bind.JAXBContext;
-
 import java.io.StringWriter;
+import java.util.concurrent.*;
 
 import static spark.Spark.*;
 
@@ -51,6 +51,11 @@ public class JdbcServer {
         this(new SimpleJdbcController(), new JdbcServerConfiguration());
     }
 
+    public JdbcServer(String[] args) throws JdbcServerException {
+        this();
+        new JdbcServerOptions().apply(configuration, args);
+    }
+
     /**
      * Default constructor using controller and configuration.
      * @param configuration
@@ -65,8 +70,20 @@ public class JdbcServer {
      * Main method
      * @param args
      */
-    public static void main(String[] args) {
-        new JdbcServer().start();
+    public static void main(String[] args) throws JdbcServerException {
+        JdbcServer server = new JdbcServer(args);
+
+        if (server.configuration.getTimeToLive() > 0) {
+            CompletableFuture.runAsync(() -> {
+                try {
+                    new CompletableFuture<Void>().get(server.configuration.getTimeToLive(), TimeUnit.MILLISECONDS);
+                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                    server.stop();
+                }
+            });
+        }
+
+        server.start();
     }
 
     /**

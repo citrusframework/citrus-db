@@ -16,7 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.model.ResultSet;
+import com.consol.citrus.db.driver.dataset.DataSet;
 
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -26,19 +26,19 @@ import java.sql.SQLException;
  */
 public class JdbcResultSetMetaData implements ResultSetMetaData {
 
-    private final ResultSet resultSet;
+    private final DataSet dataSet;
 
     /**
      * Default constructor using result set.
-     * @param resultSet
+     * @param dataSet
      */
-    public JdbcResultSetMetaData(ResultSet resultSet) {
-        this.resultSet = resultSet;
+    public JdbcResultSetMetaData(DataSet dataSet) {
+        this.dataSet = dataSet;
     }
 
     @Override
     public int getColumnCount() throws SQLException {
-        return resultSet.getColumns().size();
+        return dataSet.getColumns().size();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class JdbcResultSetMetaData implements ResultSetMetaData {
 
     @Override
     public String getColumnName(int column) throws SQLException {
-        return resultSet.getColumns().get(column-1).getName();
+        return dataSet.getColumns().get(column-1);
     }
 
     @Override

@@ -63,6 +63,8 @@ public class JdbcDriverTest {
     @DataProvider
     private static Object[][] urlProvider() {
         return new Object[][] { new Object[] { "jdbc:db2://localhost:1234/testdb", 1234, "testdb" },
+                                new Object[] { "jdbc:hsqldb:testdb", 4567, "testdb" },
+                                new Object[] { "jdbc:hsqldb:hsql://localhost/testdb", 4567, "testdb" },
                                 new Object[] { "jdbc:odbc:testdb", 4567, "testdb" },
                                 new Object[] { "jdbc:oracle:thin:@localhost:1234:testdb", 1234, "testdb" },
                                 new Object[] { "jdbc:pointbase://localhost:1234/testdb", 1234, "testdb" },

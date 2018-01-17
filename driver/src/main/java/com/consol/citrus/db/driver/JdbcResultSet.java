@@ -16,7 +16,8 @@
 
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.model.ResultSet;
+import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.data.Row;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -31,22 +32,22 @@ import java.util.Map;
 public class JdbcResultSet implements java.sql.ResultSet {
 
     /** Remote ResultSet */
-    private ResultSet resultSet;
+    private DataSet dataSet;
 
     //The current ResultSet data row
-    private ResultSet.Row row;
+    private Row row;
 
     /**
      * Constructor using remote result set.
      */
-    public JdbcResultSet(ResultSet resultSet) throws SQLException {
-        this.resultSet = resultSet;
+    public JdbcResultSet(DataSet dataSet) throws SQLException {
+        this.dataSet = dataSet;
     }
 
     @Override
     public boolean next() throws SQLException {
         try {
-            row = resultSet.getNextRow();
+            row = dataSet.getNextRow();
         } catch(SQLException ex) {
             throw ex;
         } catch(Exception ex) {
@@ -58,11 +59,11 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public void close()	throws SQLException {
-        resultSet.close();
+        dataSet.close();
     }
 
     public String getString(int columnIndex) throws SQLException {
-        Object columnData = row.getValues().get(columnIndex-1);
+        Object columnData = row.getValue(columnIndex-1);
 
         if (columnData == null) {
             return null;
@@ -72,7 +73,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public String getString(String columnName) throws SQLException {
-        Object columnData = row.getValues().get(findColumn(columnName));
+        Object columnData = row.getValue(columnName);
         if (columnData == null) {
             return null;
         } else {
@@ -81,82 +82,82 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public float getFloat(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null) {
+        if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String flotObj = (String)row.getValues().get(columnIndex-1);
+            String flotObj = row.getValue(columnIndex-1);
             return Float.valueOf(flotObj);
         }
     }
 
     public float getFloat(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String flotObj = row.getValues().get(findColumn(columnName));
+            String flotObj = row.getValue(columnName);
             return Float.valueOf(flotObj);
         }
     }
 
     public int getInt(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null) {
+        if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String currentObj =(String)row.getValues().get(columnIndex-1);
+            String currentObj = row.getValue(columnIndex-1);
             return Integer.valueOf(currentObj);
         }
     }
 
     public int getInt(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String currentObj = row.getValues().get(findColumn(columnName));
+            String currentObj = row.getValue(columnName);
             return Integer.valueOf(currentObj);
         }
     }
 
     public boolean getBoolean(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1) == null) {
+        if (row.getValue(columnIndex-1) == null) {
             return false;
         } else {
-            String boolObj = (String)row.getValues().get(columnIndex-1);
+            String boolObj = row.getValue(columnIndex-1);
             return Boolean.valueOf(boolObj);
         }
     }
 
     public byte getByte(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null) {
+        if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String byeObj =(String)row.getValues().get(columnIndex-1);
+            String byeObj = row.getValue(columnIndex-1);
             return Byte.valueOf(byeObj);
         }
     }
 
     public short getShort(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null) {
+        if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String sortObj = (String)row.getValues().get(columnIndex-1);
+            String sortObj = row.getValue(columnIndex-1);
             return Short.valueOf(sortObj);
         }
     }
 
     public long getLong(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null) {
+        if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String langObj = (String)row.getValues().get(columnIndex-1);
+            String langObj = row.getValue(columnIndex-1);
             return Long.valueOf(langObj);
         }
     }
 
     public double getDouble(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null) {
+        if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String dubObj = (String)row.getValues().get(columnIndex-1);
+            String dubObj = row.getValue(columnIndex-1);
             return Double.valueOf(dubObj);
         }
     }
@@ -166,114 +167,122 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public byte[] getBytes(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        return row.getValues().get(columnIndex-1).getBytes();
+        return row.getValue(columnIndex-1).getBytes();
     }
 
     public Date getDate(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        String datObj = (String)row.getValues().get(columnIndex-1);
+        String datObj = row.getValue(columnIndex-1);
         return Date.valueOf(datObj);
     }
 
     public Time getTime(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        String timObj = (String)row.getValues().get(columnIndex-1);
+        String timObj = row.getValue(columnIndex-1);
         return Time.valueOf(timObj);
     }
 
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        String timstmpObj = (String)row.getValues().get(columnIndex-1);
+        String timstmpObj = row.getValue(columnIndex-1);
         return Timestamp.valueOf(timstmpObj);
     }
 
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(columnIndex-1).getBytes();
+        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
     public InputStream getUnicodeStream(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(columnIndex-1).getBytes();
+        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
     public InputStream getBinaryStream(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(columnIndex-1).getBytes();
+        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
     public Object getObject(int columnIndex) throws SQLException {
-        return row.getValues().get(columnIndex-1);
+        return row.getValue(columnIndex-1);
     }
 
     public BigDecimal getBigDecimal(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        String bigdStr = (String)row.getValues().get(columnIndex-1);
+        String bigdStr = row.getValue(columnIndex-1);
         Long bigdObj = Long.valueOf(bigdStr);
         return BigDecimal.valueOf(bigdObj);
     }
 
     public boolean getBoolean(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return false;
         } else {
-            String currentObj = row.getValues().get(findColumn(columnName));
+            String currentObj = row.getValue(columnName);
             return Boolean.valueOf(currentObj);
         }
     }
 
     public byte getByte(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String byeObj = row.getValues().get(findColumn(columnName));
+            String byeObj = row.getValue(columnName);
             return Byte.valueOf(byeObj);
         }
     }
 
     public short getShort(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String sortObj = row.getValues().get(findColumn(columnName));
+            String sortObj = row.getValue(columnName);
             return Short.valueOf(sortObj);
         }
     }
 
     public long getLong(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String langObj = row.getValues().get(findColumn(columnName));
+            String langObj = row.getValue(columnName);
             return Long.valueOf(langObj);
         }
     }
 
     public double getDouble(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String dubObj = row.getValues().get(findColumn(columnName));
+            String dubObj = row.getValue(columnName);
             return Double.valueOf(dubObj);
         }
     }
@@ -283,71 +292,78 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public byte[] getBytes(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null) {
+        if (row.getValue(columnName)==null) {
             return null;
         } else {
-            return row.getValues().get(findColumn(columnName)).getBytes();
+            return row.getValue(columnName).getBytes();
         }
     }
 
     public Date getDate(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        String dateObj = row.getValues().get(findColumn(columnName));
+        String dateObj = row.getValue(columnName);
         return Date.valueOf(dateObj);
     }
 
     public Time getTime(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        String timObj = row.getValues().get(findColumn(columnName));
+        String timObj = row.getValue(columnName);
         return Time.valueOf(timObj);
     }
 
     public Timestamp getTimestamp(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        String timstmpObj = row.getValues().get(findColumn(columnName));
+        String timstmpObj = row.getValue(columnName);
         return Timestamp.valueOf(timstmpObj);
     }
 
     public Object getObject(String columnName) throws SQLException {
-        return row.getValues().get(findColumn(columnName));
+        return row.getValue(columnName);
     }
 
     public BigDecimal getBigDecimal(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        String bigdStr = row.getValues().get(findColumn(columnName));
+        String bigdStr = row.getValue(columnName);
         Long bigdObj = Long.valueOf(bigdStr);
         return BigDecimal.valueOf(bigdObj);
     }
 
     public InputStream getAsciiStream(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(findColumn(columnName)).getBytes();
+        byte[] byteArray = row.getValue(columnName).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
     public InputStream getUnicodeStream(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(findColumn(columnName)).getBytes();
+        byte[] byteArray = row.getValue(columnName).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
     public InputStream getBinaryStream(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(findColumn(columnName)).getBytes();
+        byte[] byteArray = row.getValue(columnName).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
@@ -363,26 +379,28 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public ResultSetMetaData getMetaData() throws SQLException {
-        return new JdbcResultSetMetaData(resultSet);
+        return new JdbcResultSetMetaData(dataSet);
     }
 
     public int findColumn(String columnName) throws SQLException {
-        return resultSet.getColumns().indexOf(resultSet.getColumns().stream().filter(column -> column.getName().equals(columnName)).findFirst().orElse(new ResultSet.Column()));
+        return row.getColumns().indexOf(columnName);
     }
 
     public Reader getCharacterStream(int columnIndex) throws SQLException {
-        if (row.getValues().get(columnIndex-1)==null)
+        if (row.getValue(columnIndex-1)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(columnIndex-1).getBytes();
+        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
         return new InputStreamReader(new ByteArrayInputStream(byteArray));
     }
 
     public Reader getCharacterStream(String columnName) throws SQLException {
-        if (row.getValues().get(findColumn(columnName))==null)
+        if (row.getValue(columnName)==null) {
             return null;
+        }
 
-        byte[] byteArray = row.getValues().get(findColumn(columnName)).getBytes();
+        byte[] byteArray = row.getValue(columnName).getBytes();
         return new InputStreamReader(new ByteArrayInputStream(byteArray));
     }
 
@@ -417,7 +435,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public int getRow() throws SQLException {
-        return resultSet.getRow();
+        return dataSet.getCursor() + 1;
     }
 
     public boolean absolute(int row) throws SQLException {
@@ -455,15 +473,15 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean rowUpdated() throws SQLException {
-        return resultSet.getAffectedRows() > 0;
+        return dataSet.getRows().size() > 0;
     }
 
     public boolean rowInserted() throws SQLException {
-        return resultSet.getAffectedRows() > 0;
+        return dataSet.getRows().size() > 0;
     }
 
     public boolean rowDeleted() throws SQLException {
-        return resultSet.getAffectedRows() > 0;
+        return dataSet.getRows().size() > 0;
     }
 
     public void updateNull(int columnIndex) throws SQLException {

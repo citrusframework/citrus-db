@@ -1,0 +1,34 @@
+{
+  "characters":
+  [
+    {
+      "id" : 1,
+      "firstname" : "Sheldon",
+      "lastname" : "Cooper",
+      "username" : "flash",
+      "password" : "%$&&%$"
+    },
+    {
+      "id" : 2,
+      "firstname" : "Leonard",
+      "lastname" : "Hofstadter",
+      "username" : "batman",
+      "password" : "secr3t",
+      "email" : "leo@bigbangtheory.org"
+    }
+  ],
+  "friends":
+  [
+    {
+      "id" : 3,
+      "firstname" : "Rajesh",
+      "lastname" : "Koothrappali"
+    },
+    {
+      "id" : 4,
+      "firstname" : "Howard",
+      "lastname" : "Wolowitz",
+      "email" : "womanizr@bigbangtheory.org"
+    }
+  ]
+}

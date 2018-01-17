@@ -16,18 +16,17 @@
 
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.model.ResultSet;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.json.JsonDataSetProducer;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.sql.*;
 
@@ -39,7 +38,7 @@ public class JdbcStatement implements Statement {
     protected final HttpClient httpClient;
     private final String serverUrl;
 
-    protected ResultSet resultSet;
+    protected DataSet dataSet;
 
     /**
      * Default constructor using remote client reference.
@@ -55,6 +54,7 @@ public class JdbcStatement implements Statement {
         HttpResponse response = null;
         try {
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/query")
+                    .addHeader(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
                     .setEntity(new StringEntity(sqlQuery, ContentType.create("text/plain", "UTF-8")))
                     .build());
 
@@ -62,9 +62,12 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute query: " + EntityUtils.toString(response.getEntity()));
             }
 
-            resultSet = (ResultSet) JAXBContext.newInstance(ResultSet.class).createUnmarshaller().unmarshal(response.getEntity().getContent());
-            return new JdbcResultSet(resultSet);
-        } catch (IOException | JAXBException e) {
+            if (response.getEntity().getContentType().getValue().equals("application/json")) {
+                dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+            }
+
+            return new JdbcResultSet(dataSet);
+        } catch (IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);

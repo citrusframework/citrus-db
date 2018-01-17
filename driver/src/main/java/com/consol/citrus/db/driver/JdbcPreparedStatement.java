@@ -185,7 +185,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return new JdbcResultSetMetaData(resultSet);
+        return new JdbcResultSetMetaData(dataSet);
     }
 
     @Override

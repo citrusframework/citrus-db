@@ -14,22 +14,30 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.rules;
-
-import com.consol.citrus.db.driver.dataset.DataSet;
-
-import java.sql.SQLException;
+package com.consol.citrus.db.driver;
 
 /**
  * @author Christoph Deppisch
  */
-public interface StatementRule extends Rule<String> {
+public class JdbcDriverException extends RuntimeException {
 
-    void create() throws SQLException;
+    public JdbcDriverException() {
+        super();
+    }
 
-    void close() throws SQLException;
+    public JdbcDriverException(String message) {
+        super(message);
+    }
 
-    DataSet executeQuery();
+    public JdbcDriverException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-    Integer executeUpdate();
+    public JdbcDriverException(Throwable cause) {
+        super(cause);
+    }
+
+    public JdbcDriverException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

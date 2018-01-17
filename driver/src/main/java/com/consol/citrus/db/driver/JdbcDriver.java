@@ -56,7 +56,6 @@ public class JdbcDriver implements Driver {
 
     /** Driver URL prefix */
     private static final String[] URL_PREFIX_SET = { "jdbc:citrus:",
-            "jdbc:hsql",
             "jdbc:weblogic:",
             "jdbc:microsoft:",
             "jdbc:oracle:oci:",
@@ -207,6 +206,8 @@ public class JdbcDriver implements Driver {
             url = localhost + url.substring("HypersonicSQL:".length());
         } else if (url.startsWith("cloudscape:")) {
             url = localhost + url.substring("cloudscape:".length());
+        } else if (url.startsWith("hsqldb:") && !url.contains("://")) {
+            url = localhost + url.substring("hsqldb:".length());
         }
 
         if (!url.contains("://")) {

@@ -16,7 +16,7 @@
 
 package com.consol.citrus.db.server.controller;
 
-import com.consol.citrus.db.driver.model.ResultSet;
+import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.server.JdbcServerException;
 
 import java.util.Map;
@@ -61,7 +61,7 @@ public interface JdbcController {
      * @throws JdbcServerException
      * @return
      */
-    ResultSet executeQuery(String stmt) throws JdbcServerException;
+    DataSet executeQuery(String stmt) throws JdbcServerException;
 
     /**
      * Execute statement.

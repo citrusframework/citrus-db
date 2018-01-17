@@ -16,7 +16,7 @@
 
 package com.consol.citrus.db.server.controller;
 
-import com.consol.citrus.db.driver.model.ResultSet;
+import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.server.JdbcServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,10 +56,10 @@ public class SimpleJdbcController implements JdbcController {
     }
 
     @Override
-    public ResultSet executeQuery(String stmt) throws JdbcServerException {
+    public DataSet executeQuery(String stmt) throws JdbcServerException {
         log.info("EXECUTE QUERY: " + stmt);
         log.info("Return empty result set");
-        return new ResultSet();
+        return new DataSet();
     }
 
     @Override

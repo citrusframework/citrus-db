@@ -1,0 +1,14 @@
+[ {
+  "id" : 1,
+  "firstname" : "Sheldon",
+  "lastname" : "Cooper",
+  "username" : "flash",
+  "password" : "%$&&%$"
+}, {
+  "id" : 2,
+  "firstname" : "Leonard",
+  "lastname" : "Hofstadter",
+  "username" : "batman",
+  "password" : "secr3t",
+  "email" : "leo@bigbangtheory.org"
+} ]

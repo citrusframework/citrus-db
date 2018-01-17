@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.rules;
-
-import com.consol.citrus.db.driver.dataset.DataSet;
+package com.consol.citrus.db.driver.dataset;
 
 import java.sql.SQLException;
 
 /**
  * @author Christoph Deppisch
  */
-public interface StatementRule extends Rule<String> {
+public interface DataSetProducer {
 
-    void create() throws SQLException;
-
-    void close() throws SQLException;
-
-    DataSet executeQuery();
-
-    Integer executeUpdate();
+    /**
+     * Produce dataset from given input.
+     * @return
+     */
+    DataSet produce() throws SQLException;
 }

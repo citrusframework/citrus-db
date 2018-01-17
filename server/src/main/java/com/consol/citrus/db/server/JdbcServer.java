@@ -16,7 +16,8 @@
 
 package com.consol.citrus.db.server;
 
-import com.consol.citrus.db.driver.model.ResultSet;
+import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.json.JsonDataSetWriter;
 import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import org.slf4j.Logger;
@@ -24,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Spark;
 
-import javax.xml.bind.JAXBContext;
-import java.io.StringWriter;
 import java.util.concurrent.*;
 
 import static spark.Spark.*;
@@ -119,11 +118,10 @@ public class JdbcServer {
             return "";
         });
 
-        post("/query", (req, res) -> controller.executeQuery(req.body()), model -> {
-            StringWriter writer = new StringWriter();
-            JAXBContext.newInstance(ResultSet.class).createMarshaller().marshal(model, writer);
-            return writer.toString();
-        });
+        post("/query", "application/json", (req, res) -> {
+            res.type("application/json");
+            return controller.executeQuery(req.body());
+        }, model -> new JsonDataSetWriter().write((DataSet) model));
 
         post("/execute", (req, res) -> {
             controller.execute(req.body());

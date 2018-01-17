@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.rules;
+package com.consol.citrus.db.driver.json;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import java.sql.SQLException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @author Christoph Deppisch
  */
-public interface StatementRule extends Rule<String> {
+public class JsonDataSetWriterTest {
 
-    void create() throws SQLException;
+    @Test
+    public void testWrite() throws Exception {
+        Assert.assertEquals(
+                new JsonDataSetWriter().write(new JsonDataSetProducer(Paths.get(ClassLoader.getSystemResource("dataset.json").toURI())).produce()),
+                new String(Files.readAllBytes(Paths.get(ClassLoader.getSystemResource("dataset.json").toURI()))));
+    }
 
-    void close() throws SQLException;
-
-    DataSet executeQuery();
-
-    Integer executeUpdate();
 }

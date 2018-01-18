@@ -18,6 +18,7 @@ package com.consol.citrus.db.server;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetWriter;
+import com.consol.citrus.db.driver.xml.XmlDataSetWriter;
 import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import org.slf4j.Logger;
@@ -122,6 +123,11 @@ public class JdbcServer {
             res.type("application/json");
             return controller.executeQuery(req.body());
         }, model -> new JsonDataSetWriter().write((DataSet) model));
+
+        post("/query", "application/xml", (req, res) -> {
+            res.type("application/xml");
+            return controller.executeQuery(req.body());
+        }, model -> new XmlDataSetWriter().write((DataSet) model));
 
         post("/execute", (req, res) -> {
             controller.execute(req.body());

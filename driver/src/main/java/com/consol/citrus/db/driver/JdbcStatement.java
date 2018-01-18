@@ -18,6 +18,7 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
+import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
 import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.RequestBuilder;
@@ -54,7 +55,7 @@ public class JdbcStatement implements Statement {
         HttpResponse response = null;
         try {
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/query")
-                    .addHeader(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
+                    .addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/json"))
                     .setEntity(new StringEntity(sqlQuery, ContentType.create("text/plain", "UTF-8")))
                     .build());
 
@@ -64,6 +65,8 @@ public class JdbcStatement implements Statement {
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {
                 dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+            } else if (response.getEntity().getContentType().getValue().equals("application/xml")) {
+                dataSet = new XmlDataSetProducer(response.getEntity().getContent()).produce();
             }
 
             return new JdbcResultSet(dataSet);

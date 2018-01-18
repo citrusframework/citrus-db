@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver.json;
+package com.consol.citrus.db.driver.xml;
 
 import com.consol.citrus.db.driver.data.Table;
 import org.testng.Assert;
@@ -26,11 +26,11 @@ import java.util.List;
 /**
  * @author Christoph Deppisch
  */
-public class JsonTableProducerTest {
+public class XmlTableProducerTest {
 
     @Test
     public void testProduce() throws Exception {
-        JsonTableProducer dataSetProducer = new JsonTableProducer(Paths.get(ClassLoader.getSystemResource("database.json").toURI()));
+        XmlTableProducer dataSetProducer = new XmlTableProducer(Paths.get(ClassLoader.getSystemResource("database.xml").toURI()));
 
         List<Table> tables = dataSetProducer.produce();
 

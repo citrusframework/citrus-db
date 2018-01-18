@@ -6,14 +6,14 @@
       "firstname" : "Sheldon",
       "lastname" : "Cooper",
       "username" : "flash",
-      "password" : "%$&&%$"
+      "password" : "gordon"
     },
     {
       "id" : 2,
       "firstname" : "Leonard",
       "lastname" : "Hofstadter",
       "username" : "batman",
-      "password" : "secr3t",
+      "password" : "wayne",
       "email" : "leo@bigbangtheory.org"
     }
   ],

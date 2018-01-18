@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver.json;
+package com.consol.citrus.db.driver.dataset;
 
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.data.Table;
-import com.consol.citrus.db.driver.dataset.*;
 
 import java.sql.SQLException;
 import java.util.LinkedHashMap;

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver.json;
+package com.consol.citrus.db.driver.dataset;
 
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.data.Table;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.dataset.TableDataSetProducer;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;

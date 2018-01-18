@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver.json;
+package com.consol.citrus.db.driver.xml;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import org.testng.Assert;
@@ -25,11 +25,10 @@ import java.nio.file.Paths;
 /**
  * @author Christoph Deppisch
  */
-public class JsonDataSetProducerTest {
-
+public class XmlDataSetProducerTest {
     @Test
     public void testProduce() throws Exception {
-        JsonDataSetProducer dataSetProducer = new JsonDataSetProducer(Paths.get(ClassLoader.getSystemResource("dataset.json").toURI()));
+        XmlDataSetProducer dataSetProducer = new XmlDataSetProducer(Paths.get(ClassLoader.getSystemResource("dataset.xml").toURI()));
 
         DataSet dataSet = dataSetProducer.produce();
 
@@ -38,6 +37,19 @@ public class JsonDataSetProducerTest {
         Assert.assertEquals(dataSet.getRows().size(), 2L);
         Assert.assertEquals(dataSet.getNextRow().getValues().toString(), "{id=1, firstname=Sheldon, lastname=Cooper, username=flash, password=gordon}");
         Assert.assertEquals(dataSet.getNextRow().getValues().toString(), "{id=2, firstname=Leonard, lastname=Hofstadter, username=batman, password=wayne, email=leo@bigbangtheory.org}");
+    }
+
+    @Test
+    public void testProduceWithAttributes() throws Exception {
+        XmlDataSetProducer dataSetProducer = new XmlDataSetProducer(Paths.get(ClassLoader.getSystemResource("dataset_attribute.xml").toURI()));
+
+        DataSet dataSet = dataSetProducer.produce();
+
+        Assert.assertEquals(dataSet.getColumns().size(), 6L);
+        Assert.assertEquals(dataSet.getColumns().toString(), "[firstname, id, lastname, password, username, email]");
+        Assert.assertEquals(dataSet.getRows().size(), 2L);
+        Assert.assertEquals(dataSet.getNextRow().getValues().toString(), "{firstname=Sheldon, id=1, lastname=Cooper, password=gordon, username=flash}");
+        Assert.assertEquals(dataSet.getNextRow().getValues().toString(), "{email=leo@bigbangtheory.org, firstname=Leonard, id=2, lastname=Hofstadter, password=wayne, username=batman}");
     }
 
 }

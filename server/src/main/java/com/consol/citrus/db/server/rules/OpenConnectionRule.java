@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server;
+package com.consol.citrus.db.server.rules;
+
+import java.util.Map;
 
 /**
  * @author Christoph Deppisch
  */
-public class JdbcServerException extends RuntimeException {
+public class OpenConnectionRule extends Rule<Map<String, String>, Boolean, OpenConnectionRule> {
 
-    public JdbcServerException() {
+    public OpenConnectionRule() {
         super();
     }
 
-    public JdbcServerException(String message) {
-        super(message);
+    public OpenConnectionRule(RuleExecutor<Map<String, String>, Boolean> ruleExecutor) {
+        super(ruleExecutor);
     }
 
-    public JdbcServerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public JdbcServerException(Throwable cause) {
-        super(cause);
-    }
-
-    public JdbcServerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public OpenConnectionRule(RuleMatcher<Map<String, String>> ruleMatcher, RuleExecutor<Map<String, String>, Boolean> ruleExecutor) {
+        super(ruleMatcher, ruleExecutor);
     }
 }

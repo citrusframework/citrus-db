@@ -14,30 +14,20 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server;
+package com.consol.citrus.db.server.rules;
 
 /**
  * @author Christoph Deppisch
  */
-public class JdbcServerException extends RuntimeException {
+public interface RuleMatcher<P> {
 
-    public JdbcServerException() {
-        super();
-    }
+    boolean match(P predicate);
 
-    public JdbcServerException(String message) {
-        super(message);
-    }
-
-    public JdbcServerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public JdbcServerException(Throwable cause) {
-        super(cause);
-    }
-
-    public JdbcServerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    /**
+     * Rule matcher that matches all predicates.
+     * @return
+     */
+    static <T> RuleMatcher<T> matchAll() {
+        return (any) -> true;
     }
 }

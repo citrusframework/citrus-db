@@ -35,6 +35,8 @@ public class XmlDataSetProducer implements DataSetProducer {
     /** Json data used as table source */
     private final InputStream input;
 
+    private DataSetBuilder builder;
+
     public XmlDataSetProducer(File file) {
         this(file.toPath());
     }
@@ -57,7 +59,11 @@ public class XmlDataSetProducer implements DataSetProducer {
 
     @Override
     public DataSet produce() throws SQLException {
-        DataSetBuilder builder = new DataSetBuilder();
+        if (builder != null) {
+            return builder.build();
+        }
+
+        builder = new DataSetBuilder();
 
         try {
             DOMImplementationLS domImpl = ((DOMImplementationLS) DOMImplementationRegistry.newInstance().getDOMImplementation("LS"));

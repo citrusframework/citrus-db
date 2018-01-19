@@ -35,6 +35,8 @@ public class JsonDataSetProducer implements DataSetProducer {
     /** Json data used as table source */
     private final InputStream input;
 
+    private DataSetBuilder builder;
+
     public JsonDataSetProducer(File file) {
         this(file.toPath());
     }
@@ -57,7 +59,11 @@ public class JsonDataSetProducer implements DataSetProducer {
 
     @Override
     public DataSet produce() throws SQLException {
-        DataSetBuilder builder = new DataSetBuilder();
+        if (builder != null) {
+            return builder.build();
+        }
+
+        builder = new DataSetBuilder();
 
         try {
             List<Map<String, String>> rawDataSet = new ObjectMapper().readValue(input, List.class);

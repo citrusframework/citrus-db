@@ -32,7 +32,7 @@ public interface JdbcController {
      * @return
      * @throws JdbcServerException
      */
-    void getConnection(Map<String, String> properties) throws JdbcServerException;
+    void openConnection(Map<String, String> properties) throws JdbcServerException;
 
     /**
      * Create statement request.
@@ -49,35 +49,35 @@ public interface JdbcController {
 
     /**
      * Create new prepared statement.
-     * @param stmt
+     * @param sql
      * @return
      * @throws JdbcServerException
      */
-    void createPreparedStatement(String stmt) throws JdbcServerException;
+    void createPreparedStatement(String sql) throws JdbcServerException;
 
     /**
      * Execute query statement
-     * @param stmt
+     * @param sql
      * @throws JdbcServerException
      * @return
      */
-    DataSet executeQuery(String stmt) throws JdbcServerException;
+    DataSet executeQuery(String sql) throws JdbcServerException;
 
     /**
      * Execute statement.
-     * @param stmt
+     * @param sql
      * @return
      * @throws JdbcServerException
      */
-    void execute(String stmt) throws JdbcServerException;
+    void execute(String sql) throws JdbcServerException;
 
     /**
      * Execute update statement.
-     * @param stmt
+     * @param sql
      * @return
      * @throws JdbcServerException
      */
-    int executeUpdate(String stmt) throws JdbcServerException;
+    int executeUpdate(String sql) throws JdbcServerException;
 
     /**
      * Close request.

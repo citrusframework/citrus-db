@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server;
+package com.consol.citrus.db.server.rules;
 
 /**
  * @author Christoph Deppisch
  */
-public class JdbcServerException extends RuntimeException {
+public class ExecuteUpdateRule extends Rule<String, Integer, ExecuteUpdateRule> {
 
-    public JdbcServerException() {
+    public ExecuteUpdateRule() {
         super();
     }
 
-    public JdbcServerException(String message) {
-        super(message);
+    public ExecuteUpdateRule(RuleExecutor<String, Integer> ruleExecutor) {
+        super(ruleExecutor);
     }
 
-    public JdbcServerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public JdbcServerException(Throwable cause) {
-        super(cause);
-    }
-
-    public JdbcServerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public ExecuteUpdateRule(RuleMatcher<String> ruleMatcher, RuleExecutor<String, Integer> ruleExecutor) {
+        super(ruleMatcher, ruleExecutor);
     }
 }

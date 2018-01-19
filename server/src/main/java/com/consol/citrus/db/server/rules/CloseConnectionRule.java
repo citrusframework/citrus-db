@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server;
+package com.consol.citrus.db.server.rules;
 
 /**
  * @author Christoph Deppisch
  */
-public class JdbcServerException extends RuntimeException {
+public class CloseConnectionRule extends Rule<Void, Boolean, CloseConnectionRule> {
 
-    public JdbcServerException() {
+    public CloseConnectionRule() {
         super();
     }
 
-    public JdbcServerException(String message) {
-        super(message);
+    public CloseConnectionRule(RuleExecutor<Void, Boolean> ruleExecutor) {
+        super(ruleExecutor);
     }
 
-    public JdbcServerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public JdbcServerException(Throwable cause) {
-        super(cause);
-    }
-
-    public JdbcServerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public CloseConnectionRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
+        super(ruleMatcher, ruleExecutor);
     }
 }

@@ -17,65 +17,44 @@
 package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.dataset.DataSetProducer;
 import com.consol.citrus.db.server.JdbcServerException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.sql.SQLException;
 
 /**
  * @author Christoph Deppisch
  */
-public class SimpleJdbcController implements JdbcController {
+public class SimpleJdbcController extends AbstractJdbcController {
 
-    /** Logger */
-    private static Logger log = LoggerFactory.getLogger(SimpleJdbcController.class);
+    private final DataSetProducer dataSetProducer;
 
-    @Override
-    public void getConnection(Map<String, String> properties) throws JdbcServerException {
-        log.info("OPEN CONNECTION with properties: " + properties.entrySet()
-                                                                    .stream()
-                                                                    .map(entry -> entry.getKey() + "=" + entry.getValue())
-                                                                    .collect(Collectors.joining(" | ")));
+    /**
+     * Default constructor using default dataset producer.
+     */
+    public SimpleJdbcController() {
+        this(DataSet::new);
+    }
+
+    /**
+     * Constructor initializes dataset producer.
+     * @param dataSetProducer
+     */
+    public SimpleJdbcController(DataSetProducer dataSetProducer) {
+        this.dataSetProducer = dataSetProducer;
     }
 
     @Override
-    public void createStatement() throws JdbcServerException {
-        log.info("CREATE STATEMENT");
+    protected DataSet handleQuery(String sql) throws JdbcServerException {
+        try {
+            return dataSetProducer.produce();
+        } catch (SQLException e) {
+            throw new JdbcServerException("Failed to produce datase", e);
+        }
     }
 
     @Override
-    public void closeConnection() throws JdbcServerException {
-        log.info("CLOSE CONNECTION");
-    }
-
-    @Override
-    public void createPreparedStatement(String stmt) throws JdbcServerException {
-        log.info("CREATE PREPARED STATEMENT: " + stmt);
-    }
-
-    @Override
-    public DataSet executeQuery(String stmt) throws JdbcServerException {
-        log.info("EXECUTE QUERY: " + stmt);
-        log.info("Return empty result set");
-        return new DataSet();
-    }
-
-    @Override
-    public void execute(String stmt) throws JdbcServerException {
-        log.info("EXECUTE STATEMENT: " + stmt);
-    }
-
-    @Override
-    public int executeUpdate(String stmt) throws JdbcServerException {
-        log.info("EXECUTE UPDATE: " + stmt);
-        log.info("Return 0 affected rows");
+    protected int handleUpdate(String sql) throws JdbcServerException {
         return 0;
-    }
-
-    @Override
-    public void closeStatement() throws JdbcServerException {
-        log.info("CLOSE STATEMENT");
     }
 }

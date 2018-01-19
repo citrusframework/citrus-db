@@ -14,30 +14,22 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server;
+package com.consol.citrus.db.server.rules;
 
 /**
  * @author Christoph Deppisch
  */
-public class JdbcServerException extends RuntimeException {
+public class CreatePreparedStatementRule extends Rule<String, Boolean, CreatePreparedStatementRule> {
 
-    public JdbcServerException() {
+    public CreatePreparedStatementRule() {
         super();
     }
 
-    public JdbcServerException(String message) {
-        super(message);
+    public CreatePreparedStatementRule(RuleExecutor<String, Boolean> ruleExecutor) {
+        super(ruleExecutor);
     }
 
-    public JdbcServerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public JdbcServerException(Throwable cause) {
-        super(cause);
-    }
-
-    public JdbcServerException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public CreatePreparedStatementRule(RuleMatcher<String> ruleMatcher, RuleExecutor<String, Boolean> ruleExecutor) {
+        super(ruleMatcher, ruleExecutor);
     }
 }

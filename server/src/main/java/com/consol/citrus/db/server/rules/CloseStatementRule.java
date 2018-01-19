@@ -16,20 +16,20 @@
 
 package com.consol.citrus.db.server.rules;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-
-import java.sql.SQLException;
-
 /**
  * @author Christoph Deppisch
  */
-public interface StatementRule extends Rule<String> {
+public class CloseStatementRule extends Rule<Void, Boolean, CloseStatementRule> {
 
-    void create() throws SQLException;
+    public CloseStatementRule() {
+        super();
+    }
 
-    void close() throws SQLException;
+    public CloseStatementRule(RuleExecutor<Void, Boolean> ruleExecutor) {
+        super(ruleExecutor);
+    }
 
-    DataSet executeQuery();
-
-    Integer executeUpdate();
+    public CloseStatementRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
+        super(ruleMatcher, ruleExecutor);
+    }
 }

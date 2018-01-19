@@ -19,8 +19,7 @@ package com.consol.citrus.db.server;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetWriter;
 import com.consol.citrus.db.driver.xml.XmlDataSetWriter;
-import com.consol.citrus.db.server.controller.JdbcController;
-import com.consol.citrus.db.server.controller.SimpleJdbcController;
+import com.consol.citrus.db.server.controller.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
@@ -42,13 +41,31 @@ public class JdbcServer {
     private final JdbcServerConfiguration configuration;
 
     /** Controller handling requests */
-    private final JdbcController controller;
+    private JdbcController controller;
 
     /**
      * Default constructor initializing controller and configuration.
      */
     public JdbcServer() {
-        this(new SimpleJdbcController(), new JdbcServerConfiguration());
+        this(new JdbcServerConfiguration());
+    }
+
+    /**
+     * Default constructor using controller and configuration.
+     * @param configuration
+     */
+    public JdbcServer(JdbcServerConfiguration configuration) {
+        this(new SimpleJdbcController(), configuration);
+    }
+
+    /**
+     * Default constructor using controller and configuration.
+     * @param controller
+     * @param configuration
+     */
+    public JdbcServer(JdbcController controller, JdbcServerConfiguration configuration) {
+        this.controller = controller;
+        this.configuration = configuration;
     }
 
     public JdbcServer(String[] args) throws JdbcServerException {
@@ -56,14 +73,12 @@ public class JdbcServer {
         new JdbcServerOptions().apply(configuration, args);
     }
 
-    /**
-     * Default constructor using controller and configuration.
-     * @param configuration
-     * @param controller
-     */
-    public JdbcServer(JdbcController controller, JdbcServerConfiguration configuration) {
-        this.configuration = configuration;
-        this.controller = controller;
+    public RuleBasedControllerBuilder when() {
+        if (!RuleBasedController.class.isAssignableFrom(controller.getClass())) {
+            controller = new RuleBasedController();
+        }
+
+        return new RuleBasedControllerBuilder((RuleBasedController) controller);
     }
 
     /**
@@ -95,7 +110,7 @@ public class JdbcServer {
         before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
 
         get("/connection", (req, res) -> {
-            controller.getConnection(req.params());
+            controller.openConnection(req.params());
             return "";
         });
 

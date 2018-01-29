@@ -1,5 +1,5 @@
 = Citrus DB
-Christoph Deppisch;
+Christoph Deppisch;Sven Hettwer
 :revnumber: {version}
 :revdate: {localdate}
 :sectanchors:

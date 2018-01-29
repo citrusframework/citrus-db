@@ -1,0 +1,20 @@
+[[user-interface]]
+= User interface
+
+The db server application provides a web user interface at `http://localhost:8080` once the server is started on your local machine.
+You will see the default welcome page.
+
+image:default-ui.png[]
+
+The default ui is straight forward and limited to viewing Json response data returned by the db server REST API.
+
+Open your browser pointing to the db server UI at `http://localhost:8080`. You will see the extended
+web application user interface that gives you information about the db server.
+
+[[ui-dashboard]]
+== Dashboard
+
+The db server dashboard gives you a quick overview of the numbers and facts such as active connections latest SQL commands and their
+data set returned.
+
+image:dashboard.png[]

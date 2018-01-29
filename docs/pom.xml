@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.consol.citrus</groupId>
+    <artifactId>citrus-db</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>citrus-db-docs</artifactId>
+  <name>citrus-db-docs</name>
+  <packaging>pom</packaging>
+
+  <properties>
+    <asciidoctor.version>1.5.6</asciidoctor.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.asciidoctor</groupId>
+      <artifactId>asciidoctorj</artifactId>
+      <version>${asciidoctor.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>${asciidoctor.version}</version>
+        <configuration>
+          <sourceDirectory>src/main/asciidoc</sourceDirectory>
+          <sourceDocumentName>index.adoc</sourceDocumentName>
+          <attributes>
+            <icons>font</icons>
+            <pagenums/>
+            <version>${project.version}</version>
+            <plugindir>${project.basedir}/plugin</plugindir>
+            <idprefix/>
+            <idseparator>-</idseparator>
+            <allow-uri-read>true</allow-uri-read>
+          </attributes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- ==== HTML documentation ====================== -->
+
+    <profile>
+      <id>docs-html</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctor-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>output-html</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>process-asciidoc</goal>
+                </goals>
+                <configuration>
+                  <sourceHighlighter>coderay</sourceHighlighter>
+                  <backend>html</backend>
+                  <sourceHighlighter>coderay</sourceHighlighter>
+                  <attributes>
+                    <toc>left</toc>
+                    <linkcss>false</linkcss>
+                  </attributes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- ==== PDF documentation ====================== -->
+
+    <profile>
+      <id>docs-pdf</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctor-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>output-pdf</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>process-asciidoc</goal>
+                </goals>
+                <configuration>
+                  <backend>pdf</backend>
+                  <sourceHighlighter>rouge</sourceHighlighter>
+                  <attributes>
+                    <toc/>
+                  </attributes>
+                </configuration>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctorj-pdf</artifactId>
+                <version>1.5.0-alpha.16</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!-- ==== Github pages release ====================== -->
+
+    <profile>
+      <id>release-docs</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-scm-plugin</artifactId>
+            <version>1.9.5</version>
+            <configuration>
+              <connectionUrl>scm:git:git@github.com:christophd/citrus-db.git</connectionUrl>
+              <developerConnectionUrl>scm:git:git@github.com:christophd/citrus-db.git</developerConnectionUrl>
+              <scmVersion>gh-pages</scmVersion>
+              <scmVersionType>branch</scmVersionType>
+            </configuration>
+            <executions>
+              <execution>
+                <id>gh-pages-clone</id>
+                <phase>initialize</phase>
+                <goals>
+                  <goal>checkout</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>gh-pages-add</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>add</goal>
+                </goals>
+                <configuration>
+                  <workingDirectory>${project.build.directory}/checkout</workingDirectory>
+                  <includes>**/**</includes>
+                </configuration>
+              </execution>
+              <execution>
+                <id>gh-pages-push</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>checkin</goal>
+                </goals>
+                <configuration>
+                  <workingDirectory>${project.build.directory}/checkout</workingDirectory>
+                  <message>Update reference manual</message>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>copy-docs-sources</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <outputDirectory>${project.build.directory}/checkout</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>${project.build.directory}/generated-docs</directory>
+                      <includes>
+                        <include>**/**</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

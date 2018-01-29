@@ -1,0 +1,9 @@
+[[links]]
+= Links & Further reading
+
+.Reading material
+[horizontal]
+link:https://www.citrusframework.org/reference/html/[Citrus manual]:: gives you a detailed description of all Citrus features
+link:https://github.com/christophd/citrus-db/blob/master/samples[Sample projects]:: demonstrate typical db scenarios with persistence storage
+link:https://www.citrusframework.org/docs/history[ChangeLog]:: shows the release history
+link:https://github.com/christophd/citrus-db/blob/master/docs/contributing.md[Contributing]:: explains how you can contribute to this project

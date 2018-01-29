@@ -1,0 +1,10 @@
+[[installation]]
+= Installation
+
+The Citrus DB server is a web application that provides a RESTful API for clients. The server is able to run as Java application on your local machine
+or as container/pod in Docker, Kubernetes or Openshift.
+
+[[installation-driver]]
+== JDBC driver usage
+
+That's it you are ready to use the Citrus db server.

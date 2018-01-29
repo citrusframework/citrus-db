@@ -1,0 +1,45 @@
+[[introduction]]
+= Introduction
+
+This project provides a simple way to simulate relational database servers such as Oracle DB, MySQL, Postgres, MSSQL, DB2 and so on.
+All applications using JDBC technology in order to access a relational database are able to use this simulated persistence server in testing scenarios.
+
+The Citrus DB project provides a special JDBC driver implementation that connects to the simulated database server. The server accepts any kind of SQL operation like
+open/close connection, create statement, execute query (SELECT) and execute update (UPDATE, INSERT, DELETE). The server will simulate result sets according to
+a data set which is defined as Json, YAML or XML data.
+
+The library is based on the test framework link:https://www.citrusframework.org[Citrus] and integrates best in acceptance and integration test scenarios.
+
+Why and when should someone use this database simulation?
+
+[[project-usage]]
+== Motivation and Scope
+
+Most of the software components we write require persistent data to be stored in some kind of database. In Java persistence is using Java database connectivity (JDBC) technology for
+accessing a database. When we test our software in integration tests the persistence infrastructure is always a painful challenge.
+
+This is mainly because:
+
+* Database instances are heavy to setup locally or in a test environment.
+* Database licensing may prohibit local installation or multi installation usage in test environments.
+* In memory databases are not fully compliant with different SQL dialects and database specific features (e.g. different syntax, column types and stored procedure handling)
+* All tables, constraints, views, store procedures and relations (foreign keys) need to exist in test database instance before test
+* Setting up proper test data in prior to each test case is very difficult because
+** each test needs a fresh data set
+** test data has to be unique per test in order to get repeatable tests (dynamic test data and automatic cleanup)
+* Parallel testing breaks data integrity
+
+[[project-status]]
+== Project status
+
+*NOTE:* _This project is considered stable but still under construction!_
+
+The Citrus db server application is stable not yet finished. Some features are still under construction. Some aspects are simply not covered yet. Please see the following experimental
+features.
+
+.Experimental features
+[horizontal]
+Proxy mode (record-replay):: First record SQL operations and their outcome then replay captured data
+JDBC driver agent:: JVM agent using aspect oriented mechanism to inspect foreign driver implementations
+
+Feedback and contributions are highly appreciated!

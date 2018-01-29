@@ -54,6 +54,7 @@
   <modules>
     <module>driver</module>
     <module>server</module>
+    <module>docs</module>
   </modules>
 
   <developers>

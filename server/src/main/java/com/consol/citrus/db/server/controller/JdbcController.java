@@ -102,4 +102,9 @@ public interface JdbcController {
      * Commits all statements in the current transaction
      */
     void commitStatements();
+
+    /**
+     * Rollback all statements since the current transaction has been started
+     */
+    void rollbackStatements();
 }

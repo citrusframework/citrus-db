@@ -157,6 +157,21 @@ public class JdbcConnection implements Connection {
 
     @Override
     public void rollback() throws SQLException {
+        HttpResponse response = null;
+        try {
+            response = httpClient.execute(
+                    RequestBuilder.delete(serverUrl + "/connection/transaction")
+                            .build());
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to rollback database: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override

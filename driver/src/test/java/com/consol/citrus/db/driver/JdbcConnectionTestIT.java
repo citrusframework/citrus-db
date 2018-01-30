@@ -37,4 +37,11 @@ public class JdbcConnectionTestIT {
         //requires a running citrus db instance
         jdbcConnection.commit();
     }
+
+    @Test
+    public void testRollback() throws Exception{
+
+        //requires a running citrus db instance
+        jdbcConnection.rollback();
+    }
 }

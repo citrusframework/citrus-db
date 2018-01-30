@@ -136,6 +136,11 @@ public class JdbcServer {
             return "";
         });
 
+        delete("/connection/transaction", (req, res) -> {
+            controller.rollbackStatements();
+            return "";
+        });
+
         get("/statement", (req, res) -> {
             controller.createStatement();
             return "";

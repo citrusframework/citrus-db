@@ -73,4 +73,9 @@ public class SimpleJdbcController extends AbstractJdbcController {
     public void commitStatements() {
 
     }
+
+    @Override
+    public void rollbackStatements() {
+
+    }
 }

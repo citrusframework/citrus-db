@@ -68,4 +68,9 @@ public class SimpleJdbcController extends AbstractJdbcController {
     public boolean getTransactionState() {
         return this.transactionState;
     }
+
+    @Override
+    public void commitStatements() {
+
+    }
 }

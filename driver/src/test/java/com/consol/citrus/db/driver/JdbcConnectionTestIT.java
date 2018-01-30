@@ -30,4 +30,11 @@ public class JdbcConnectionTestIT {
         jdbcConnection.setAutoCommit(false);
         assertFalse(jdbcConnection.getAutoCommit());
     }
+
+    @Test
+    public void testCommit() throws Exception{
+
+        //requires a running citrus db instance
+        jdbcConnection.commit();
+    }
 }

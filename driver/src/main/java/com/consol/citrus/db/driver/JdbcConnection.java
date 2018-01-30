@@ -138,6 +138,21 @@ public class JdbcConnection implements Connection {
 
     @Override
     public void commit() throws SQLException {
+        HttpResponse response = null;
+        try {
+            response = httpClient.execute(
+                    RequestBuilder.put(serverUrl + "/connection/transaction")
+                            .build());
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to commit statements: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override

@@ -131,6 +131,11 @@ public class JdbcServer {
             return "";
         });
 
+        put("/connection/transaction", (req, res) -> {
+            controller.commitStatements();
+            return "";
+        });
+
         get("/statement", (req, res) -> {
             controller.createStatement();
             return "";

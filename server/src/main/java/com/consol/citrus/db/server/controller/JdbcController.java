@@ -97,4 +97,9 @@ public interface JdbcController {
      * @return The transaction state of the server
      */
     boolean getTransactionState();
+
+    /**
+     * Commits all statements in the current transaction
+     */
+    void commitStatements();
 }

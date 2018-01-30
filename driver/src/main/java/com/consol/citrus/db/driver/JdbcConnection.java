@@ -98,7 +98,7 @@ public class JdbcConnection implements Connection {
         try {
             HttpUriRequest request = RequestBuilder
                     .post(serverUrl + "/connection/transaction")
-                    .setEntity(new StringEntity("{ \"transactionState\": " + String.valueOf(autoCommit) + "}"))
+                    .setEntity(new StringEntity("{ \"transactionState\": " + String.valueOf(!autoCommit) + "}"))
                     .build();
             response = httpClient.execute(request);
 
@@ -126,7 +126,7 @@ public class JdbcConnection implements Connection {
                         EntityUtils.toString(response.getEntity()));
             }
             final String result = EntityUtils.toString(response.getEntity());
-            return new ObjectMapper().readTree(result)
+            return !new ObjectMapper().readTree(result)
                     .get("transactionState")
                     .asBoolean();
         } catch (final IOException e) {

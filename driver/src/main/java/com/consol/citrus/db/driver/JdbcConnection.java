@@ -16,9 +16,11 @@
 
 package com.consol.citrus.db.driver;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
@@ -92,12 +94,46 @@ public class JdbcConnection implements Connection {
 
     @Override
     public void setAutoCommit(final boolean autoCommit) throws SQLException {
+        HttpResponse response = null;
+        try {
+            HttpUriRequest request = RequestBuilder
+                    .post(serverUrl + "/connection/transaction")
+                    .setEntity(new StringEntity("{ \"transactionState\": " + String.valueOf(autoCommit) + "}"))
+                    .build();
+            response = httpClient.execute(request);
 
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to transmit auto commit value: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override
     public boolean getAutoCommit() throws SQLException {
-        return true;
+        HttpResponse response = null;
+        try {
+            response = httpClient.execute(
+                    RequestBuilder.get(serverUrl + "/connection/transaction")
+                            .build());
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to get auto commit value: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+            final String result = EntityUtils.toString(response.getEntity());
+            return new ObjectMapper().readTree(result)
+                    .get("transactionState")
+                    .asBoolean();
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override

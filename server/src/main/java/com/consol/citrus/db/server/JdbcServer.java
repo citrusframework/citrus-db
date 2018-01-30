@@ -20,6 +20,7 @@ import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetWriter;
 import com.consol.citrus.db.driver.xml.XmlDataSetWriter;
 import com.consol.citrus.db.server.controller.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
@@ -116,6 +117,17 @@ public class JdbcServer {
 
         delete("/connection", (req, res) -> {
             controller.closeConnection();
+            return "";
+        });
+
+        get("/connection/transaction", (req, res) ->{
+            res.type("application/json");
+            return "{ \"transactionState\": " + controller.getTransactionState() + "}";
+        });
+
+
+        post("/connection/transaction", (req, res) -> {
+            controller.setTransactionState(new ObjectMapper().readTree(req.body()).get("transactionState").asBoolean());
             return "";
         });
 

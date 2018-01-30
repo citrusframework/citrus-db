@@ -84,4 +84,17 @@ public interface JdbcController {
      * @throws JdbcServerException
      */
     void closeStatement() throws JdbcServerException;
+
+    /**
+     * Sets whether the server is in a transaction state or not.
+     * @param transactionState The boolean value whether the server is in transaction state.
+     */
+    void setTransactionState(boolean transactionState);
+
+
+    /**
+     * Gets the current transaction state of the server
+     * @return The transaction state of the server
+     */
+    boolean getTransactionState();
 }

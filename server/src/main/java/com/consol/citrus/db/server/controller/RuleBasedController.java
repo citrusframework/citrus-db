@@ -36,6 +36,7 @@ public class RuleBasedController extends SimpleJdbcController {
     private List<ExecuteUpdateRule> executeUpdateRules = new ArrayList<>();
     private List<StartTransactionRule> startTransactionRule = new ArrayList<>();
     private List<CommitTransactionRule> commitTransactionRule = new ArrayList<>();
+    private List<RollbackTransactionRule> rollbackTransactionRule = new ArrayList<>();
 
     @Override
     protected DataSet handleQuery(String sql) throws JdbcServerException {
@@ -136,6 +137,12 @@ public class RuleBasedController extends SimpleJdbcController {
 
     @Override
     public void rollbackStatements() {
+        rollbackTransactionRule.stream()
+                .filter(rule -> rule.matches(null))
+                .findFirst()
+                .orElse(new RollbackTransactionRule())
+                .apply(null);
+
         super.rollbackStatements();
     }
 
@@ -158,6 +165,8 @@ public class RuleBasedController extends SimpleJdbcController {
             add((StartTransactionRule) rule);
         } else if (rule instanceof CommitTransactionRule) {
             add((CommitTransactionRule) rule);
+        } else if (rule instanceof RollbackTransactionRule) {
+            add((RollbackTransactionRule) rule);
         }
 
         return this;
@@ -198,4 +207,9 @@ public class RuleBasedController extends SimpleJdbcController {
     private void add(CommitTransactionRule rule) {
         this.commitTransactionRule.add(rule);
     }
+
+    private void add(RollbackTransactionRule rule) {
+        this.rollbackTransactionRule.add(rule);
+    }
+
 }

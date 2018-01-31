@@ -34,6 +34,7 @@ public class RuleBasedController extends SimpleJdbcController {
     private List<CloseStatementRule> closeStatementRules = new ArrayList<>();
     private List<ExecuteQueryRule> executeQueryRules = new ArrayList<>();
     private List<ExecuteUpdateRule> executeUpdateRules = new ArrayList<>();
+    private List<StartTransactionRule> startTransactionRule = new ArrayList<>();
 
     @Override
     protected DataSet handleQuery(String sql) throws JdbcServerException {
@@ -108,7 +109,30 @@ public class RuleBasedController extends SimpleJdbcController {
         super.closeStatement();
     }
 
-    RuleBasedController add(Rule rule) {
+    @Override
+    public void setTransactionState(final boolean transactionState) {
+        if(transactionState){
+            startTransactionRule.stream()
+                    .filter(rule -> rule.matches(null))
+                    .findFirst()
+                    .orElse(new StartTransactionRule())
+                    .apply(null);
+        }
+
+        super.setTransactionState(transactionState);
+    }
+
+    @Override
+    public void commitStatements() {
+        super.commitStatements();
+    }
+
+    @Override
+    public void rollbackStatements() {
+        super.rollbackStatements();
+    }
+
+    RuleBasedController add(final Rule rule) {
         if (rule instanceof OpenConnectionRule) {
             add((OpenConnectionRule) rule);
         } else if (rule instanceof CloseConnectionRule) {
@@ -123,6 +147,8 @@ public class RuleBasedController extends SimpleJdbcController {
             add((ExecuteQueryRule) rule);
         } else if (rule instanceof ExecuteUpdateRule) {
             add((ExecuteUpdateRule) rule);
+        } else if (rule instanceof StartTransactionRule) {
+            add((StartTransactionRule) rule);
         }
 
         return this;
@@ -154,5 +180,9 @@ public class RuleBasedController extends SimpleJdbcController {
 
     private void add(ExecuteUpdateRule rule) {
         this.executeUpdateRules.add(rule);
+    }
+
+    private void add(StartTransactionRule rule) {
+        this.startTransactionRule.add(rule);
     }
 }

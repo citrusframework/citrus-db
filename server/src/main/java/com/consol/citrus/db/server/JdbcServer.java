@@ -55,7 +55,7 @@ public class JdbcServer {
      * Default constructor using controller and configuration.
      * @param configuration
      */
-    public JdbcServer(JdbcServerConfiguration configuration) {
+    public JdbcServer(final JdbcServerConfiguration configuration) {
         this(new SimpleJdbcController(), configuration);
     }
 
@@ -64,12 +64,12 @@ public class JdbcServer {
      * @param controller
      * @param configuration
      */
-    public JdbcServer(JdbcController controller, JdbcServerConfiguration configuration) {
+    public JdbcServer(final JdbcController controller, final JdbcServerConfiguration configuration) {
         this.controller = controller;
         this.configuration = configuration;
     }
 
-    public JdbcServer(String[] args) throws JdbcServerException {
+    public JdbcServer(final String[] args) throws JdbcServerException {
         this();
         new JdbcServerOptions().apply(configuration, args);
     }
@@ -86,8 +86,8 @@ public class JdbcServer {
      * Main method
      * @param args
      */
-    public static void main(String[] args) throws JdbcServerException {
-        JdbcServer server = new JdbcServer(args);
+    public static void main(final String[] args) throws JdbcServerException {
+        final JdbcServer server = new JdbcServer(args);
 
         if (server.configuration.getTimeToLive() > 0) {
             CompletableFuture.runAsync(() -> {

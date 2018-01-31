@@ -52,8 +52,8 @@ public class JdbcServer {
     }
 
     /**
-     * Default constructor using controller and configuration.
-     * @param configuration
+     * Default constructor using a given configuration.
+     * @param configuration The configuration of the jdbc server
      */
     public JdbcServer(final JdbcServerConfiguration configuration) {
         this(new SimpleJdbcController(), configuration);
@@ -61,8 +61,8 @@ public class JdbcServer {
 
     /**
      * Default constructor using controller and configuration.
-     * @param controller
-     * @param configuration
+     * @param controller The controller to use for request handling
+     * @param configuration The configuration of the jdbc server
      */
     public JdbcServer(final JdbcController controller, final JdbcServerConfiguration configuration) {
         this.controller = controller;
@@ -84,7 +84,7 @@ public class JdbcServer {
 
     /**
      * Main method
-     * @param args
+     * @param args The command line arguments of the java call
      */
     public static void main(final String[] args) throws JdbcServerException {
         final JdbcServer server = new JdbcServer(args);

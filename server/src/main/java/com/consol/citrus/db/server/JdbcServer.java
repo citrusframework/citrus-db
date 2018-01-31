@@ -110,68 +110,85 @@ public class JdbcServer {
 
         before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
 
-        get("/connection", (req, res) -> {
-            controller.openConnection(req.params());
-            return "";
-        });
+        get("/connection",
+                (req, res) -> {
+                    controller.openConnection(req.params());
+                    return "";
+                });
 
-        delete("/connection", (req, res) -> {
-            controller.closeConnection();
-            return "";
-        });
+        delete("/connection",
+                (req, res) -> {
+                    controller.closeConnection();
+                    return "";
+                });
 
-        get("/connection/transaction", (req, res) ->{
-            res.type("application/json");
-            return "{ \"transactionState\": " + controller.getTransactionState() + "}";
-        });
+        get("/connection/transaction",
+                (req, res) ->{
+                    res.type("application/json");
+                    return "{ \"transactionState\": " + controller.getTransactionState() + "}";
+                });
 
 
-        post("/connection/transaction", (req, res) -> {
-            controller.setTransactionState(new ObjectMapper().readTree(req.body()).get("transactionState").asBoolean());
-            return "";
-        });
+        post("/connection/transaction",
+                (req, res) -> {
+                    controller.setTransactionState(new ObjectMapper().readTree(req.body()).get("transactionState").asBoolean());
+                    return "";
+                });
 
-        put("/connection/transaction", (req, res) -> {
-            controller.commitStatements();
-            return "";
-        });
+        put("/connection/transaction",
+                (req, res) -> {
+                    controller.commitStatements();
+                    return "";
+                });
 
-        delete("/connection/transaction", (req, res) -> {
-            controller.rollbackStatements();
-            return "";
-        });
+        delete("/connection/transaction",
+                (req, res) -> {
+                    controller.rollbackStatements();
+                    return "";
+                });
 
-        get("/statement", (req, res) -> {
-            controller.createStatement();
-            return "";
-        });
+        get("/statement",
+                (req, res) -> {
+                    controller.createStatement();
+                    return "";
+                });
 
-        delete("/statement", (req, res) -> {
-            controller.closeStatement();
-            return "";
-        });
+        delete("/statement",
+                (req, res) -> {
+                    controller.closeStatement();
+                    return "";
+                });
 
-        post("/statement", (req, res) -> {
-            controller.createPreparedStatement(req.body());
-            return "";
-        });
+        post("/statement",
+                (req, res) -> {
+                    controller.createPreparedStatement(req.body());
+                    return "";
+                });
 
-        post("/query", "application/json", (req, res) -> {
-            res.type("application/json");
-            return controller.executeQuery(req.body());
-        }, model -> new JsonDataSetWriter().write((DataSet) model));
+        post("/query",
+                "application/json",
+                (req, res) -> {
+                    res.type("application/json");
+                    return controller.executeQuery(req.body());
+                 },
+                model -> new JsonDataSetWriter().write((DataSet) model));
 
-        post("/query", "application/xml", (req, res) -> {
-            res.type("application/xml");
-            return controller.executeQuery(req.body());
-        }, model -> new XmlDataSetWriter().write((DataSet) model));
+        post("/query",
+                "application/xml",
+                (req, res) -> {
+                    res.type("application/xml");
+                    return controller.executeQuery(req.body());
+                },
+                model -> new XmlDataSetWriter().write((DataSet) model));
 
-        post("/execute", (req, res) -> {
-            controller.execute(req.body());
-            return "";
-        });
+        post("/execute",
+                (req, res) -> {
+                    controller.execute(req.body());
+                    return "";
+                });
 
-        post("/update", (req, res) -> controller.executeUpdate(req.body()));
+        post("/update",
+                (req, res) -> controller.executeUpdate(req.body()));
 
         exception(JdbcServerException.class, (exception, request, response) -> {
             response.status(500);

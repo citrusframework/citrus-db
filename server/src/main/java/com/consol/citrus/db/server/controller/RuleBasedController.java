@@ -35,6 +35,7 @@ public class RuleBasedController extends SimpleJdbcController {
     private List<ExecuteQueryRule> executeQueryRules = new ArrayList<>();
     private List<ExecuteUpdateRule> executeUpdateRules = new ArrayList<>();
     private List<StartTransactionRule> startTransactionRule = new ArrayList<>();
+    private List<CommitTransactionRule> commitTransactionRule = new ArrayList<>();
 
     @Override
     protected DataSet handleQuery(String sql) throws JdbcServerException {
@@ -124,6 +125,12 @@ public class RuleBasedController extends SimpleJdbcController {
 
     @Override
     public void commitStatements() {
+        commitTransactionRule.stream()
+                .filter(rule -> rule.matches(null))
+                .findFirst()
+                .orElse(new CommitTransactionRule())
+                .apply(null);
+
         super.commitStatements();
     }
 
@@ -149,6 +156,8 @@ public class RuleBasedController extends SimpleJdbcController {
             add((ExecuteUpdateRule) rule);
         } else if (rule instanceof StartTransactionRule) {
             add((StartTransactionRule) rule);
+        } else if (rule instanceof CommitTransactionRule) {
+            add((CommitTransactionRule) rule);
         }
 
         return this;
@@ -184,5 +193,9 @@ public class RuleBasedController extends SimpleJdbcController {
 
     private void add(StartTransactionRule rule) {
         this.startTransactionRule.add(rule);
+    }
+
+    private void add(CommitTransactionRule rule) {
+        this.commitTransactionRule.add(rule);
     }
 }

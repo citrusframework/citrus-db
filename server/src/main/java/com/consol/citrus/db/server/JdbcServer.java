@@ -20,6 +20,7 @@ import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetWriter;
 import com.consol.citrus.db.driver.xml.XmlDataSetWriter;
 import com.consol.citrus.db.server.controller.*;
+import com.consol.citrus.db.server.handler.OpenConnectionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,11 +111,7 @@ public class JdbcServer {
 
         before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
 
-        get("/connection",
-                (req, res) -> {
-                    controller.openConnection(req.params());
-                    return "";
-                });
+        get("/connection", new OpenConnectionHandler(controller));
 
         delete("/connection",
                 (req, res) -> {

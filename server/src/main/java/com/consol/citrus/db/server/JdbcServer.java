@@ -19,7 +19,11 @@ package com.consol.citrus.db.server;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetWriter;
 import com.consol.citrus.db.driver.xml.XmlDataSetWriter;
-import com.consol.citrus.db.server.controller.*;
+import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.controller.RuleBasedController;
+import com.consol.citrus.db.server.controller.RuleBasedControllerBuilder;
+import com.consol.citrus.db.server.controller.SimpleJdbcController;
+import com.consol.citrus.db.server.handler.CloseConnectionHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -27,9 +31,18 @@ import org.slf4j.LoggerFactory;
 import spark.Filter;
 import spark.Spark;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import static spark.Spark.*;
+import static spark.Spark.before;
+import static spark.Spark.delete;
+import static spark.Spark.exception;
+import static spark.Spark.get;
+import static spark.Spark.port;
+import static spark.Spark.post;
+import static spark.Spark.put;
 
 /**
  * @author Christoph Deppisch
@@ -113,11 +126,7 @@ public class JdbcServer {
 
         get("/connection", new OpenConnectionHandler(controller));
 
-        delete("/connection",
-                (req, res) -> {
-                    controller.closeConnection();
-                    return "";
-                });
+        delete("/connection", new CloseConnectionHandler(controller));
 
         get("/connection/transaction",
                 (req, res) ->{

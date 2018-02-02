@@ -21,10 +21,12 @@ import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
 
+import java.util.Random;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertEquals;
 
 public class GetTransactionStateHandlerTest {
 
@@ -38,14 +40,15 @@ public class GetTransactionStateHandlerTest {
         final Request requestMock = mock(Request.class);
         final Response responseMock = mock(Response.class);
 
-        when(controllerMock.getTransactionState()).thenReturn(false);
+        final boolean expectedTransactionState = new Random().nextBoolean();
+        when(controllerMock.getTransactionState()).thenReturn(expectedTransactionState);
 
         //WHEN
         final boolean transactionState = (Boolean) transactionStateHandler.handle(requestMock, responseMock);
 
         //THEN
         verify(controllerMock).getTransactionState();
-        assertFalse(transactionState);
+        assertEquals(expectedTransactionState, transactionState);
     }
 
 }

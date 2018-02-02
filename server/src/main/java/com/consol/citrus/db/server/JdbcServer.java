@@ -24,6 +24,7 @@ import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.controller.RuleBasedControllerBuilder;
 import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.handler.CloseConnectionHandler;
+import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -128,11 +129,7 @@ public class JdbcServer {
 
         delete("/connection", new CloseConnectionHandler(controller));
 
-        get("/connection/transaction",
-                (req, res) ->{
-                    res.type("application/json");
-                    return "{ \"transactionState\": " + controller.getTransactionState() + "}";
-                });
+        get("/connection/transaction", new GetTransactionStateHandler(controller));
 
 
         post("/connection/transaction",

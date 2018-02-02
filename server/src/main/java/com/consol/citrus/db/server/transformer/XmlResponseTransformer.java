@@ -24,8 +24,17 @@ import java.sql.SQLException;
 
 public class XmlResponseTransformer implements ResponseTransformer {
 
+    private XmlDataSetWriter xmlDataSetWriter = new XmlDataSetWriter();
+
+    public XmlResponseTransformer() {
+    }
+
+    XmlResponseTransformer(final XmlDataSetWriter xmlDataSetWriter) {
+        this.xmlDataSetWriter = xmlDataSetWriter;
+    }
+
     @Override
     public String render(final Object model) throws SQLException {
-        return new XmlDataSetWriter().write((DataSet) model);
+        return xmlDataSetWriter.write((DataSet) model);
     }
 }

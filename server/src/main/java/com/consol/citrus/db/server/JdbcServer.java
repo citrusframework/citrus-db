@@ -27,6 +27,7 @@ import com.consol.citrus.db.server.handler.CloseConnectionHandler;
 import com.consol.citrus.db.server.handler.CommitTransactionStatementsHandler;
 import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
+import com.consol.citrus.db.server.handler.RollbackTransactionStatementsHandler;
 import com.consol.citrus.db.server.handler.SetTransactionStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,11 +137,7 @@ public class JdbcServer {
 
         put("/connection/transaction", new CommitTransactionStatementsHandler(controller));
 
-        delete("/connection/transaction",
-                (req, res) -> {
-                    controller.rollbackStatements();
-                    return "";
-                });
+        delete("/connection/transaction", new RollbackTransactionStatementsHandler(controller));
 
         get("/statement",
                 (req, res) -> {

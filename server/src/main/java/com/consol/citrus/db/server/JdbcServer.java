@@ -26,6 +26,7 @@ import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.handler.CloseConnectionHandler;
 import com.consol.citrus.db.server.handler.CloseStatementHandler;
 import com.consol.citrus.db.server.handler.CommitTransactionStatementsHandler;
+import com.consol.citrus.db.server.handler.CreatePreparedStatementHandler;
 import com.consol.citrus.db.server.handler.CreateStatementHandler;
 import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
@@ -145,11 +146,7 @@ public class JdbcServer {
 
         delete("/statement", new CloseStatementHandler(controller));
 
-        post("/statement",
-                (req, res) -> {
-                    controller.createPreparedStatement(req.body());
-                    return "";
-                });
+        post("/statement", new CreatePreparedStatementHandler(controller));
 
         post("/query",
                 "application/json",

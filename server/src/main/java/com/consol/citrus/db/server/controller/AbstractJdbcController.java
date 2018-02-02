@@ -26,6 +26,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * This class provides a basic abstract implementation of the JdbcController interface,
+ * which provides logging and delegation to the implementation of the subclasses.
+ *
  * @author Christoph Deppisch
  */
 public abstract class AbstractJdbcController implements JdbcController {
@@ -34,21 +37,21 @@ public abstract class AbstractJdbcController implements JdbcController {
     private static Logger log = LoggerFactory.getLogger(JdbcController.class);
 
     /**
-     * Subclasses must provide proper dataset for SQL statement.
-     * @param sql
-     * @return
+     * Subclasses must provide proper data set for SQL statement.
+     * @param sql The sql statement to map to a DataSet
+     * @return The data set mapped to the given query
      */
     protected abstract DataSet handleQuery(String sql) throws JdbcServerException;
 
     /**
      * Subclasses must provide number of row updated by SQL statement.
-     * @param sql
-     * @return
+     * @param sql The sql statement to map to a DataSet
+     * @return The amount of rows affected by the sql
      */
     protected abstract int handleUpdate(String sql) throws JdbcServerException;
 
     @Override
-    public void openConnection(Map<String, String> properties) throws JdbcServerException {
+    public void openConnection(final Map<String, String> properties) throws JdbcServerException {
         log.info("OPEN CONNECTION with properties: " + properties.entrySet()
                 .stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
@@ -66,19 +69,19 @@ public abstract class AbstractJdbcController implements JdbcController {
     }
 
     @Override
-    public void createPreparedStatement(String sql) throws JdbcServerException {
+    public void createPreparedStatement(final String sql) throws JdbcServerException {
         log.info("CREATE PREPARED STATEMENT: " + sql);
     }
 
     @Override
-    public DataSet executeQuery(String sql) throws JdbcServerException {
+    public DataSet executeQuery(final String sql) throws JdbcServerException {
         log.info("EXECUTE QUERY: " + sql);
-        DataSet dataSet = handleQuery(sql);
+        final DataSet dataSet = handleQuery(sql);
 
         try {
             log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
-        } catch (SQLException e) {
-            throw new JdbcServerException("Failed to access dataset", e);
+        } catch (final SQLException e) {
+            throw new JdbcServerException("Failed to access dataSet", e);
         }
 
         log.info("QUERY EXECUTION SUCCESSFUL");
@@ -86,17 +89,17 @@ public abstract class AbstractJdbcController implements JdbcController {
     }
 
     @Override
-    public void execute(String sql) throws JdbcServerException {
+    public void execute(final String sql) throws JdbcServerException {
         log.info("EXECUTE STATEMENT: " + sql);
         handleUpdate(sql);
         log.info("STATEMENT EXECUTION SUCCESSFUL");
     }
 
     @Override
-    public int executeUpdate(String sql) throws JdbcServerException {
+    public int executeUpdate(final String sql) throws JdbcServerException {
         log.info("EXECUTE UPDATE: " + sql);
 
-        int rows = handleUpdate(sql);
+        final int rows = handleUpdate(sql);
 
         log.debug(String.format("ROWS UPDATED %s", rows));
         log.info("UPDATE EXECUTION SUCCESSFUL");

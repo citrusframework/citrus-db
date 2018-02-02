@@ -24,8 +24,17 @@ import java.sql.SQLException;
 
 public class JsonResponseTransformer implements ResponseTransformer {
 
+    private JsonDataSetWriter jsonDataSetWriter = new JsonDataSetWriter();
+
+    public JsonResponseTransformer() {
+    }
+
+    JsonResponseTransformer(final JsonDataSetWriter jsonDataSetWriter) {
+        this.jsonDataSetWriter = jsonDataSetWriter;
+    }
+
     @Override
     public String render(final Object model) throws SQLException {
-        return new JsonDataSetWriter().write((DataSet) model);
+        return jsonDataSetWriter.write((DataSet) model);
     }
 }

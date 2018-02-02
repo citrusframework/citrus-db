@@ -20,6 +20,7 @@ import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.controller.RuleBasedControllerBuilder;
 import com.consol.citrus.db.server.controller.SimpleJdbcController;
+import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
 import com.consol.citrus.db.server.handler.CloseConnectionHandler;
 import com.consol.citrus.db.server.handler.CloseStatementHandler;
 import com.consol.citrus.db.server.handler.CommitTransactionStatementsHandler;
@@ -165,10 +166,7 @@ public class JdbcServer {
 
         post("/update", new ExecuteUpdateHandler(controller));
 
-        exception(JdbcServerException.class, (exception, request, response) -> {
-            response.status(500);
-            response.body(exception.getMessage());
-        });
+        exception(JdbcServerException.class, new JdbcServerExceptionHandler());
     }
 
     /**

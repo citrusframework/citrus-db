@@ -16,8 +16,6 @@
 
 package com.consol.citrus.db.server;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.xml.XmlDataSetWriter;
 import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.controller.RuleBasedControllerBuilder;
@@ -36,6 +34,7 @@ import com.consol.citrus.db.server.handler.OpenConnectionHandler;
 import com.consol.citrus.db.server.handler.RollbackTransactionStatementsHandler;
 import com.consol.citrus.db.server.handler.SetTransactionStateHandler;
 import com.consol.citrus.db.server.transformer.JsonResponseTransformer;
+import com.consol.citrus.db.server.transformer.XmlResponseTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
@@ -160,7 +159,7 @@ public class JdbcServer {
         post("/query",
                 "application/xml",
                 new ExecuteXmlQueryHandler(controller),
-                model -> new XmlDataSetWriter().write((DataSet) model));
+                new XmlResponseTransformer());
 
         post("/execute", new ExecuteStatementHandler(controller));
 

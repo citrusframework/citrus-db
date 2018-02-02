@@ -17,12 +17,14 @@
 package com.consol.citrus.db.server.handler;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
 
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,11 +44,15 @@ public class ExecuteUpdateHandlerTest {
 
         final Response responseMock = mock(Response.class);
 
+        final int expectedUpdatedRows = 42;
+        when(controllerMock.executeUpdate(anyString())).thenReturn(expectedUpdatedRows);
+
         //WHEN
-        executeUpdateHandler.handle(requestMock, responseMock);
+        final int updatedResult = (int) executeUpdateHandler.handle(requestMock, responseMock);
 
         //THEN
         verify(controllerMock).executeUpdate(body);
+        Assert.assertEquals(expectedUpdatedRows, updatedResult);
     }
 
 }

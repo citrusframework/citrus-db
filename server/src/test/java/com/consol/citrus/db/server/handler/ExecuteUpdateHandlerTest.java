@@ -17,7 +17,6 @@
 package com.consol.citrus.db.server.handler;
 
 import com.consol.citrus.db.server.controller.JdbcController;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
@@ -28,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
 public class ExecuteUpdateHandlerTest {
 
@@ -52,7 +52,7 @@ public class ExecuteUpdateHandlerTest {
 
         //THEN
         verify(controllerMock).executeUpdate(body);
-        Assert.assertEquals(expectedUpdatedRows, updatedResult);
+        assertEquals(updatedResult, expectedUpdatedRows);
     }
 
 }

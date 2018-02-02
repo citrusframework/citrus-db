@@ -48,7 +48,7 @@ public class GetTransactionStateHandlerTest {
 
         //THEN
         verify(controllerMock).getTransactionState();
-        assertEquals(expectedTransactionState, transactionState);
+        assertEquals(transactionState, expectedTransactionState);
     }
 
 }

@@ -17,11 +17,8 @@
 package com.consol.citrus.db.server.handler;
 
 import com.consol.citrus.db.server.controller.JdbcController;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.Request;
 import spark.Response;
-
-import java.io.IOException;
 
 public class SetTransactionStateHandler extends AbstractJdbcRequestHandler {
 
@@ -31,8 +28,8 @@ public class SetTransactionStateHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response) throws IOException {
-        controller.setTransactionState(new ObjectMapper().readTree(request.body()).get("transactionState").asBoolean());
+    public Object handle(final Request request, final Response response) {
+        controller.setTransactionState(Boolean.valueOf(request.body()));
         return "";
     }
 }

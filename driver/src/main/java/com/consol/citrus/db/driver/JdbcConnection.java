@@ -16,7 +16,6 @@
 
 package com.consol.citrus.db.driver;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -27,7 +26,21 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -98,7 +111,7 @@ public class JdbcConnection implements Connection {
         try {
             HttpUriRequest request = RequestBuilder
                     .post(serverUrl + "/connection/transaction")
-                    .setEntity(new StringEntity("{ \"transactionState\": " + String.valueOf(!autoCommit) + "}"))
+                    .setEntity(new StringEntity(String.valueOf(!autoCommit)))
                     .build();
             response = httpClient.execute(request);
 
@@ -125,10 +138,7 @@ public class JdbcConnection implements Connection {
                 throw new SQLException("Failed to get auto commit value: " +
                         EntityUtils.toString(response.getEntity()));
             }
-            final String result = EntityUtils.toString(response.getEntity());
-            return !new ObjectMapper().readTree(result)
-                    .get("transactionState")
-                    .asBoolean();
+            return !Boolean.valueOf(EntityUtils.toString(response.getEntity()));
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {

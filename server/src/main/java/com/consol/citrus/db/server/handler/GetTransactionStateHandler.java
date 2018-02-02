@@ -29,7 +29,6 @@ public class GetTransactionStateHandler extends AbstractJdbcRequestHandler {
 
     @Override
     public Object handle(final Request request, final Response response){
-        response.type("application/json");
-        return "{ \"transactionState\": " + controller.getTransactionState() + "}";
+        return controller.getTransactionState();
     }
 }

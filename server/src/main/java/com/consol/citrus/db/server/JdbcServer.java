@@ -28,6 +28,7 @@ import com.consol.citrus.db.server.handler.CloseStatementHandler;
 import com.consol.citrus.db.server.handler.CommitTransactionStatementsHandler;
 import com.consol.citrus.db.server.handler.CreatePreparedStatementHandler;
 import com.consol.citrus.db.server.handler.CreateStatementHandler;
+import com.consol.citrus.db.server.handler.ExecuteJsonQueryHandler;
 import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
 import com.consol.citrus.db.server.handler.RollbackTransactionStatementsHandler;
@@ -150,10 +151,7 @@ public class JdbcServer {
 
         post("/query",
                 "application/json",
-                (req, res) -> {
-                    res.type("application/json");
-                    return controller.executeQuery(req.body());
-                 },
+                new ExecuteJsonQueryHandler(controller),
                 model -> new JsonDataSetWriter().write((DataSet) model));
 
         post("/query",

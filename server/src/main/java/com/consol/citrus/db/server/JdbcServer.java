@@ -29,6 +29,7 @@ import com.consol.citrus.db.server.handler.CommitTransactionStatementsHandler;
 import com.consol.citrus.db.server.handler.CreatePreparedStatementHandler;
 import com.consol.citrus.db.server.handler.CreateStatementHandler;
 import com.consol.citrus.db.server.handler.ExecuteJsonQueryHandler;
+import com.consol.citrus.db.server.handler.ExecuteXmlQueryHandler;
 import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
 import com.consol.citrus.db.server.handler.RollbackTransactionStatementsHandler;
@@ -156,10 +157,7 @@ public class JdbcServer {
 
         post("/query",
                 "application/xml",
-                (req, res) -> {
-                    res.type("application/xml");
-                    return controller.executeQuery(req.body());
-                },
+                new ExecuteXmlQueryHandler(controller),
                 model -> new XmlDataSetWriter().write((DataSet) model));
 
         post("/execute",

@@ -30,6 +30,7 @@ import com.consol.citrus.db.server.handler.CreatePreparedStatementHandler;
 import com.consol.citrus.db.server.handler.CreateStatementHandler;
 import com.consol.citrus.db.server.handler.ExecuteJsonQueryHandler;
 import com.consol.citrus.db.server.handler.ExecuteStatementHandler;
+import com.consol.citrus.db.server.handler.ExecuteUpdateHandler;
 import com.consol.citrus.db.server.handler.ExecuteXmlQueryHandler;
 import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
@@ -163,8 +164,7 @@ public class JdbcServer {
 
         post("/execute", new ExecuteStatementHandler(controller));
 
-        post("/update",
-                (req, res) -> controller.executeUpdate(req.body()));
+        post("/update", new ExecuteUpdateHandler(controller));
 
         exception(JdbcServerException.class, (exception, request, response) -> {
             response.status(500);

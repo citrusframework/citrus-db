@@ -28,7 +28,6 @@ import java.sql.SQLException;
 public class SimpleJdbcController extends AbstractJdbcController {
 
     private final DataSetProducer dataSetProducer;
-    private boolean transactionState;
 
     /**
      * Default constructor using default dataset producer.
@@ -57,25 +56,5 @@ public class SimpleJdbcController extends AbstractJdbcController {
     @Override
     protected int handleUpdate(String sql) throws JdbcServerException {
         return 0;
-    }
-
-    @Override
-    public void setTransactionState(final boolean transactionState) {
-        this.transactionState = transactionState;
-    }
-
-    @Override
-    public boolean getTransactionState() {
-        return this.transactionState;
-    }
-
-    @Override
-    public void commitStatements() {
-
-    }
-
-    @Override
-    public void rollbackStatements() {
-
     }
 }

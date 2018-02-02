@@ -35,6 +35,7 @@ public abstract class AbstractJdbcController implements JdbcController {
 
     /** Logger */
     private static Logger log = LoggerFactory.getLogger(JdbcController.class);
+    private boolean transactionState;
 
     /**
      * Subclasses must provide proper data set for SQL statement.
@@ -79,7 +80,9 @@ public abstract class AbstractJdbcController implements JdbcController {
         final DataSet dataSet = handleQuery(sql);
 
         try {
-            log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
+            if(log.isDebugEnabled()){
+                log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
+            }
         } catch (final SQLException e) {
             throw new JdbcServerException("Failed to access dataSet", e);
         }
@@ -101,7 +104,9 @@ public abstract class AbstractJdbcController implements JdbcController {
 
         final int rows = handleUpdate(sql);
 
-        log.debug(String.format("ROWS UPDATED %s", rows));
+        if(log.isDebugEnabled()){
+            log.debug(String.format("ROWS UPDATED %s", rows));
+        }
         log.info("UPDATE EXECUTION SUCCESSFUL");
         return rows;
     }
@@ -109,5 +114,27 @@ public abstract class AbstractJdbcController implements JdbcController {
     @Override
     public void closeStatement() throws JdbcServerException {
         log.info("CLOSE STATEMENT");
+    }
+
+    @Override
+    public void setTransactionState(final boolean transactionState) {
+        log.info(String.format("RECEIVED TRANSACTION STATE CHANGE: %s", String.valueOf(transactionState)));
+        this.transactionState = transactionState;
+    }
+
+    @Override
+    public boolean getTransactionState() {
+        log.info(String.format("GET TRANSACTION STATE: %s", String.valueOf(transactionState)));
+        return this.transactionState;
+    }
+
+    @Override
+    public void commitStatements() {
+        log.info("COMMIT STATEMENTS");
+    }
+
+    @Override
+    public void rollbackStatements() {
+        log.info("ROLLBACK STATEMENTS");
     }
 }

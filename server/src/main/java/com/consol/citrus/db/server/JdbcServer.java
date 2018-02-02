@@ -26,7 +26,7 @@ import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.handler.CloseConnectionHandler;
 import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.OpenConnectionHandler;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.consol.citrus.db.server.handler.SetTransactionStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
@@ -131,12 +131,7 @@ public class JdbcServer {
 
         get("/connection/transaction", new GetTransactionStateHandler(controller));
 
-
-        post("/connection/transaction",
-                (req, res) -> {
-                    controller.setTransactionState(new ObjectMapper().readTree(req.body()).get("transactionState").asBoolean());
-                    return "";
-                });
+        post("/connection/transaction", new SetTransactionStateHandler(controller));
 
         put("/connection/transaction",
                 (req, res) -> {

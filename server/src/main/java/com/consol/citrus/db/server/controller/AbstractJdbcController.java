@@ -35,6 +35,8 @@ public abstract class AbstractJdbcController implements JdbcController {
 
     /** Logger */
     private static Logger log = LoggerFactory.getLogger(JdbcController.class);
+
+    /** Holds the information whether the controller is within a transaction */
     private boolean transactionState;
 
     /**

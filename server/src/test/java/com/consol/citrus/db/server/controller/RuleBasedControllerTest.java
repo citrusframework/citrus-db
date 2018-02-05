@@ -18,10 +18,13 @@ package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
+import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
 import com.consol.citrus.db.server.rules.RuleExecutor;
 import com.consol.citrus.db.server.rules.RuleMatcher;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Random;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -54,7 +57,7 @@ public class RuleBasedControllerTest {
         final RuleExecutor<String, DataSet> ruleExecutor = (RuleExecutor<String, DataSet>) mock(RuleExecutor.class);
         when(ruleExecutor.then(incomingQuery)).thenReturn(expectedDataSet);
 
-        //Compose QueryRule
+        //Compose Rule
         final ExecuteQueryRule executeQueryRule = new ExecuteQueryRule(ruleMatcher, ruleExecutor);
 
         //Add rule to Controller
@@ -81,5 +84,49 @@ public class RuleBasedControllerTest {
 
         //THEN
         assertEquals(dataSet, expectedDataSet);
+    }
+
+    @Test
+    public void testHandleUpdateWithMatch(){
+
+        //GIVEN
+        final String incomingQuery = "some query";
+
+        //Create matcher
+        final RuleMatcher<String> ruleMatcher = (RuleMatcher<String>) mock(RuleMatcher.class);
+        when(ruleMatcher.match(incomingQuery)).thenReturn(true);
+
+        //Prepare return value for match
+        final int expectedUpdatedRows = new Random().nextInt();
+        final RuleExecutor<String, Integer> ruleExecutor = (RuleExecutor<String, Integer>) mock(RuleExecutor.class);
+        when(ruleExecutor.then(incomingQuery)).thenReturn(expectedUpdatedRows);
+
+        //Compose Rule
+        final ExecuteUpdateRule executeQueryRule = new ExecuteUpdateRule(ruleMatcher, ruleExecutor);
+
+        //Add rule to Controller
+        ruleBasedController.add(executeQueryRule);
+
+        //WHEN
+        final int updatedRows = ruleBasedController.handleUpdate(incomingQuery);
+
+        //THEN
+        assertEquals(updatedRows, expectedUpdatedRows);
+    }
+
+    @Test
+    public void testHandleUpdateWithoutMatch(){
+
+        //GIVEN
+        final String incomingQuery = "some query";
+        final int expectedUpdatedRows = new Random().nextInt();
+        when(simpleJdbcController.handleUpdate(incomingQuery)).thenReturn(expectedUpdatedRows);
+
+
+        //WHEN
+        final int updatedRows = ruleBasedController.handleUpdate(incomingQuery);
+
+        //THEN
+        assertEquals(updatedRows, expectedUpdatedRows);
     }
 }

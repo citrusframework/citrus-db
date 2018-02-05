@@ -169,4 +169,17 @@ public class RuleBasedControllerTest {
         //THEN
         verify(jdbcControllerMock).createStatement();
     }
+
+    @Test
+    public void testCreatePreparedStatementDelegation(){
+
+        //GIVEN
+        final String sql = "some query";
+
+        //WHEN
+        ruleBasedController.createPreparedStatement(sql);
+
+        //THEN
+        verify(jdbcControllerMock).createPreparedStatement(sql);
+    }
 }

@@ -220,4 +220,16 @@ public class RuleBasedControllerTest {
         verify(jdbcControllerMock).commitStatements();
     }
 
+
+    @Test
+    public void testRolbackStatementsDelegation(){
+
+        //GIVEN
+
+        //WHEN
+        ruleBasedController.rollbackStatements();
+
+        //THEN
+        verify(jdbcControllerMock).rollbackStatements();
+    }
 }

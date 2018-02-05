@@ -49,7 +49,7 @@ public class SimpleJdbcController extends AbstractJdbcController {
         try {
             return dataSetProducer.produce();
         } catch (final SQLException e) {
-            throw new JdbcServerException("Failed to produce datase", e);
+            throw new JdbcServerException("Failed to produce dataSet", e);
         }
     }
 

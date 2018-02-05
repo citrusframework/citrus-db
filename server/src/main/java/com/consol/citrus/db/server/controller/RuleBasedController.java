@@ -169,7 +169,7 @@ public class RuleBasedController extends AbstractJdbcController{
         delegateJdbcController.rollbackStatements();
     }
 
-    RuleBasedController add(final Rule rule) {
+    public RuleBasedController add(final Rule rule) {
         if (rule instanceof OpenConnectionRule) {
             add((OpenConnectionRule) rule);
         } else if (rule instanceof CloseConnectionRule) {

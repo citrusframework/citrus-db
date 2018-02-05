@@ -16,9 +16,9 @@
 
 package com.consol.citrus.db.server;
 
+import com.consol.citrus.db.server.builder.RuleBasedControllerBuilder;
 import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.controller.RuleBasedControllerBuilder;
 import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
 import com.consol.citrus.db.server.handler.CloseConnectionHandler;

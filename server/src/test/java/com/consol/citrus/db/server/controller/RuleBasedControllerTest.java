@@ -157,4 +157,16 @@ public class RuleBasedControllerTest {
         //THEN
         verify(jdbcControllerMock).closeConnection();
     }
+
+    @Test
+    public void testCreateStatementDelegation(){
+
+        //GIVEN
+
+        //WHEN
+        ruleBasedController.createStatement();
+
+        //THEN
+        verify(jdbcControllerMock).createStatement();
+    }
 }

@@ -24,22 +24,25 @@ import com.consol.citrus.db.server.rules.RuleMatcher;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Random;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 @SuppressWarnings("unchecked")
 public class RuleBasedControllerTest {
 
-    private SimpleJdbcController simpleJdbcController;
+    private AbstractJdbcController jdbcControllerMock;
     private RuleBasedController ruleBasedController;
 
     @BeforeMethod
     public void setUp(){
-        simpleJdbcController = mock(SimpleJdbcController.class);
-        ruleBasedController = new RuleBasedController(simpleJdbcController);
+        jdbcControllerMock = mock(AbstractJdbcController.class);
+        ruleBasedController = new RuleBasedController(jdbcControllerMock);
     }
 
     @Test
@@ -76,7 +79,7 @@ public class RuleBasedControllerTest {
         //GIVEN
         final String incomingQuery = "some query";
         final DataSet expectedDataSet = mock(DataSet.class);
-        when(simpleJdbcController.handleQuery(incomingQuery)).thenReturn(expectedDataSet);
+        when(jdbcControllerMock.handleQuery(incomingQuery)).thenReturn(expectedDataSet);
 
 
         //WHEN
@@ -102,10 +105,10 @@ public class RuleBasedControllerTest {
         when(ruleExecutor.then(incomingQuery)).thenReturn(expectedUpdatedRows);
 
         //Compose Rule
-        final ExecuteUpdateRule executeQueryRule = new ExecuteUpdateRule(ruleMatcher, ruleExecutor);
+        final ExecuteUpdateRule executeUpdateRule = new ExecuteUpdateRule(ruleMatcher, ruleExecutor);
 
         //Add rule to Controller
-        ruleBasedController.add(executeQueryRule);
+        ruleBasedController.add(executeUpdateRule);
 
         //WHEN
         final int updatedRows = ruleBasedController.handleUpdate(incomingQuery);
@@ -120,7 +123,7 @@ public class RuleBasedControllerTest {
         //GIVEN
         final String incomingQuery = "some query";
         final int expectedUpdatedRows = new Random().nextInt();
-        when(simpleJdbcController.handleUpdate(incomingQuery)).thenReturn(expectedUpdatedRows);
+        when(jdbcControllerMock.handleUpdate(incomingQuery)).thenReturn(expectedUpdatedRows);
 
 
         //WHEN
@@ -128,5 +131,18 @@ public class RuleBasedControllerTest {
 
         //THEN
         assertEquals(updatedRows, expectedUpdatedRows);
+    }
+
+    @Test
+    public void testOpenConnectionDelegation(){
+
+        //GIVEN
+        final Map<String, String> properties = Collections.singletonMap("name", "value");
+
+        //WHEN
+        ruleBasedController.openConnection(properties);
+
+        //THEN
+        verify(jdbcControllerMock).openConnection(properties);
     }
 }

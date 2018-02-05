@@ -194,4 +194,17 @@ public class RuleBasedControllerTest {
         //THEN
         verify(jdbcControllerMock).closeStatement();
     }
+
+    @Test
+    public void testSetTransactionStateDelegation(){
+
+        //GIVEN
+        final boolean transactionState = new Random().nextBoolean();
+
+        //WHEN
+        ruleBasedController.setTransactionState(transactionState);
+
+        //THEN
+        verify(jdbcControllerMock).setTransactionState(transactionState);
+    }
 }

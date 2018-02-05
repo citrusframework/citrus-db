@@ -182,4 +182,16 @@ public class RuleBasedControllerTest {
         //THEN
         verify(jdbcControllerMock).createPreparedStatement(sql);
     }
+
+    @Test
+    public void testCloseStatementDelegation(){
+
+        //GIVEN
+
+        //WHEN
+        ruleBasedController.closeStatement();
+
+        //THEN
+        verify(jdbcControllerMock).closeStatement();
+    }
 }

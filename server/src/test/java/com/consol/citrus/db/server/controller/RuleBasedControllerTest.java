@@ -207,4 +207,17 @@ public class RuleBasedControllerTest {
         //THEN
         verify(jdbcControllerMock).setTransactionState(transactionState);
     }
+
+    @Test
+    public void testCommitStatementsDelegation(){
+
+        //GIVEN
+
+        //WHEN
+        ruleBasedController.commitStatements();
+
+        //THEN
+        verify(jdbcControllerMock).commitStatements();
+    }
+
 }

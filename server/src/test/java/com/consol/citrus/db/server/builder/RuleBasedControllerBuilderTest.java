@@ -16,6 +16,40 @@
 
 package com.consol.citrus.db.server.builder;
 
+import com.consol.citrus.db.server.controller.RuleBasedController;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import static org.mockito.Mockito.mock;
+
 public class RuleBasedControllerBuilderTest {
+
+    private final RuleBasedController ruleBasedController = mock(RuleBasedController.class);
+    private final RuleBasedControllerBuilder ruleBasedControllerBuilder =
+            new RuleBasedControllerBuilder(ruleBasedController);
+
+    @Test
+    public void testConnection(){
+
+        //GIVEN
+
+        //WHEN
+        final ConnectionRuleBuilder connectionRuleBuilder = ruleBasedControllerBuilder.connection();
+
+        //THEN
+        Assert.assertEquals(connectionRuleBuilder.getController(), ruleBasedController);
+    }
+
+    @Test
+    public void testStatement(){
+
+        //GIVEN
+
+        //WHEN
+        final StatementRuleBuilder statementRuleBuilder = ruleBasedControllerBuilder.statement();
+
+        //THEN
+        Assert.assertEquals(statementRuleBuilder.getController(), ruleBasedController);
+    }
 
 }

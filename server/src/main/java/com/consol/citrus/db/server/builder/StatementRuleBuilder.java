@@ -65,4 +65,8 @@ public class StatementRuleBuilder {
     public CloseStatementRuleBuilder close() {
         return new CloseStatementRuleBuilder(controller);
     }
+
+    RuleBasedController getController() {
+        return controller;
+    }
 }

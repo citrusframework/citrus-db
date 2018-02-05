@@ -59,4 +59,8 @@ public class ConnectionRuleBuilder {
                 .orElse("")
                 .equalsIgnoreCase(value);
     }
+
+    RuleBasedController getController() {
+        return controller;
+    }
 }

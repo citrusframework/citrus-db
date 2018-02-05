@@ -41,22 +41,22 @@ public class ConnectionRuleBuilder {
 
     public OpenConnectionRuleBuilder open(final String username) {
         return open((properties) ->
-                Optional.ofNullable(properties.get("username"))
-                        .orElse("")
-                        .equalsIgnoreCase(username));
+                propertyMatchesValue(properties.get("username"), username));
     }
 
     public OpenConnectionRuleBuilder open(final String username, final String password) {
         return open((properties) ->
-                Optional.ofNullable(properties.get("username"))
-                        .orElse("")
-                        .equalsIgnoreCase(username) &&
-                        Optional.ofNullable(properties.get("password"))
-                                .orElse("")
-                                .equalsIgnoreCase(password));
+                propertyMatchesValue(properties.get("username"), username) &&
+                        propertyMatchesValue(properties.get("password") ,password));
     }
 
     public OpenConnectionRuleBuilder open(final RuleMatcher<Map<String, String>> ruleMatcher) {
         return new OpenConnectionRuleBuilder(ruleMatcher, controller);
+    }
+
+    private boolean propertyMatchesValue(final String property, final String value) {
+        return Optional.ofNullable(property)
+                .orElse("")
+                .equalsIgnoreCase(value);
     }
 }

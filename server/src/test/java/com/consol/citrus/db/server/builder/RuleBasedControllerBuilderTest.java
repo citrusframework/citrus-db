@@ -16,24 +16,6 @@
 
 package com.consol.citrus.db.server.builder;
 
-import com.consol.citrus.db.server.controller.RuleBasedController;
+public class RuleBasedControllerBuilderTest {
 
-/**
- * @author Christoph Deppisch
- */
-public class RuleBasedControllerBuilder {
-
-    private final RuleBasedController controller;
-
-    public RuleBasedControllerBuilder(final RuleBasedController controller) {
-        this.controller = controller;
-    }
-
-    public ConnectionRuleBuilder connection() {
-        return new ConnectionRuleBuilder(controller);
-    }
-
-    public StatementRuleBuilder statement() {
-        return new StatementRuleBuilder(controller);
-    }
 }

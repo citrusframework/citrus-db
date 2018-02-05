@@ -145,4 +145,16 @@ public class RuleBasedControllerTest {
         //THEN
         verify(jdbcControllerMock).openConnection(properties);
     }
+
+    @Test
+    public void testCloseConnectionDelegation(){
+
+        //GIVEN
+
+        //WHEN
+        ruleBasedController.closeConnection();
+
+        //THEN
+        verify(jdbcControllerMock).closeConnection();
+    }
 }

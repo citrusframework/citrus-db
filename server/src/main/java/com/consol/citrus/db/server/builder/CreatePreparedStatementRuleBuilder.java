@@ -35,4 +35,8 @@ public class CreatePreparedStatementRuleBuilder extends AbstractRuleBuilder<Crea
     protected CreatePreparedStatementRule createRule(final RuleMatcher<String> matcher, final RuleExecutor<String, Boolean> executor) {
         return new CreatePreparedStatementRule(ruleMatcher, executor);
     }
+
+    RuleMatcher<String> getRuleMatcher() {
+        return ruleMatcher;
+    }
 }

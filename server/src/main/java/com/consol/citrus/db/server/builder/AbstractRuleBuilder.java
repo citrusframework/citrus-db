@@ -51,4 +51,8 @@ public abstract class AbstractRuleBuilder<T extends Rule<P, Boolean, T>, P> {
     }
 
     protected abstract T createRule(RuleMatcher<P> matcher, RuleExecutor<P, Boolean> executor);
+
+    RuleBasedController getController() {
+        return controller;
+    }
 }

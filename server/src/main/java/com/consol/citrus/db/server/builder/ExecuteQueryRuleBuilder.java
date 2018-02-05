@@ -76,4 +76,12 @@ public class ExecuteQueryRuleBuilder {
         controller.add(rule);
         return rule;
     }
+
+    RuleBasedController getController() {
+        return controller;
+    }
+
+    RuleMatcher<String> getRuleMatcher() {
+        return ruleMatcher;
+    }
 }

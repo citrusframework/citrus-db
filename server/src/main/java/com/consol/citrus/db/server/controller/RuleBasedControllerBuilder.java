@@ -17,11 +17,21 @@
 package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.data.Table;
-import com.consol.citrus.db.driver.dataset.*;
+import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.dataset.TableDataSetProducer;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
 import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
 import com.consol.citrus.db.server.JdbcServerException;
-import com.consol.citrus.db.server.rules.*;
+import com.consol.citrus.db.server.rules.CloseConnectionRule;
+import com.consol.citrus.db.server.rules.CloseStatementRule;
+import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
+import com.consol.citrus.db.server.rules.CreateStatementRule;
+import com.consol.citrus.db.server.rules.ExecuteQueryRule;
+import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
+import com.consol.citrus.db.server.rules.OpenConnectionRule;
+import com.consol.citrus.db.server.rules.Rule;
+import com.consol.citrus.db.server.rules.RuleExecutor;
+import com.consol.citrus.db.server.rules.RuleMatcher;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,7 +47,7 @@ public class RuleBasedControllerBuilder {
 
     private final RuleBasedController controller;
 
-    public RuleBasedControllerBuilder(RuleBasedController controller) {
+    public RuleBasedControllerBuilder(final RuleBasedController controller) {
         this.controller = controller;
     }
 
@@ -49,6 +59,7 @@ public class RuleBasedControllerBuilder {
         return new StatementRuleBuilder();
     }
 
+    @SuppressWarnings("unused")
     public class StatementRuleBuilder {
 
         public CreateStatementRuleBuilder create() {
@@ -59,27 +70,27 @@ public class RuleBasedControllerBuilder {
             return prepare(RuleMatcher.matchAll());
         }
 
-        public CreatePreparedStatementRuleBuilder prepare(String sql) {
+        public CreatePreparedStatementRuleBuilder prepare(final String sql) {
             return prepare((stmt) -> stmt.equals(sql));
         }
 
-        public CreatePreparedStatementRuleBuilder prepare(RuleMatcher<String> matcher) {
+        public CreatePreparedStatementRuleBuilder prepare(final RuleMatcher<String> matcher) {
             return new CreatePreparedStatementRuleBuilder(matcher);
         }
 
-        public ExecuteQueryRuleBuilder executeQuery(String sql) {
+        public ExecuteQueryRuleBuilder executeQuery(final String sql) {
             return new ExecuteQueryRuleBuilder((stmt) -> stmt.equals(sql));
         }
 
-        public ExecuteQueryRuleBuilder executeQuery(Pattern sql) {
+        public ExecuteQueryRuleBuilder executeQuery(final Pattern sql) {
             return new ExecuteQueryRuleBuilder((stmt) -> sql.matcher(stmt).matches());
         }
 
-        public ExecuteUpdateRuleBuilder executeUpdate(String sql) {
+        public ExecuteUpdateRuleBuilder executeUpdate(final String sql) {
             return new ExecuteUpdateRuleBuilder((stmt) -> stmt.equals(sql));
         }
 
-        public ExecuteUpdateRuleBuilder executeUpdate(Pattern sql) {
+        public ExecuteUpdateRuleBuilder executeUpdate(final Pattern sql) {
             return new ExecuteUpdateRuleBuilder((stmt) -> sql.matcher(stmt).matches());
         }
 
@@ -89,7 +100,7 @@ public class RuleBasedControllerBuilder {
 
         public class CreateStatementRuleBuilder extends AbstractRuleBuilder<CreateStatementRule, Void> {
             @Override
-            protected CreateStatementRule createRule(RuleMatcher<Void> matcher, RuleExecutor<Void, Boolean> executor) {
+            protected CreateStatementRule createRule(final RuleMatcher<Void> matcher, final RuleExecutor<Void, Boolean> executor) {
                 return new CreateStatementRule(matcher, executor);
             }
         }
@@ -97,12 +108,12 @@ public class RuleBasedControllerBuilder {
         public class CreatePreparedStatementRuleBuilder extends AbstractRuleBuilder<CreatePreparedStatementRule, String> {
             private final RuleMatcher<String> ruleMatcher;
 
-            private CreatePreparedStatementRuleBuilder(RuleMatcher<String> ruleMatcher) {
+            private CreatePreparedStatementRuleBuilder(final RuleMatcher<String> ruleMatcher) {
                 this.ruleMatcher = ruleMatcher;
             }
 
             @Override
-            protected CreatePreparedStatementRule createRule(RuleMatcher<String> matcher, RuleExecutor<String, Boolean> executor) {
+            protected CreatePreparedStatementRule createRule(final RuleMatcher<String> matcher, final RuleExecutor<String, Boolean> executor) {
                 return new CreatePreparedStatementRule(ruleMatcher, executor);
             }
         }
@@ -110,22 +121,22 @@ public class RuleBasedControllerBuilder {
         public class ExecuteQueryRuleBuilder {
             private final RuleMatcher<String> ruleMatcher;
 
-            private ExecuteQueryRuleBuilder(RuleMatcher<String> ruleMatcher) {
+            private ExecuteQueryRuleBuilder(final RuleMatcher<String> ruleMatcher) {
                 this.ruleMatcher = ruleMatcher;
             }
 
-            public ExecuteQueryRule thenReturn(DataSet dataSet) {
-                ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> dataSet);
+            public ExecuteQueryRule thenReturn(final DataSet dataSet) {
+                final ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> dataSet);
                 controller.add(rule);
                 return rule;
             }
 
-            public ExecuteQueryRule thenReturn(File file) {
+            public ExecuteQueryRule thenReturn(final File file) {
                 return thenReturn(file.toPath());
             }
 
-            public ExecuteQueryRule thenReturn(Path path) {
-                DataSet dataSet;
+            public ExecuteQueryRule thenReturn(final Path path) {
+                final DataSet dataSet;
 
                 try {
                     if (path.toString().endsWith(".json")) {
@@ -135,17 +146,17 @@ public class RuleBasedControllerBuilder {
                     } else {
                         dataSet = new TableDataSetProducer(new Table("empty")).produce();
                     }
-                } catch (SQLException e) {
+                } catch (final SQLException e) {
                     throw new JdbcServerException(e);
                 }
 
-                ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> dataSet);
+                final ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> dataSet);
                 controller.add(rule);
                 return rule;
             }
 
-            public ExecuteQueryRule thenThrow(JdbcServerException e) {
-                ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> { throw e; });
+            public ExecuteQueryRule thenThrow(final JdbcServerException e) {
+                final ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> { throw e; });
                 controller.add(rule);
                 return rule;
             }
@@ -154,24 +165,24 @@ public class RuleBasedControllerBuilder {
         public class ExecuteUpdateRuleBuilder {
             private final RuleMatcher<String> ruleMatcher;
 
-            private ExecuteUpdateRuleBuilder(RuleMatcher<String> ruleMatcher) {
+            private ExecuteUpdateRuleBuilder(final RuleMatcher<String> ruleMatcher) {
                 this.ruleMatcher = ruleMatcher;
             }
 
-            public ExecuteUpdateRule thenReturn(Integer rowsUpdated) {
-                ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> rowsUpdated);
+            public ExecuteUpdateRule thenReturn(final Integer rowsUpdated) {
+                final ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> rowsUpdated);
                 controller.add(rule);
                 return rule;
             }
 
             public ExecuteUpdateRule thenReturn() {
-                ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> 0);
+                final ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> 0);
                 controller.add(rule);
                 return rule;
             }
 
-            public ExecuteUpdateRule thenThrow(JdbcServerException e) {
-                ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> { throw e; });
+            public ExecuteUpdateRule thenThrow(final JdbcServerException e) {
+                final ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> { throw e; });
                 controller.add(rule);
                 return rule;
             }
@@ -179,12 +190,13 @@ public class RuleBasedControllerBuilder {
 
         public class CloseStatementRuleBuilder extends AbstractRuleBuilder<CloseStatementRule, Void> {
             @Override
-            protected CloseStatementRule createRule(RuleMatcher<Void> matcher, RuleExecutor<Void, Boolean> executor) {
+            protected CloseStatementRule createRule(final RuleMatcher<Void> matcher, final RuleExecutor<Void, Boolean> executor) {
                 return new CloseStatementRule(matcher, executor);
             }
         }
     }
 
+    @SuppressWarnings({"WeakerAccess", "unused"})
     public class ConnectionRuleBuilder {
 
         public CloseConnectionRuleBuilder close() {
@@ -195,14 +207,14 @@ public class RuleBasedControllerBuilder {
             return open(RuleMatcher.matchAll());
         }
 
-        public OpenConnectionRuleBuilder open(String username) {
+        public OpenConnectionRuleBuilder open(final String username) {
             return open((properties) ->
                     Optional.ofNullable(properties.get("username"))
                             .orElse("")
                             .equalsIgnoreCase(username));
         }
 
-        public OpenConnectionRuleBuilder open(String username, String password) {
+        public OpenConnectionRuleBuilder open(final String username, final String password) {
             return open((properties) ->
                    Optional.ofNullable(properties.get("username"))
                             .orElse("")
@@ -212,7 +224,7 @@ public class RuleBasedControllerBuilder {
                             .equalsIgnoreCase(password));
         }
 
-        public OpenConnectionRuleBuilder open(RuleMatcher<Map<String, String>> ruleMatcher) {
+        public OpenConnectionRuleBuilder open(final RuleMatcher<Map<String, String>> ruleMatcher) {
             return new OpenConnectionRuleBuilder(ruleMatcher);
         }
 
@@ -220,39 +232,40 @@ public class RuleBasedControllerBuilder {
 
             private final RuleMatcher<Map<String, String>> ruleMatcher;
 
-            private OpenConnectionRuleBuilder(RuleMatcher<Map<String, String>> ruleMatcher) {
+            private OpenConnectionRuleBuilder(final RuleMatcher<Map<String, String>> ruleMatcher) {
                 this.ruleMatcher = ruleMatcher;
             }
 
             @Override
-            protected OpenConnectionRule createRule(RuleMatcher<Map<String, String>> matcher, RuleExecutor<Map<String, String>, Boolean> executor) {
+            protected OpenConnectionRule createRule(final RuleMatcher<Map<String, String>> matcher, final RuleExecutor<Map<String, String>, Boolean> executor) {
                 return new OpenConnectionRule(ruleMatcher, executor);
             }
         }
 
         public class CloseConnectionRuleBuilder extends AbstractRuleBuilder<CloseConnectionRule, Void> {
             @Override
-            protected CloseConnectionRule createRule(RuleMatcher<Void> matcher, RuleExecutor<Void, Boolean> executor) {
+            protected CloseConnectionRule createRule(final RuleMatcher<Void> matcher, final RuleExecutor<Void, Boolean> executor) {
                 return new CloseConnectionRule(matcher, executor);
             }
         }
     }
 
+    @SuppressWarnings("unused")
     public abstract class AbstractRuleBuilder<T extends Rule<P, Boolean, T>, P> {
         public T thenAccept() {
-            T rule = createRule(RuleMatcher.matchAll(), (any) -> true);
+            final T rule = createRule(RuleMatcher.matchAll(), (any) -> true);
             controller.add(rule);
             return rule;
         }
 
         public T thenDecline() {
-            T rule = createRule(RuleMatcher.matchAll(), (any) -> false);
+            final T rule = createRule(RuleMatcher.matchAll(), (any) -> false);
             controller.add(rule);
             return rule;
         }
 
-        public T thenThrow(JdbcServerException e) {
-            T rule = createRule(RuleMatcher.matchAll(), (any) -> { throw e; });
+        public T thenThrow(final JdbcServerException e) {
+            final T rule = createRule(RuleMatcher.matchAll(), (any) -> { throw e; });
             controller.add(rule);
             return rule;
         }

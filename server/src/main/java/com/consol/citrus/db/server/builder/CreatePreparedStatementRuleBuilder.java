@@ -22,21 +22,28 @@ import com.consol.citrus.db.server.rules.RuleExecutor;
 import com.consol.citrus.db.server.rules.RuleMatcher;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class CreatePreparedStatementRuleBuilder extends AbstractRuleBuilder<CreatePreparedStatementRule, String> {
+public class CreatePreparedStatementRuleBuilder {
 
+    private final RuleBasedController controller;
     private final RuleMatcher<String> ruleMatcher;
 
     public CreatePreparedStatementRuleBuilder(final RuleMatcher<String> ruleMatcher, final RuleBasedController controller) {
-        super(controller);
+        this.controller = controller;
         this.ruleMatcher = ruleMatcher;
     }
 
-    @Override
-    protected CreatePreparedStatementRule createRule(final RuleMatcher<String> matcher, final RuleExecutor<String, Boolean> executor) {
-        return new CreatePreparedStatementRule(ruleMatcher, executor);
+    protected CreatePreparedStatementRule createRule(final RuleExecutor<String, Boolean> executor) {
+        final CreatePreparedStatementRule createPreparedStatementRule =
+                new CreatePreparedStatementRule(ruleMatcher, executor);
+        controller.add(createPreparedStatementRule);
+        return createPreparedStatementRule;
     }
 
     RuleMatcher<String> getRuleMatcher() {
         return ruleMatcher;
+    }
+
+    RuleBasedController getController() {
+        return controller;
     }
 }

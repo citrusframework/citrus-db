@@ -46,7 +46,7 @@ public class CreatePreparedStatementRuleBuilderTest {
                 createStatementRuleBuilder.createRule(executor);
 
         //THEN
-        final boolean applyResult = createPreparedStatementRule.apply("some predicate");
+        final boolean applyResult = createPreparedStatementRule.applyOn("some predicate");
         assertEquals(applyResult, expectedValue);
     }
 }

@@ -55,7 +55,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.apply("whatever"), dataSet);
+        assertEquals(rule.applyOn("whatever"), dataSet);
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ExecuteQueryRuleBuilderTest {
         //THEN
         verify(ruleBasedControllerMock).add(rule);
         verify(executeQueryRuleBuilder).thenReturn(file.toPath());
-        assertEquals(rule.apply("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever"), expectedDataSet);
     }
 
     @Test
@@ -88,7 +88,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.apply("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever"), expectedDataSet);
     }
 
     @Test
@@ -103,7 +103,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.apply("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever"), expectedDataSet);
     }
 
     @Test
@@ -118,7 +118,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.apply("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever"), expectedDataSet);
     }
 
     @Test(expectedExceptions = JdbcServerException.class)
@@ -132,6 +132,6 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        rule.apply("whatever");
+        rule.applyOn("whatever");
     }
 }

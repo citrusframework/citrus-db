@@ -67,7 +67,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
                 .orElse(new ExecuteQueryRule(delegateJdbcController::handleQuery))
-                .apply(sql);
+                .applyOn(sql);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
                 .orElse(new ExecuteUpdateRule(delegateJdbcController::handleUpdate))
-                .apply(sql);
+                .applyOn(sql);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(properties))
                 .findFirst()
                 .orElse(new OpenConnectionRule())
-                .apply(properties);
+                .applyOn(properties);
 
         delegateJdbcController.openConnection(properties);
     }
@@ -96,7 +96,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new CloseConnectionRule())
-                .apply(null);
+                .applyOn(null);
 
         delegateJdbcController.closeConnection();
     }
@@ -107,7 +107,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new CreateStatementRule())
-                .apply(null);
+                .applyOn(null);
 
         delegateJdbcController.createStatement();
     }
@@ -118,7 +118,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
                 .orElse(new CreatePreparedStatementRule())
-                .apply(null);
+                .applyOn(null);
 
         delegateJdbcController.createPreparedStatement(sql);
     }
@@ -129,7 +129,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new CloseStatementRule())
-                .apply(null);
+                .applyOn(null);
 
         delegateJdbcController.closeStatement();
     }
@@ -141,7 +141,7 @@ public class RuleBasedController extends AbstractJdbcController{
                     .filter(rule -> rule.matches(null))
                     .findFirst()
                     .orElse(new StartTransactionRule())
-                    .apply(null);
+                    .applyOn(null);
         }
 
         delegateJdbcController.setTransactionState(transactionState);
@@ -153,7 +153,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new CommitTransactionRule())
-                .apply(null);
+                .applyOn(null);
 
         delegateJdbcController.commitStatements();
     }
@@ -164,7 +164,7 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new RollbackTransactionRule())
-                .apply(null);
+                .applyOn(null);
 
         delegateJdbcController.rollbackStatements();
     }

@@ -45,7 +45,7 @@ public class ExecuteUpdateRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(executeUpdateRule);
-        final int rowsUpdated = executeUpdateRule.apply("predicate");
+        final int rowsUpdated = executeUpdateRule.applyOn("predicate");
         assertEquals(rowsUpdated, expectedRowsUpdated);
     }
 
@@ -59,7 +59,7 @@ public class ExecuteUpdateRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(executeUpdateRule);
-        final int rowsUpdated = executeUpdateRule.apply("predicate");
+        final int rowsUpdated = executeUpdateRule.applyOn("predicate");
         assertEquals(rowsUpdated, 0);
     }
 
@@ -74,6 +74,6 @@ public class ExecuteUpdateRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        rule.apply("whatever");
+        rule.applyOn("whatever");
     }
 }

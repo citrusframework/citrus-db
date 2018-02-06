@@ -80,7 +80,7 @@ public class Rule<P, R, T extends Rule> {
      * @return The mapped object of the codomain
      * @throws JdbcServerException In case of an error
      */
-    public final R apply(final P domainObject) throws JdbcServerException {
+    public final R applyOn(final P domainObject) throws JdbcServerException {
         if (maxInvocation != null) {
             maxInvocation.decrementAndGet();
         }

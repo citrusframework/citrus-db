@@ -45,7 +45,7 @@ public class CreateStatementRuleBuilderTest {
         final CreateStatementRule createStatementRule = createStatementRuleBuilder.createRule(precondition, executor);
 
         //THEN
-        final boolean applyResult = createStatementRule.apply(null);
+        final boolean applyResult = createStatementRule.applyOn(null);
         assertEquals(applyResult, expectedValue);
     }
 }

@@ -23,6 +23,7 @@ import com.consol.citrus.db.server.rules.RuleMatcher;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ExecuteUpdateRuleBuilder {
+
     private final RuleMatcher<String> ruleMatcher;
     private RuleBasedController controller;
 

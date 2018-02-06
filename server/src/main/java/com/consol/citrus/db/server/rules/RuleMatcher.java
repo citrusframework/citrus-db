@@ -17,15 +17,25 @@
 package com.consol.citrus.db.server.rules;
 
 /**
+ * This interface describe objects which create a mapping between
+ * objects of type P and their appropriate rules, by evaluating
+ * a predicate on P.
+ *
  * @author Christoph Deppisch
+ *
  */
 public interface RuleMatcher<P> {
 
-    boolean match(P predicate);
+    /**
+     * The implementation of a predicate on P
+     * @param candidate The candidate to evaluate the predicate on
+     * @return Whether the predicate was true or false
+     */
+    boolean match(P candidate);
 
     /**
-     * Rule matcher that matches all predicates.
-     * @return
+     * Rule matcher that matches all candidates.
+     * @return Always true
      */
     static <T> RuleMatcher<T> matchAll() {
         return (any) -> true;

@@ -37,4 +37,8 @@ public class OpenConnectionRuleBuilder extends AbstractRuleBuilder<OpenConnectio
     protected OpenConnectionRule createRule(final RuleMatcher<Map<String, String>> matcher, final RuleExecutor<Map<String, String>, Boolean> executor) {
         return new OpenConnectionRule(ruleMatcher, executor);
     }
+
+    public RuleMatcher<Map<String, String>> getRuleMatcher() {
+        return ruleMatcher;
+    }
 }

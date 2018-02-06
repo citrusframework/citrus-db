@@ -20,12 +20,12 @@ public class RollbackTransactionRule extends Rule<Void, Boolean, RollbackTransac
         super();
     }
 
-    public RollbackTransactionRule(RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public RollbackTransactionRule(Mapping<Void, Boolean> mapping) {
+        super(mapping);
     }
 
-    public RollbackTransactionRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public RollbackTransactionRule(Precondition<Void> precondition, Mapping<Void, Boolean> mapping) {
+        super(precondition, mapping);
     }
 
 }

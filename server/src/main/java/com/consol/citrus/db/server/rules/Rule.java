@@ -8,8 +8,8 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * This class represents a functional predicate (mapping rule) that is applicable on objects of type P, if
- * the objects fulfills a certain boolean-valued precondition predicate. If the rule is applied, the object of type P
+ * This class represents a mapping rule that is applicable on objects of type P, if
+ * the objects fulfills a certain boolean-valued precondition. If the rule is applied, the object of type P
  * will be mapped in an object of type R.
  *
  * @author Christoph Deppisch
@@ -20,11 +20,11 @@ public class Rule<P, R, T extends Rule> {
     /** Logger */
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    /** The predicate that has to be fulfilled so that the rule can be applied */
-    private final RuleMatcher<P> ruleMatcher;
+    /** The precondition that has to be fulfilled so that the rule can be applied */
+    private final Precondition<P> precondition;
 
-    /** The application logic of the rule transforming P -> R */
-    private final RuleExecutor<P, R> ruleExecutor;
+    /** The mapping of the rule transforming P -> R */
+    private final Mapping<P, R> mapping;
 
     /** The amount of invocations */
     private AtomicInteger maxInvocation;
@@ -40,30 +40,30 @@ public class Rule<P, R, T extends Rule> {
     }
 
     /**
-     * Constructor accepting all objects and a specified functional predicate.
+     * Constructor accepting all objects and a specified mapping.
      */
-    public Rule(final RuleExecutor<P, R> ruleExecutor) {
-        this(RuleMatcher.matchAll(), ruleExecutor);
+    public Rule(final Mapping<P, R> mapping) {
+        this(Precondition.matchAll(), mapping);
     }
 
     /**
-     * Constructor accepting a precondition predicate and functional predicate.
-     * @param ruleMatcher The predicate that specifies the precondition of the rule
-     * @param ruleExecutor The functional predicate to apply to the given object
+     * Constructor accepting a precondition and a mapping.
+     * @param precondition The precondition of the rule
+     * @param mapping The mapping to apply to the given object
      */
-    public Rule(final RuleMatcher<P> ruleMatcher, final RuleExecutor<P, R> ruleExecutor) {
-        this.ruleMatcher = ruleMatcher;
-        this.ruleExecutor = ruleExecutor;
+    public Rule(final Precondition<P> precondition, final Mapping<P, R> mapping) {
+        this.precondition = precondition;
+        this.mapping = mapping;
         this.self = (T) this;
     }
 
     /**
-     * Determines whether a given object fulfills the precondition predicate of this rule
-     * @param candidate The object to evaluate the precondition predicate on
-     * @return The result of the predicate evaluation
+     * Determines whether a given object fulfills the precondition of this rule
+     * @param candidate The object to evaluate the precondition on
+     * @return The result of the precondition evaluation
      */
     public final boolean matches(final P candidate) {
-        final boolean matching = (maxInvocation == null || maxInvocation.get() != 0) && ruleMatcher.match(candidate);
+        final boolean matching = (maxInvocation == null || maxInvocation.get() != 0) && precondition.match(candidate);
 
         if (matching) {
             log.debug(String.format("Found matching rule for candidate '%s'", Optional.ofNullable(candidate).map(Object::toString).orElse("")));
@@ -85,7 +85,7 @@ public class Rule<P, R, T extends Rule> {
             maxInvocation.decrementAndGet();
         }
 
-        return ruleExecutor.then(domainObject);
+        return mapping.map(domainObject);
     }
 
     /**

@@ -18,8 +18,8 @@ package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.CloseConnectionRule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class CloseConnectionRuleBuilder extends AbstractRuleBuilder<CloseConnectionRule, Void> {
@@ -29,7 +29,7 @@ public class CloseConnectionRuleBuilder extends AbstractRuleBuilder<CloseConnect
     }
 
     @Override
-    protected CloseConnectionRule createRule(final RuleMatcher<Void> matcher, final RuleExecutor<Void, Boolean> executor) {
+    protected CloseConnectionRule createRule(final Precondition<Void> matcher, final Mapping<Void, Boolean> executor) {
         return new CloseConnectionRule(matcher, executor);
     }
 }

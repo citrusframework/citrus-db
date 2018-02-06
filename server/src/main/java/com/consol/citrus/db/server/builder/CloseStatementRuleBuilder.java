@@ -18,8 +18,8 @@ package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.CloseStatementRule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class CloseStatementRuleBuilder extends AbstractRuleBuilder<CloseStatementRule, Void> {
@@ -29,7 +29,7 @@ public class CloseStatementRuleBuilder extends AbstractRuleBuilder<CloseStatemen
     }
 
     @Override
-    protected CloseStatementRule createRule(final RuleMatcher<Void> matcher, final RuleExecutor<Void, Boolean> executor) {
+    protected CloseStatementRule createRule(final Precondition<Void> matcher, final Mapping<Void, Boolean> executor) {
         return new CloseStatementRule(matcher, executor);
     }
 }

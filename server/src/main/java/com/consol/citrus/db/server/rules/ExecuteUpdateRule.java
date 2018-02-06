@@ -25,11 +25,11 @@ public class ExecuteUpdateRule extends Rule<String, Integer, ExecuteUpdateRule> 
         super();
     }
 
-    public ExecuteUpdateRule(RuleExecutor<String, Integer> ruleExecutor) {
-        super(ruleExecutor);
+    public ExecuteUpdateRule(Mapping<String, Integer> mapping) {
+        super(mapping);
     }
 
-    public ExecuteUpdateRule(RuleMatcher<String> ruleMatcher, RuleExecutor<String, Integer> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public ExecuteUpdateRule(Precondition<String> precondition, Mapping<String, Integer> mapping) {
+        super(precondition, mapping);
     }
 }

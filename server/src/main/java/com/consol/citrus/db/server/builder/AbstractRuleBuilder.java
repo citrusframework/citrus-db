@@ -18,9 +18,9 @@ package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 import com.consol.citrus.db.server.rules.Rule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class AbstractRuleBuilder<T extends Rule<P, Boolean, T>, P> {
@@ -33,24 +33,24 @@ public abstract class AbstractRuleBuilder<T extends Rule<P, Boolean, T>, P> {
     }
 
     public T thenAccept() {
-        final T rule = createRule(RuleMatcher.matchAll(), (any) -> true);
+        final T rule = createRule(Precondition.matchAll(), (any) -> true);
         controller.add(rule);
         return rule;
     }
 
     public T thenDecline() {
-        final T rule = createRule(RuleMatcher.matchAll(), (any) -> false);
+        final T rule = createRule(Precondition.matchAll(), (any) -> false);
         controller.add(rule);
         return rule;
     }
 
     public T thenThrow(final JdbcServerException e) {
-        final T rule = createRule(RuleMatcher.matchAll(), (any) -> { throw e; });
+        final T rule = createRule(Precondition.matchAll(), (any) -> { throw e; });
         controller.add(rule);
         return rule;
     }
 
-    protected abstract T createRule(RuleMatcher<P> matcher, RuleExecutor<P, Boolean> executor);
+    protected abstract T createRule(Precondition<P> matcher, Mapping<P, Boolean> executor);
 
     RuleBasedController getController() {
         return controller;

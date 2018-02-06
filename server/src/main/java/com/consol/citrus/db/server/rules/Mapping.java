@@ -16,28 +16,23 @@
 
 package com.consol.citrus.db.server.rules;
 
+import com.consol.citrus.db.server.JdbcServerException;
+
 /**
- * This interface describe objects which create a mapping between
- * objects of type P and their appropriate rules, by evaluating
- * a predicate on P.
+ * This interface describes the transformation of an object of type P
+ * into a object of type R by executing transformation rules
  *
  * @author Christoph Deppisch
- *
  */
-public interface RuleMatcher<P> {
+public interface Mapping<P, R> {
 
     /**
-     * The implementation of a predicate on P
-     * @param candidate The candidate to evaluate the predicate on
-     * @return Whether the predicate was true or false
+     * Transforms an object of the domain type P into an object
+     * of the codomain R by executing the underlying implementation.
+     *
+     * @param domainElement The domain element to be transformed
+     * @return The transformed element of the codomain
+     * @throws JdbcServerException In case of an transformation error
      */
-    boolean match(P candidate);
-
-    /**
-     * Rule matcher that matches all candidates.
-     * @return Always true
-     */
-    static <T> RuleMatcher<T> matchAll() {
-        return (any) -> true;
-    }
+    R map(P domainElement) throws JdbcServerException;
 }

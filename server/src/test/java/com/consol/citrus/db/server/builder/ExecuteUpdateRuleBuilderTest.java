@@ -19,7 +19,7 @@ package com.consol.citrus.db.server.builder;
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 import org.testng.annotations.Test;
 
 import java.util.Random;
@@ -30,9 +30,9 @@ import static org.testng.Assert.assertEquals;
 
 public class ExecuteUpdateRuleBuilderTest {
 
-    private RuleMatcher<String> ruleMatcher = RuleMatcher.matchAll();
+    private Precondition<String> precondition = Precondition.matchAll();
     private RuleBasedController ruleBasedControllerMock = mock(RuleBasedController.class);
-    private ExecuteUpdateRuleBuilder builder = new ExecuteUpdateRuleBuilder(ruleMatcher, ruleBasedControllerMock);
+    private ExecuteUpdateRuleBuilder builder = new ExecuteUpdateRuleBuilder(precondition, ruleBasedControllerMock);
 
     @Test
     public void thenReturnWithValueSpecified(){

@@ -18,8 +18,8 @@ package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.CreateStatementRule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 import org.testng.annotations.Test;
 
 import java.util.Random;
@@ -29,7 +29,7 @@ import static org.testng.Assert.assertEquals;
 
 public class CreateStatementRuleBuilderTest {
 
-    private final RuleMatcher<Void> ruleMatcher = RuleMatcher.matchAll();
+    private final Precondition<Void> precondition = Precondition.matchAll();
     private RuleBasedController ruleBasedControllerMock = mock(RuleBasedController.class);
     private CreateStatementRuleBuilder createStatementRuleBuilder =
             new CreateStatementRuleBuilder(ruleBasedControllerMock);
@@ -39,10 +39,10 @@ public class CreateStatementRuleBuilderTest {
 
         //GIVEN
         final boolean expectedValue = new Random().nextBoolean();
-        final RuleExecutor<Void, Boolean> executor = (anything) -> expectedValue;
+        final Mapping<Void, Boolean> executor = (anything) -> expectedValue;
 
         //WHEN
-        final CreateStatementRule createStatementRule = createStatementRuleBuilder.createRule(ruleMatcher, executor);
+        final CreateStatementRule createStatementRule = createStatementRuleBuilder.createRule(precondition, executor);
 
         //THEN
         final boolean applyResult = createStatementRule.apply(null);

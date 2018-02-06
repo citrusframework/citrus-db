@@ -18,8 +18,8 @@ package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 import org.testng.annotations.Test;
 
 import java.util.Random;
@@ -29,17 +29,17 @@ import static org.testng.Assert.assertEquals;
 
 public class CreatePreparedStatementRuleBuilderTest {
 
-    private final RuleMatcher<String> ruleMatcher = RuleMatcher.matchAll();
+    private final Precondition<String> precondition = Precondition.matchAll();
     private RuleBasedController ruleBasedControllerMock = mock(RuleBasedController.class);
     private CreatePreparedStatementRuleBuilder createStatementRuleBuilder =
-            new CreatePreparedStatementRuleBuilder(ruleMatcher, ruleBasedControllerMock);
+            new CreatePreparedStatementRuleBuilder(precondition, ruleBasedControllerMock);
 
     @Test
     public void testCreateRule(){
 
         //GIVEN
         final boolean expectedValue = new Random().nextBoolean();
-        final RuleExecutor<String, Boolean> executor = (anything) -> expectedValue;
+        final Mapping<String, Boolean> executor = (anything) -> expectedValue;
 
         //WHEN
         final CreatePreparedStatementRule createPreparedStatementRule =

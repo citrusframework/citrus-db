@@ -18,29 +18,31 @@ package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class CreatePreparedStatementRuleBuilder {
 
     private final RuleBasedController controller;
-    private final RuleMatcher<String> ruleMatcher;
+    private final Precondition<String> precondition;
 
-    public CreatePreparedStatementRuleBuilder(final RuleMatcher<String> ruleMatcher, final RuleBasedController controller) {
+    public CreatePreparedStatementRuleBuilder(
+            final Precondition<String> precondition,
+            final RuleBasedController controller) {
         this.controller = controller;
-        this.ruleMatcher = ruleMatcher;
+        this.precondition = precondition;
     }
 
-    protected CreatePreparedStatementRule createRule(final RuleExecutor<String, Boolean> executor) {
+    protected CreatePreparedStatementRule createRule(final Mapping<String, Boolean> executor) {
         final CreatePreparedStatementRule createPreparedStatementRule =
-                new CreatePreparedStatementRule(ruleMatcher, executor);
+                new CreatePreparedStatementRule(precondition, executor);
         controller.add(createPreparedStatementRule);
         return createPreparedStatementRule;
     }
 
-    RuleMatcher<String> getRuleMatcher() {
-        return ruleMatcher;
+    Precondition<String> getPrecondition() {
+        return precondition;
     }
 
     RuleBasedController getController() {

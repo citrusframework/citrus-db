@@ -17,7 +17,7 @@
 package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +36,7 @@ public class ConnectionRuleBuilder {
     }
 
     public OpenConnectionRuleBuilder open() {
-        return open(RuleMatcher.matchAll());
+        return open(Precondition.matchAll());
     }
 
     public OpenConnectionRuleBuilder open(final String username) {
@@ -50,8 +50,8 @@ public class ConnectionRuleBuilder {
                         propertyMatchesValue(properties.get("password") ,password));
     }
 
-    public OpenConnectionRuleBuilder open(final RuleMatcher<Map<String, String>> ruleMatcher) {
-        return new OpenConnectionRuleBuilder(ruleMatcher, controller);
+    public OpenConnectionRuleBuilder open(final Precondition<Map<String, String>> precondition) {
+        return new OpenConnectionRuleBuilder(precondition, controller);
     }
 
     private boolean propertyMatchesValue(final String property, final String value) {

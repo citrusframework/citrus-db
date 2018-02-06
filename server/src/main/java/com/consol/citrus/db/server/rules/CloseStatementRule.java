@@ -25,11 +25,11 @@ public class CloseStatementRule extends Rule<Void, Boolean, CloseStatementRule> 
         super();
     }
 
-    public CloseStatementRule(RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public CloseStatementRule(Mapping<Void, Boolean> mapping) {
+        super(mapping);
     }
 
-    public CloseStatementRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public CloseStatementRule(Precondition<Void> precondition, Mapping<Void, Boolean> mapping) {
+        super(precondition, mapping);
     }
 }

@@ -19,8 +19,8 @@ package com.consol.citrus.db.server.controller;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
 import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -52,16 +52,16 @@ public class RuleBasedControllerTest {
         final String incomingQuery = "some query";
 
         //Create matcher
-        final RuleMatcher<String> ruleMatcher = (RuleMatcher<String>) mock(RuleMatcher.class);
-        when(ruleMatcher.match(incomingQuery)).thenReturn(true);
+        final Precondition<String> precondition = (Precondition<String>) mock(Precondition.class);
+        when(precondition.match(incomingQuery)).thenReturn(true);
 
         //Prepare return value for match
         final DataSet expectedDataSet = mock(DataSet.class);
-        final RuleExecutor<String, DataSet> ruleExecutor = (RuleExecutor<String, DataSet>) mock(RuleExecutor.class);
-        when(ruleExecutor.then(incomingQuery)).thenReturn(expectedDataSet);
+        final Mapping<String, DataSet> mapping = (Mapping<String, DataSet>) mock(Mapping.class);
+        when(mapping.map(incomingQuery)).thenReturn(expectedDataSet);
 
         //Compose Rule
-        final ExecuteQueryRule executeQueryRule = new ExecuteQueryRule(ruleMatcher, ruleExecutor);
+        final ExecuteQueryRule executeQueryRule = new ExecuteQueryRule(precondition, mapping);
 
         //Add rule to Controller
         ruleBasedController.add(executeQueryRule);
@@ -96,16 +96,16 @@ public class RuleBasedControllerTest {
         final String incomingQuery = "some query";
 
         //Create matcher
-        final RuleMatcher<String> ruleMatcher = (RuleMatcher<String>) mock(RuleMatcher.class);
-        when(ruleMatcher.match(incomingQuery)).thenReturn(true);
+        final Precondition<String> precondition = (Precondition<String>) mock(Precondition.class);
+        when(precondition.match(incomingQuery)).thenReturn(true);
 
         //Prepare return value for match
         final int expectedUpdatedRows = new Random().nextInt();
-        final RuleExecutor<String, Integer> ruleExecutor = (RuleExecutor<String, Integer>) mock(RuleExecutor.class);
-        when(ruleExecutor.then(incomingQuery)).thenReturn(expectedUpdatedRows);
+        final Mapping<String, Integer> mapping = (Mapping<String, Integer>) mock(Mapping.class);
+        when(mapping.map(incomingQuery)).thenReturn(expectedUpdatedRows);
 
         //Compose Rule
-        final ExecuteUpdateRule executeUpdateRule = new ExecuteUpdateRule(ruleMatcher, ruleExecutor);
+        final ExecuteUpdateRule executeUpdateRule = new ExecuteUpdateRule(precondition, mapping);
 
         //Add rule to Controller
         ruleBasedController.add(executeUpdateRule);

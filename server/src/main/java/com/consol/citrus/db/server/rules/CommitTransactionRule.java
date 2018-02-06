@@ -20,12 +20,12 @@ public class CommitTransactionRule extends Rule<Void, Boolean, CommitTransaction
         super();
     }
 
-    public CommitTransactionRule(RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public CommitTransactionRule(Mapping<Void, Boolean> mapping) {
+        super(mapping);
     }
 
-    public CommitTransactionRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public CommitTransactionRule(Precondition<Void> precondition, Mapping<Void, Boolean> mapping) {
+        super(precondition, mapping);
     }
 
 }

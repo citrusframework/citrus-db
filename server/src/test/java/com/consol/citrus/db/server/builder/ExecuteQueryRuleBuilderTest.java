@@ -24,7 +24,7 @@ import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -39,10 +39,10 @@ import static org.testng.Assert.assertEquals;
 @SuppressWarnings("unchecked")
 public class ExecuteQueryRuleBuilderTest {
 
-    private RuleMatcher<String> ruleMatcher = RuleMatcher.matchAll();
+    private Precondition<String> precondition = Precondition.matchAll();
     private RuleBasedController ruleBasedControllerMock = mock(RuleBasedController.class);
     private ExecuteQueryRuleBuilder executeQueryRuleBuilder =
-            new ExecuteQueryRuleBuilder(ruleMatcher, ruleBasedControllerMock);
+            new ExecuteQueryRuleBuilder(precondition, ruleBasedControllerMock);
 
     @Test
     public void testThenReturnDataSet(){
@@ -63,7 +63,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //GIVEN
         final ExecuteQueryRuleBuilder executeQueryRuleBuilder =
-                spy(new ExecuteQueryRuleBuilder(ruleMatcher, ruleBasedControllerMock));
+                spy(new ExecuteQueryRuleBuilder(precondition, ruleBasedControllerMock));
         final File file = new File(ClassLoader.getSystemResource("dataset.json").toURI().getPath());
         final DataSet expectedDataSet = new JsonDataSetProducer(file).produce();
 

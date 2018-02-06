@@ -25,11 +25,11 @@ public class CloseConnectionRule extends Rule<Void, Boolean, CloseConnectionRule
         super();
     }
 
-    public CloseConnectionRule(RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public CloseConnectionRule(Mapping<Void, Boolean> mapping) {
+        super(mapping);
     }
 
-    public CloseConnectionRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public CloseConnectionRule(Precondition<Void> precondition, Mapping<Void, Boolean> mapping) {
+        super(precondition, mapping);
     }
 }

@@ -24,7 +24,7 @@ import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -33,16 +33,16 @@ import java.sql.SQLException;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ExecuteQueryRuleBuilder {
 
-    private final RuleMatcher<String> ruleMatcher;
+    private final Precondition<String> precondition;
     private RuleBasedController controller;
 
-    public ExecuteQueryRuleBuilder(final RuleMatcher<String> ruleMatcher, final RuleBasedController controller) {
+    public ExecuteQueryRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
         this.controller = controller;
-        this.ruleMatcher = ruleMatcher;
+        this.precondition = precondition;
     }
 
     public ExecuteQueryRule thenReturn(final DataSet dataSet) {
-        final ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> dataSet);
+        final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, (any) -> dataSet);
         controller.add(rule);
         return rule;
     }
@@ -66,13 +66,13 @@ public class ExecuteQueryRuleBuilder {
             throw new JdbcServerException(e);
         }
 
-        final ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> dataSet);
+        final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, (any) -> dataSet);
         controller.add(rule);
         return rule;
     }
 
     public ExecuteQueryRule thenThrow(final JdbcServerException e) {
-        final ExecuteQueryRule rule = new ExecuteQueryRule(ruleMatcher, (any) -> { throw e; });
+        final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, (any) -> { throw e; });
         controller.add(rule);
         return rule;
     }
@@ -81,7 +81,7 @@ public class ExecuteQueryRuleBuilder {
         return controller;
     }
 
-    RuleMatcher<String> getRuleMatcher() {
-        return ruleMatcher;
+    Precondition<String> getPrecondition() {
+        return precondition;
     }
 }

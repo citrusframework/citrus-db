@@ -17,7 +17,7 @@
 package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -55,7 +55,7 @@ public class ConnectionRuleBuilderTest {
 
         //THEN
         assertEquals(openConnectionRuleBuilder.getController(), ruleBasedController);
-        assertEquals(openConnectionRuleBuilder.getRuleMatcher(), RuleMatcher.matchAll());
+        assertEquals(openConnectionRuleBuilder.getPrecondition(), Precondition.matchAll());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class ConnectionRuleBuilderTest {
 
         //THEN
         assertEquals(openConnectionRuleBuilder.getController(), ruleBasedController);
-        assertTrue(openConnectionRuleBuilder.getRuleMatcher().match(propertiesToMatch));
+        assertTrue(openConnectionRuleBuilder.getPrecondition().match(propertiesToMatch));
     }
 
     @Test
@@ -88,7 +88,7 @@ public class ConnectionRuleBuilderTest {
 
         //THEN
         assertEquals(openConnectionRuleBuilder.getController(), ruleBasedController);
-        assertTrue(openConnectionRuleBuilder.getRuleMatcher().match(propertiesToMatch));
+        assertTrue(openConnectionRuleBuilder.getPrecondition().match(propertiesToMatch));
     }
 
     @Test
@@ -98,7 +98,7 @@ public class ConnectionRuleBuilderTest {
         final String key = "someKey";
         final String value = "somevalue";
         final Map<String, String> propertiesToMatch = Collections.singletonMap(key, value);
-        final RuleMatcher<Map<String, String>> matcher = (props) -> props.get(key).equals(value);
+        final Precondition<Map<String, String>> matcher = (props) -> props.get(key).equals(value);
 
 
         //WHEN
@@ -106,6 +106,6 @@ public class ConnectionRuleBuilderTest {
 
         //THEN
         assertEquals(openConnectionRuleBuilder.getController(), ruleBasedController);
-        assertTrue(openConnectionRuleBuilder.getRuleMatcher().match(propertiesToMatch));
+        assertTrue(openConnectionRuleBuilder.getPrecondition().match(propertiesToMatch));
     }
 }

@@ -17,7 +17,7 @@
 package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 import org.testng.annotations.Test;
 
 import java.util.regex.Pattern;
@@ -55,7 +55,7 @@ public class StatementRuleBuilderTest {
 
         //THEN
         assertEquals(createStatementRuleBuilder.getController(), ruleBasedControllerMock);
-        assertEquals(createStatementRuleBuilder.getRuleMatcher(), RuleMatcher.matchAll());
+        assertEquals(createStatementRuleBuilder.getPrecondition(), Precondition.matchAll());
     }
 
     @Test
@@ -69,7 +69,7 @@ public class StatementRuleBuilderTest {
 
         //THEN
         assertEquals(createStatementRuleBuilder.getController(), ruleBasedControllerMock);
-        assertTrue(createStatementRuleBuilder.getRuleMatcher().match(sql));
+        assertTrue(createStatementRuleBuilder.getPrecondition().match(sql));
     }
 
     @Test
@@ -77,16 +77,16 @@ public class StatementRuleBuilderTest {
 
         //GIVEN
         final String sql = "some Statement";
-        final RuleMatcher<String> expectedRuleMatcher = (statement) -> statement.equals(sql);
+        final Precondition<String> expectedPrecondition = (statement) -> statement.equals(sql);
 
 
         //WHEN
         final CreatePreparedStatementRuleBuilder createStatementRuleBuilder =
-                statementRuleBuilder.prepare(expectedRuleMatcher);
+                statementRuleBuilder.prepare(expectedPrecondition);
 
         //THEN
         assertEquals(createStatementRuleBuilder.getController(), ruleBasedControllerMock);
-        assertTrue(createStatementRuleBuilder.getRuleMatcher().match(sql));
+        assertTrue(createStatementRuleBuilder.getPrecondition().match(sql));
     }
 
     @Test
@@ -101,7 +101,7 @@ public class StatementRuleBuilderTest {
 
         //THEN
         assertEquals(executeQueryRuleBuilder.getController(), ruleBasedControllerMock);
-        assertTrue(executeQueryRuleBuilder.getRuleMatcher().match(sql));
+        assertTrue(executeQueryRuleBuilder.getPrecondition().match(sql));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class StatementRuleBuilderTest {
 
         //THEN
         assertEquals(executeQueryRuleBuilder.getController(), ruleBasedControllerMock);
-        assertTrue(executeQueryRuleBuilder.getRuleMatcher().match("some cool pattern"));
+        assertTrue(executeQueryRuleBuilder.getPrecondition().match("some cool pattern"));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class StatementRuleBuilderTest {
 
         //THEN
         assertEquals(executeUpdateRuleBuilder.getController(), ruleBasedControllerMock);
-        assertTrue(executeUpdateRuleBuilder.getRuleMatcher().match(sql));
+        assertTrue(executeUpdateRuleBuilder.getPrecondition().match(sql));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class StatementRuleBuilderTest {
 
         //THEN
         assertEquals(executeUpdateRuleBuilder.getController(), ruleBasedControllerMock);
-        assertTrue(executeUpdateRuleBuilder.getRuleMatcher().match("some cool pattern"));
+        assertTrue(executeUpdateRuleBuilder.getPrecondition().match("some cool pattern"));
     }
 
     @Test

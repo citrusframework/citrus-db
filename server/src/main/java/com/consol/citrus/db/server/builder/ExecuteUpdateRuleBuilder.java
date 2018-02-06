@@ -19,33 +19,33 @@ package com.consol.citrus.db.server.builder;
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class ExecuteUpdateRuleBuilder {
 
-    private final RuleMatcher<String> ruleMatcher;
+    private final Precondition<String> precondition;
     private RuleBasedController controller;
 
-    public ExecuteUpdateRuleBuilder(final RuleMatcher<String> ruleMatcher, final RuleBasedController controller) {
-        this.ruleMatcher = ruleMatcher;
+    public ExecuteUpdateRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
+        this.precondition = precondition;
         this.controller = controller;
     }
 
     public ExecuteUpdateRule thenReturn(final Integer rowsUpdated) {
-        final ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> rowsUpdated);
+        final ExecuteUpdateRule rule = new ExecuteUpdateRule(precondition, (any) -> rowsUpdated);
         controller.add(rule);
         return rule;
     }
 
     public ExecuteUpdateRule thenReturn() {
-        final ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> 0);
+        final ExecuteUpdateRule rule = new ExecuteUpdateRule(precondition, (any) -> 0);
         controller.add(rule);
         return rule;
     }
 
     public ExecuteUpdateRule thenThrow(final JdbcServerException e) {
-        final ExecuteUpdateRule rule = new ExecuteUpdateRule(ruleMatcher, (any) -> { throw e; });
+        final ExecuteUpdateRule rule = new ExecuteUpdateRule(precondition, (any) -> { throw e; });
         controller.add(rule);
         return rule;
     }
@@ -54,7 +54,7 @@ public class ExecuteUpdateRuleBuilder {
         return controller;
     }
 
-    RuleMatcher<String> getRuleMatcher() {
-        return ruleMatcher;
+    Precondition<String> getPrecondition() {
+        return precondition;
     }
 }

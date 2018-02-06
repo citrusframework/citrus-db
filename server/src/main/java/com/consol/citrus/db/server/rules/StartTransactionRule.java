@@ -20,12 +20,12 @@ public class StartTransactionRule extends Rule<Void, Boolean, StartTransactionRu
         super();
     }
 
-    public StartTransactionRule(RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public StartTransactionRule(Mapping<Void, Boolean> mapping) {
+        super(mapping);
     }
 
-    public StartTransactionRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public StartTransactionRule(Precondition<Void> precondition, Mapping<Void, Boolean> mapping) {
+        super(precondition, mapping);
     }
 
 }

@@ -17,7 +17,7 @@
 package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 
 import java.util.regex.Pattern;
 
@@ -35,14 +35,14 @@ public class StatementRuleBuilder {
     }
 
     public CreatePreparedStatementRuleBuilder prepare() {
-        return prepare(RuleMatcher.matchAll());
+        return prepare(Precondition.matchAll());
     }
 
     public CreatePreparedStatementRuleBuilder prepare(final String sql) {
         return prepare((stmt) -> stmt.equals(sql));
     }
 
-    public CreatePreparedStatementRuleBuilder prepare(final RuleMatcher<String> matcher) {
+    public CreatePreparedStatementRuleBuilder prepare(final Precondition<String> matcher) {
         return new CreatePreparedStatementRuleBuilder(matcher, controller);
     }
 

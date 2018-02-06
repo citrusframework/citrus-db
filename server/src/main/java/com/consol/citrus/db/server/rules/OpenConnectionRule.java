@@ -27,11 +27,11 @@ public class OpenConnectionRule extends Rule<Map<String, String>, Boolean, OpenC
         super();
     }
 
-    public OpenConnectionRule(RuleExecutor<Map<String, String>, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public OpenConnectionRule(Mapping<Map<String, String>, Boolean> mapping) {
+        super(mapping);
     }
 
-    public OpenConnectionRule(RuleMatcher<Map<String, String>> ruleMatcher, RuleExecutor<Map<String, String>, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public OpenConnectionRule(Precondition<Map<String, String>> precondition, Mapping<Map<String, String>, Boolean> mapping) {
+        super(precondition, mapping);
     }
 }

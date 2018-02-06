@@ -17,28 +17,32 @@
 package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
+import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.OpenConnectionRule;
-import com.consol.citrus.db.server.rules.RuleExecutor;
-import com.consol.citrus.db.server.rules.RuleMatcher;
+import com.consol.citrus.db.server.rules.Precondition;
 
 import java.util.Map;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class OpenConnectionRuleBuilder extends AbstractRuleBuilder<OpenConnectionRule, Map<String, String>> {
 
-    private final RuleMatcher<Map<String, String>> ruleMatcher;
+    private final Precondition<Map<String, String>> precondition;
 
-    public OpenConnectionRuleBuilder(final RuleMatcher<Map<String, String>> ruleMatcher, final RuleBasedController controller) {
+    public OpenConnectionRuleBuilder(
+            final Precondition<Map<String, String>> precondition,
+            final RuleBasedController controller) {
         super(controller);
-        this.ruleMatcher = ruleMatcher;
+        this.precondition = precondition;
     }
 
     @Override
-    protected OpenConnectionRule createRule(final RuleMatcher<Map<String, String>> matcher, final RuleExecutor<Map<String, String>, Boolean> executor) {
-        return new OpenConnectionRule(ruleMatcher, executor);
+    protected OpenConnectionRule createRule(
+            final Precondition<Map<String, String>> matcher,
+            final Mapping<Map<String, String>, Boolean> executor) {
+        return new OpenConnectionRule(precondition, executor);
     }
 
-    public RuleMatcher<Map<String, String>> getRuleMatcher() {
-        return ruleMatcher;
+    public Precondition<Map<String, String>> getPrecondition() {
+        return precondition;
     }
 }

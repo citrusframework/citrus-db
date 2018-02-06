@@ -24,7 +24,7 @@ import com.consol.citrus.db.server.rules.Precondition;
 import java.util.Map;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class OpenConnectionRuleBuilder extends AbstractRuleBuilder<OpenConnectionRule, Map<String, String>> {
+public class OpenConnectionRuleBuilder extends AbstractDecisionMakingRuleBuilder<OpenConnectionRule, Map<String, String>> {
 
     private final Precondition<Map<String, String>> precondition;
 
@@ -39,7 +39,9 @@ public class OpenConnectionRuleBuilder extends AbstractRuleBuilder<OpenConnectio
     protected OpenConnectionRule createRule(
             final Precondition<Map<String, String>> matcher,
             final Mapping<Map<String, String>, Boolean> executor) {
-        return new OpenConnectionRule(precondition, executor);
+        final OpenConnectionRule openConnectionRule = new OpenConnectionRule(precondition, executor);
+        addRule(openConnectionRule);
+        return openConnectionRule;
     }
 
     public Precondition<Map<String, String>> getPrecondition() {

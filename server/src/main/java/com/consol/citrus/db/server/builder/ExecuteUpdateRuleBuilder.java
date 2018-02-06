@@ -19,39 +19,37 @@ package com.consol.citrus.db.server.builder;
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
+import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
 
+
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ExecuteUpdateRuleBuilder {
+public class ExecuteUpdateRuleBuilder extends AbstractRuleBuilder<ExecuteUpdateRule, String, Integer>{
 
     private final Precondition<String> precondition;
-    private RuleBasedController controller;
 
     public ExecuteUpdateRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
+        super(controller);
         this.precondition = precondition;
-        this.controller = controller;
     }
 
     public ExecuteUpdateRule thenReturn(final Integer rowsUpdated) {
-        final ExecuteUpdateRule rule = new ExecuteUpdateRule(precondition, (any) -> rowsUpdated);
-        controller.add(rule);
-        return rule;
+        return createRule(precondition, (any) -> rowsUpdated);
     }
 
     public ExecuteUpdateRule thenReturn() {
-        final ExecuteUpdateRule rule = new ExecuteUpdateRule(precondition, (any) -> 0);
-        controller.add(rule);
-        return rule;
+        return createRule(precondition, (any) -> 0);
     }
 
     public ExecuteUpdateRule thenThrow(final JdbcServerException e) {
-        final ExecuteUpdateRule rule = new ExecuteUpdateRule(precondition, (any) -> { throw e; });
-        controller.add(rule);
-        return rule;
+        return createRule(precondition, (any) -> { throw e; });
     }
 
-    RuleBasedController getController() {
-        return controller;
+    @Override
+    protected ExecuteUpdateRule createRule(final Precondition<String> matcher, final Mapping<String, Integer> executor) {
+        final ExecuteUpdateRule executeUpdateRule = new ExecuteUpdateRule(matcher, executor);
+        addRule(executeUpdateRule);
+        return executeUpdateRule;
     }
 
     Precondition<String> getPrecondition() {

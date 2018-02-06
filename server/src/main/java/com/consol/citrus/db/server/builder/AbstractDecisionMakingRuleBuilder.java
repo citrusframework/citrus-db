@@ -17,20 +17,25 @@
 package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.rules.CreateStatementRule;
-import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
+import com.consol.citrus.db.server.rules.Rule;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
-public class CreateStatementRuleBuilder extends AbstractDecisionMakingRuleBuilder<CreateStatementRule, Void> {
+@SuppressWarnings("WeakerAccess")
+public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolean, T>, P>
+        extends AbstractRuleBuilder<T, P, Boolean>{
 
-    public CreateStatementRuleBuilder(final RuleBasedController controller) {
+    public AbstractDecisionMakingRuleBuilder(final RuleBasedController controller) {
         super(controller);
     }
 
-    @Override
-    protected CreateStatementRule createRule(final Precondition<Void> matcher, final Mapping<Void, Boolean> executor) {
-        final CreateStatementRule rule = new CreateStatementRule(matcher, executor);
+    public T thenAccept() {
+        final T rule = createRule(Precondition.matchAll(), (any) -> true);
+        addRule(rule);
+        return rule;
+    }
+
+    public T thenDecline() {
+        final T rule = createRule(Precondition.matchAll(), (any) -> false);
         addRule(rule);
         return rule;
     }

@@ -22,7 +22,7 @@ import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class CloseConnectionRuleBuilder extends AbstractRuleBuilder<CloseConnectionRule, Void> {
+public class CloseConnectionRuleBuilder extends AbstractDecisionMakingRuleBuilder<CloseConnectionRule, Void> {
 
     public CloseConnectionRuleBuilder(final RuleBasedController controller) {
         super(controller);
@@ -30,6 +30,8 @@ public class CloseConnectionRuleBuilder extends AbstractRuleBuilder<CloseConnect
 
     @Override
     protected CloseConnectionRule createRule(final Precondition<Void> matcher, final Mapping<Void, Boolean> executor) {
-        return new CloseConnectionRule(matcher, executor);
+        final CloseConnectionRule rule = new CloseConnectionRule(matcher, executor);
+        addRule(rule);
+        return rule;
     }
 }

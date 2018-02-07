@@ -62,6 +62,10 @@ public class ConnectionRuleBuilder {
         return new CommitTransactionRuleBuilder(controller);
     }
 
+    public RollbackTransactionRuleBuilder rollbackTransaction() {
+        return new RollbackTransactionRuleBuilder(controller);
+    }
+
     private boolean propertyMatchesValue(final String property, final String value) {
         return Optional.ofNullable(property)
                 .orElse("")

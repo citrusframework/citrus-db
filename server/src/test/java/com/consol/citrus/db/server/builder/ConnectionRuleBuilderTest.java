@@ -132,4 +132,16 @@ public class ConnectionRuleBuilderTest {
         //THEN
         assertEquals(commitTransactionRuleBuilder.getController(), ruleBasedController);
     }
+
+    @Test
+    public void testRollbackTransaction(){
+
+        //GIVEN
+
+        //WHEN
+        final RollbackTransactionRuleBuilder rollbackTransactionRuleBuilder = connectionRuleBuilder.rollbackTransaction();
+
+        //THEN
+        assertEquals(rollbackTransactionRuleBuilder.getController(), ruleBasedController);
+    }
 }

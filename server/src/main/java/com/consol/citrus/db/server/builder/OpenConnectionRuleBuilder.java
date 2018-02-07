@@ -29,8 +29,11 @@ public class OpenConnectionRuleBuilder extends AbstractDecisionMakingRuleBuilder
     public OpenConnectionRuleBuilder(
             final Precondition<Map<String, String>> precondition,
             final RuleBasedController controller) {
+        super(controller, precondition);
+    }
+
+    public OpenConnectionRuleBuilder(final RuleBasedController controller) {
         super(controller);
-        setPrecondition(precondition);
     }
 
     @Override

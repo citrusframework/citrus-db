@@ -20,16 +20,28 @@ import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.Precondition;
 import com.consol.citrus.db.server.rules.Rule;
 
+/**
+ * This class represents all rule builder that generate @{@link Rule} where the mapping result is a boolean value.
+ */
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolean, T>, P>
         extends AbstractRuleBuilder<T, P, Boolean>{
 
+    /** The optional precondition to add to the @{@link Rule}*/
     private Precondition<P> precondition;
 
+    /**
+     * The constructor accepting a @{@link RuleBasedController}
+     * @param controller The controller to add the rules to
+     */
     public AbstractDecisionMakingRuleBuilder(final RuleBasedController controller) {
         super(controller);
     }
 
+    /**
+     * Creates a rule that accepts the previously described scenario
+     * @return A accepting Rule
+     */
     public T thenAccept() {
         if(precondition != null){
             return thenAcceptWithPrecondition(precondition);
@@ -38,33 +50,55 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
         }
     }
 
-    public T thenDecline() {
+    /**
+     * Creates a rule that refuses the previously described scenario
+     * @return A declining Rule
+     */
+    public T thenRefuse() {
         if(precondition != null){
-            return thenDeclineWithPrecondition(precondition);
+            return thenRefuseWithPrecondition(precondition);
         }else {
-            return thenDeclineWithoutPrecondition();
+            return thenRefuseWithoutPrecondition();
         }
     }
 
+    /**
+     * Create a rule that returns a acceptance result without precondition
+     * @return A accepting Rule
+     */
     private T thenAcceptWithoutPrecondition() {
         final T rule = createRule(Precondition.matchAll(), (any) -> true);
         addRule(rule);
         return rule;
     }
 
+    /**
+     * Create a rule that returns a acceptance result in case that the object,
+     * the rule will be applied on, fulfills the precondition.
+     * @return A accepting Rule
+     */
     private T thenAcceptWithPrecondition(final Precondition<P> precondition) {
         final T rule = createRule(precondition, (any) -> true);
         addRule(rule);
         return rule;
     }
 
-    private T thenDeclineWithoutPrecondition() {
+    /**
+     * Create a rule that returns a refusing result without precondition
+     * @return A accepting Rule
+     */
+    private T thenRefuseWithoutPrecondition() {
         final T rule = createRule(Precondition.matchAll(), (any) -> false);
         addRule(rule);
         return rule;
     }
 
-    private T thenDeclineWithPrecondition(final Precondition<P> precondition) {
+    /**
+     * Create a rule that returns a refusing result in case that the object,
+     * the rule will be applied on, fulfills the precondition.
+     * @return A accepting Rule
+     */
+    private T thenRefuseWithPrecondition(final Precondition<P> precondition) {
         final T rule = createRule(precondition, (any) -> false);
         addRule(rule);
         return rule;

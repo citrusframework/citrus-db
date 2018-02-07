@@ -24,6 +24,7 @@ import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
+import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
 
 import java.io.File;
@@ -31,20 +32,17 @@ import java.nio.file.Path;
 import java.sql.SQLException;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class ExecuteQueryRuleBuilder {
+public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRule, String, DataSet>{
 
     private final Precondition<String> precondition;
-    private RuleBasedController controller;
 
     public ExecuteQueryRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
-        this.controller = controller;
+        super(controller);
         this.precondition = precondition;
     }
 
     public ExecuteQueryRule thenReturn(final DataSet dataSet) {
-        final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, (any) -> dataSet);
-        controller.add(rule);
-        return rule;
+        return createRule(precondition, (any) -> dataSet);
     }
 
     public ExecuteQueryRule thenReturn(final File file) {
@@ -66,19 +64,16 @@ public class ExecuteQueryRuleBuilder {
             throw new JdbcServerException(e);
         }
 
-        final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, (any) -> dataSet);
-        controller.add(rule);
-        return rule;
+        return createRule(precondition, (any) -> dataSet);
     }
 
-    public ExecuteQueryRule thenThrow(final JdbcServerException e) {
-        final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, (any) -> { throw e; });
-        controller.add(rule);
+    @Override
+    protected ExecuteQueryRule createRule(
+            final Precondition<String> precondition,
+            final Mapping<String, DataSet> mapping) {
+        final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, mapping);
+        addRule(rule);
         return rule;
-    }
-
-    RuleBasedController getController() {
-        return controller;
     }
 
     Precondition<String> getPrecondition() {

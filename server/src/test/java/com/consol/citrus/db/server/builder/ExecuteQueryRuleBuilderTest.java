@@ -21,7 +21,6 @@ import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.TableDataSetProducer;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
 import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
-import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
 import com.consol.citrus.db.server.rules.Precondition;
@@ -119,19 +118,5 @@ public class ExecuteQueryRuleBuilderTest {
         //THEN
         verify(ruleBasedControllerMock).add(rule);
         assertEquals(rule.applyOn("whatever"), expectedDataSet);
-    }
-
-    @Test(expectedExceptions = JdbcServerException.class)
-    public void testThenThrow() {
-
-        //GIVEN
-        final JdbcServerException jdbcServerException = new JdbcServerException();
-
-        //WHEN
-        final ExecuteQueryRule rule = executeQueryRuleBuilder.thenThrow(jdbcServerException);
-
-        //THEN
-        verify(ruleBasedControllerMock).add(rule);
-        rule.applyOn("whatever");
     }
 }

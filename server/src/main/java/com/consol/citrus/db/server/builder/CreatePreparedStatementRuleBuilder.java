@@ -27,8 +27,11 @@ public class CreatePreparedStatementRuleBuilder extends AbstractDecisionMakingRu
     public CreatePreparedStatementRuleBuilder(
             final Precondition<String> precondition,
             final RuleBasedController controller) {
+        super(controller, precondition);
+    }
+
+    public CreatePreparedStatementRuleBuilder(final RuleBasedController controller) {
         super(controller);
-        setPrecondition(precondition);
     }
 
     @Override

@@ -41,6 +41,11 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
         super(controller);
     }
 
+    public AbstractDecisionMakingRuleBuilder(final RuleBasedController controller, final Precondition<P> precondition) {
+        super(controller);
+        setPrecondition(precondition);
+    }
+
     /**
      * Creates a rule that accepts the previously described scenario
      * @return A accepting Rule

@@ -20,7 +20,7 @@ import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.OpenConnectionRule;
 import com.consol.citrus.db.server.rules.Precondition;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
@@ -33,6 +33,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -45,7 +46,7 @@ public class AbstractDecisionMakingRuleBuilderTest {
     //Class under test
     private AbstractDecisionMakingRuleBuilder<OpenConnectionRule, Map<String,String>> builder;
 
-    @BeforeTest
+    @BeforeMethod
     public void setUp(){
         builder = spy(new AbstractDecisionMakingRuleBuilder<OpenConnectionRule, Map<String,String>>(controllerMock) {
             @Override
@@ -57,6 +58,29 @@ public class AbstractDecisionMakingRuleBuilderTest {
             }
         });
 
+    }
+
+    @Test
+    public void testPreconditionConstructor(){
+
+        //GIVEN
+        final Precondition<Map<String, String>> precondition = mock(Precondition.class);
+
+        //WHEN
+        final AbstractDecisionMakingRuleBuilder<OpenConnectionRule, Map<String, String>> builder =
+                new AbstractDecisionMakingRuleBuilder<OpenConnectionRule, Map<String, String>>(
+                        controllerMock,
+                        precondition) {
+            @Override
+            protected OpenConnectionRule createRule(
+                    final Precondition<Map<String, String>> precondition,
+                    final Mapping<Map<String, String>, Boolean> mapping) {
+                return null;
+            }
+        };
+
+        //THEN
+        assertEquals(builder.getPrecondition(), precondition);
     }
 
     @Test

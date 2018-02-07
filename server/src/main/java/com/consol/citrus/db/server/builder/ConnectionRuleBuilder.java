@@ -58,6 +58,10 @@ public class ConnectionRuleBuilder {
         return new StartTransactionRuleBuilder(controller);
     }
 
+    public CommitTransactionRuleBuilder commitTransaction() {
+        return new CommitTransactionRuleBuilder(controller);
+    }
+
     private boolean propertyMatchesValue(final String property, final String value) {
         return Optional.ofNullable(property)
                 .orElse("")

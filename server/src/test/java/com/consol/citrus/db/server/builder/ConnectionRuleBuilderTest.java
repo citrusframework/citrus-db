@@ -120,4 +120,16 @@ public class ConnectionRuleBuilderTest {
         //THEN
         assertEquals(startTransactionRuleBuilder.getController(), ruleBasedController);
     }
+
+    @Test
+    public void testCommitTransaction(){
+
+        //GIVEN
+
+        //WHEN
+        final CommitTransactionRuleBuilder commitTransactionRuleBuilder = connectionRuleBuilder.commitTransaction();
+
+        //THEN
+        assertEquals(commitTransactionRuleBuilder.getController(), ruleBasedController);
+    }
 }

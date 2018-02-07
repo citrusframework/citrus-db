@@ -46,7 +46,9 @@ public class ExecuteUpdateRuleBuilder extends AbstractRuleBuilder<ExecuteUpdateR
     }
 
     @Override
-    protected ExecuteUpdateRule createRule(final Precondition<String> precondition, final Mapping<String, Integer> mapping) {
+    protected ExecuteUpdateRule createRule(
+            final Precondition<String> precondition,
+            final Mapping<String, Integer> mapping) {
         final ExecuteUpdateRule executeUpdateRule = new ExecuteUpdateRule(precondition, mapping);
         addRule(executeUpdateRule);
         return executeUpdateRule;

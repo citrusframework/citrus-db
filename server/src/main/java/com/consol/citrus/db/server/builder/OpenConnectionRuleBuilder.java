@@ -36,7 +36,7 @@ public class OpenConnectionRuleBuilder extends AbstractDecisionMakingRuleBuilder
     @Override
     protected OpenConnectionRule createRule(
             final Precondition<Map<String, String>> precondition,
-            final Mapping<Map<String, String>, Boolean> executor) {
-        return new OpenConnectionRule(precondition, executor);
+            final Mapping<Map<String, String>, Boolean> mapping) {
+        return new OpenConnectionRule(precondition, mapping);
     }
 }

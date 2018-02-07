@@ -31,7 +31,7 @@ public class CloseStatementRuleBuilder extends AbstractDecisionMakingRuleBuilder
     @Override
     protected CloseStatementRule createRule(
             final Precondition<Void> precondition,
-            final Mapping<Void, Boolean> executor) {
-        return new CloseStatementRule(precondition, executor);
+            final Mapping<Void, Boolean> mapping) {
+        return new CloseStatementRule(precondition, mapping);
     }
 }

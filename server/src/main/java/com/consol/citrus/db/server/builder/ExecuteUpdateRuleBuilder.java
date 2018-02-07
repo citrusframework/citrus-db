@@ -41,13 +41,13 @@ public class ExecuteUpdateRuleBuilder extends AbstractRuleBuilder<ExecuteUpdateR
         return createRule(precondition, (any) -> 0);
     }
 
-    public ExecuteUpdateRule thenThrow(final JdbcServerException e) {
-        return createRule(precondition, (any) -> { throw e; });
+    public ExecuteUpdateRule thenThrow(final JdbcServerException exception) {
+        return createRule(precondition, (any) -> { throw exception; });
     }
 
     @Override
-    protected ExecuteUpdateRule createRule(final Precondition<String> matcher, final Mapping<String, Integer> executor) {
-        final ExecuteUpdateRule executeUpdateRule = new ExecuteUpdateRule(matcher, executor);
+    protected ExecuteUpdateRule createRule(final Precondition<String> precondition, final Mapping<String, Integer> mapping) {
+        final ExecuteUpdateRule executeUpdateRule = new ExecuteUpdateRule(precondition, mapping);
         addRule(executeUpdateRule);
         return executeUpdateRule;
     }

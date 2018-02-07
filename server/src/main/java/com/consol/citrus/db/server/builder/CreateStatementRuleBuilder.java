@@ -31,7 +31,7 @@ public class CreateStatementRuleBuilder extends AbstractDecisionMakingRuleBuilde
     @Override
     protected CreateStatementRule createRule(
             final Precondition<Void> precondition,
-            final Mapping<Void, Boolean> executor) {
-        return new CreateStatementRule(precondition, executor);
+            final Mapping<Void, Boolean> mapping) {
+        return new CreateStatementRule(precondition, mapping);
     }
 }

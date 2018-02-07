@@ -23,12 +23,14 @@ import com.consol.citrus.db.server.rules.Rule;
 
 /**
  * This class represents all rule builder that generate @{@link Rule} where the mapping result is a boolean value.
+ * @param <T> {@inheritDoc}
+ * @param <P> The input type of the rule to be mapped to the boolean value
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolean, T>, P>
         extends AbstractRuleBuilder<T, P, Boolean>{
 
-    /** The optional precondition to add to the @{@link Rule}*/
+    /** The optional @{@link Precondition} to add to the @{@link Rule}*/
     private Precondition<P> precondition;
 
     /**

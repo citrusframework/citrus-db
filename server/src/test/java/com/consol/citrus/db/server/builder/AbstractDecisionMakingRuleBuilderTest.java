@@ -50,9 +50,9 @@ public class AbstractDecisionMakingRuleBuilderTest {
         builder = spy(new AbstractDecisionMakingRuleBuilder<OpenConnectionRule, Map<String,String>>(controllerMock) {
             @Override
             protected OpenConnectionRule createRule(
-                    final Precondition<Map<String, String>> matcher,
-                    final Mapping<Map<String, String>, Boolean> executor) {
-                openConnectionRule = new OpenConnectionRule(matcher,executor);
+                    final Precondition<Map<String, String>> precondition,
+                    final Mapping<Map<String, String>, Boolean> mapping) {
+                openConnectionRule = new OpenConnectionRule(precondition, mapping);
                 return openConnectionRule;
             }
         });

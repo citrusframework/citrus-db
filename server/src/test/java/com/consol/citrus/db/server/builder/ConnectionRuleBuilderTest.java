@@ -108,4 +108,16 @@ public class ConnectionRuleBuilderTest {
         assertEquals(openConnectionRuleBuilder.getController(), ruleBasedController);
         assertTrue(openConnectionRuleBuilder.getPrecondition().match(propertiesToMatch));
     }
+
+    @Test
+    public void testStartTransaction(){
+
+        //GIVEN
+
+        //WHEN
+        final StartTransactionRuleBuilder startTransactionRuleBuilder = connectionRuleBuilder.startTransaction();
+
+        //THEN
+        assertEquals(startTransactionRuleBuilder.getController(), ruleBasedController);
+    }
 }

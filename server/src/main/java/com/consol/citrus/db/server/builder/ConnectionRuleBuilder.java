@@ -54,6 +54,10 @@ public class ConnectionRuleBuilder {
         return new OpenConnectionRuleBuilder(precondition, controller);
     }
 
+    public StartTransactionRuleBuilder startTransaction() {
+        return new StartTransactionRuleBuilder(controller);
+    }
+
     private boolean propertyMatchesValue(final String property, final String value) {
         return Optional.ofNullable(property)
                 .orElse("")

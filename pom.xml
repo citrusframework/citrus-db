@@ -27,6 +27,9 @@
     <javadoc.options>-Xdoclint:none</javadoc.options>
 
     <skip.gpg>false</skip.gpg>
+
+    <skip.unit.tests>false</skip.unit.tests>
+    <skip.integration.tests>false</skip.integration.tests>
   </properties>
 
   <licenses>
@@ -263,15 +266,30 @@
           <configuration>
             <forkMode>once</forkMode>
             <failIfNoTests>false</failIfNoTests>
+            <skipTests>${skip.unit.tests}</skipTests>
+            <excludes>
+              <exclude>**/IT*.java</exclude>
+              <exclude>**/*IT.java</exclude>
+            </excludes>
           </configuration>
         </plugin>
 
         <plugin>
           <artifactId>maven-failsafe-plugin</artifactId>
           <version>2.20.1</version>
-          <configuration>
-            <failIfNoTests>false</failIfNoTests>
-          </configuration>
+          <executions>
+            <execution>
+              <id>integration-tests</id>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+              <configuration>
+                <failIfNoTests>false</failIfNoTests>
+                <skipTests>${skip.integration.tests}</skipTests>
+              </configuration>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
@@ -321,6 +339,10 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
     </plugins>
 

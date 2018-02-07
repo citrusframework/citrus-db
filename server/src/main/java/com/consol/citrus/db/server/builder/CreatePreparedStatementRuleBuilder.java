@@ -22,30 +22,19 @@ import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-public class CreatePreparedStatementRuleBuilder {
-
-    private final RuleBasedController controller;
-    private final Precondition<String> precondition;
+public class CreatePreparedStatementRuleBuilder extends AbstractDecisionMakingRuleBuilder<CreatePreparedStatementRule, String> {
 
     public CreatePreparedStatementRuleBuilder(
             final Precondition<String> precondition,
             final RuleBasedController controller) {
-        this.controller = controller;
-        this.precondition = precondition;
+        super(controller);
+        setPrecondition(precondition);
     }
 
-    protected CreatePreparedStatementRule createRule(final Mapping<String, Boolean> executor) {
-        final CreatePreparedStatementRule createPreparedStatementRule =
-                new CreatePreparedStatementRule(precondition, executor);
-        controller.add(createPreparedStatementRule);
-        return createPreparedStatementRule;
-    }
-
-    Precondition<String> getPrecondition() {
-        return precondition;
-    }
-
-    RuleBasedController getController() {
-        return controller;
+    @Override
+    protected CreatePreparedStatementRule createRule(
+            final Precondition<String> precondition,
+            final Mapping<String, Boolean> mapping) {
+        return new CreatePreparedStatementRule(precondition, mapping);
     }
 }

@@ -21,16 +21,16 @@ import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
 import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+
 public class CreatePreparedStatementRuleBuilder extends AbstractDecisionMakingRuleBuilder<CreatePreparedStatementRule, String> {
 
-    public CreatePreparedStatementRuleBuilder(
+    CreatePreparedStatementRuleBuilder(
             final Precondition<String> precondition,
             final RuleBasedController controller) {
         super(controller, precondition);
     }
 
-    public CreatePreparedStatementRuleBuilder(final RuleBasedController controller) {
+    CreatePreparedStatementRuleBuilder(final RuleBasedController controller) {
         super(controller);
     }
 

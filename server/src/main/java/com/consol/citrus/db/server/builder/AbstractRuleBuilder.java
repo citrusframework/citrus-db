@@ -28,7 +28,6 @@ import com.consol.citrus.db.server.rules.Rule;
  * @param <P> The input type of the rule to be mapped
  * @param <R> The resulting type after mapping
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
 public abstract class AbstractRuleBuilder<T extends Rule<P, R, T>, P, R> {
 
     /** The @{@link RuleBasedController} to manipulate */
@@ -38,7 +37,7 @@ public abstract class AbstractRuleBuilder<T extends Rule<P, R, T>, P, R> {
      * Constructor accepting a @{@link RuleBasedController}
      * @param controller The @{@link RuleBasedController} to manipulate
      */
-    public AbstractRuleBuilder(final RuleBasedController controller){
+    AbstractRuleBuilder(final RuleBasedController controller){
         this.controller = controller;
     }
 
@@ -57,7 +56,7 @@ public abstract class AbstractRuleBuilder<T extends Rule<P, R, T>, P, R> {
      * Adds the given @{@link Rule} to the controller
      * @param rule The @{@link Rule} to be added
      */
-    protected void addRule(final T rule){
+    void addRule(final T rule){
         controller.add(rule);
     }
 

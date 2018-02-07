@@ -31,12 +31,11 @@ import java.io.File;
 import java.nio.file.Path;
 import java.sql.SQLException;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRule, String, DataSet>{
 
     private final Precondition<String> precondition;
 
-    public ExecuteQueryRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
+    ExecuteQueryRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
         super(controller);
         this.precondition = precondition;
     }

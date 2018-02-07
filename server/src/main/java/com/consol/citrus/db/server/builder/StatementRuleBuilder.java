@@ -21,12 +21,11 @@ import com.consol.citrus.db.server.rules.Precondition;
 
 import java.util.regex.Pattern;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class StatementRuleBuilder {
 
     private RuleBasedController controller;
 
-    public StatementRuleBuilder(final RuleBasedController controller) {
+    StatementRuleBuilder(final RuleBasedController controller) {
         this.controller = controller;
     }
 

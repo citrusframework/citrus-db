@@ -22,13 +22,11 @@ import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
 import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
 
-
-@SuppressWarnings({"unused", "WeakerAccess"})
 public class ExecuteUpdateRuleBuilder extends AbstractRuleBuilder<ExecuteUpdateRule, String, Integer>{
 
     private final Precondition<String> precondition;
 
-    public ExecuteUpdateRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
+    ExecuteUpdateRuleBuilder(final Precondition<String> precondition, final RuleBasedController controller) {
         super(controller);
         this.precondition = precondition;
     }

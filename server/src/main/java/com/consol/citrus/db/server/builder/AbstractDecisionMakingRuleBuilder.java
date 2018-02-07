@@ -17,6 +17,7 @@
 package com.consol.citrus.db.server.builder;
 
 import com.consol.citrus.db.server.controller.RuleBasedController;
+import com.consol.citrus.db.server.rules.Mapping;
 import com.consol.citrus.db.server.rules.Precondition;
 import com.consol.citrus.db.server.rules.Rule;
 
@@ -67,7 +68,7 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
      * @return A accepting Rule
      */
     private T thenAcceptWithoutPrecondition() {
-        final T rule = createRule(Precondition.matchAll(), (any) -> true);
+        final T rule = createRule(Precondition.matchAll(), accept());
         addRule(rule);
         return rule;
     }
@@ -78,7 +79,7 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
      * @return A accepting Rule
      */
     private T thenAcceptWithPrecondition(final Precondition<P> precondition) {
-        final T rule = createRule(precondition, (any) -> true);
+        final T rule = createRule(precondition, accept());
         addRule(rule);
         return rule;
     }
@@ -88,7 +89,7 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
      * @return A accepting Rule
      */
     private T thenRefuseWithoutPrecondition() {
-        final T rule = createRule(Precondition.matchAll(), (any) -> false);
+        final T rule = createRule(Precondition.matchAll(), refuse());
         addRule(rule);
         return rule;
     }
@@ -99,9 +100,19 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
      * @return A accepting Rule
      */
     private T thenRefuseWithPrecondition(final Precondition<P> precondition) {
-        final T rule = createRule(precondition, (any) -> false);
+        final T rule = createRule(precondition, refuse());
         addRule(rule);
         return rule;
+    }
+
+    /** Returns a @{@link Mapping} that accepts any value */
+    private Mapping<P, Boolean> accept() {
+        return (any) -> true;
+    }
+
+    /** Return a @{@link Mapping}, that refuses any value */
+    private Mapping<P, Boolean> refuse() {
+        return (any) -> false;
     }
 
 

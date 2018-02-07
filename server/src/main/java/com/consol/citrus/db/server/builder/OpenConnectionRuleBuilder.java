@@ -26,25 +26,17 @@ import java.util.Map;
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class OpenConnectionRuleBuilder extends AbstractDecisionMakingRuleBuilder<OpenConnectionRule, Map<String, String>> {
 
-    private final Precondition<Map<String, String>> precondition;
-
     public OpenConnectionRuleBuilder(
             final Precondition<Map<String, String>> precondition,
             final RuleBasedController controller) {
         super(controller);
-        this.precondition = precondition;
+        setPrecondition(precondition);
     }
 
     @Override
     protected OpenConnectionRule createRule(
-            final Precondition<Map<String, String>> matcher,
+            final Precondition<Map<String, String>> precondition,
             final Mapping<Map<String, String>, Boolean> executor) {
-        final OpenConnectionRule openConnectionRule = new OpenConnectionRule(precondition, executor);
-        addRule(openConnectionRule);
-        return openConnectionRule;
-    }
-
-    public Precondition<Map<String, String>> getPrecondition() {
-        return precondition;
+        return new OpenConnectionRule(precondition, executor);
     }
 }

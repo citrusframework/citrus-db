@@ -24,19 +24,58 @@ import com.consol.citrus.db.server.rules.Rule;
 public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolean, T>, P>
         extends AbstractRuleBuilder<T, P, Boolean>{
 
+    private Precondition<P> precondition;
+
     public AbstractDecisionMakingRuleBuilder(final RuleBasedController controller) {
         super(controller);
     }
 
     public T thenAccept() {
+        if(precondition != null){
+            return thenAcceptWithPrecondition(precondition);
+        }else {
+            return thenAcceptWithoutPrecondition();
+        }
+    }
+
+    public T thenDecline() {
+        if(precondition != null){
+            return thenDeclineWithPrecondition(precondition);
+        }else {
+            return thenDeclineWithoutPrecondition();
+        }
+    }
+
+    private T thenAcceptWithoutPrecondition() {
         final T rule = createRule(Precondition.matchAll(), (any) -> true);
         addRule(rule);
         return rule;
     }
 
-    public T thenDecline() {
+    private T thenAcceptWithPrecondition(final Precondition<P> precondition) {
+        final T rule = createRule(precondition, (any) -> true);
+        addRule(rule);
+        return rule;
+    }
+
+    private T thenDeclineWithoutPrecondition() {
         final T rule = createRule(Precondition.matchAll(), (any) -> false);
         addRule(rule);
         return rule;
+    }
+
+    private T thenDeclineWithPrecondition(final Precondition<P> precondition) {
+        final T rule = createRule(precondition, (any) -> false);
+        addRule(rule);
+        return rule;
+    }
+
+
+    protected void setPrecondition(final Precondition<P> precondition) {
+        this.precondition = precondition;
+    }
+
+    protected Precondition<P> getPrecondition() {
+        return precondition;
     }
 }

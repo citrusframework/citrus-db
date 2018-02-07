@@ -29,9 +29,9 @@ public class CloseConnectionRuleBuilder extends AbstractDecisionMakingRuleBuilde
     }
 
     @Override
-    protected CloseConnectionRule createRule(final Precondition<Void> matcher, final Mapping<Void, Boolean> executor) {
-        final CloseConnectionRule rule = new CloseConnectionRule(matcher, executor);
-        addRule(rule);
-        return rule;
+    protected CloseConnectionRule createRule(
+            final Precondition<Void> precondition,
+            final Mapping<Void, Boolean> executor) {
+        return new CloseConnectionRule(precondition, executor);
     }
 }

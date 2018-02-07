@@ -175,4 +175,12 @@ public class JdbcServer {
     public void stop() {
         Spark.stop();
     }
+
+    /**
+     * Starts the server and awaits its initialization
+     */
+    public void startAndAwaitInitialization(){
+        start();
+        Spark.awaitInitialization();
+    }
 }

@@ -22,12 +22,11 @@ import com.consol.citrus.db.server.rules.Precondition;
 import java.util.Map;
 import java.util.Optional;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
 public class ConnectionRuleBuilder {
 
     private RuleBasedController controller;
 
-    public ConnectionRuleBuilder(final RuleBasedController controller){
+    ConnectionRuleBuilder(final RuleBasedController controller){
         this.controller = controller;
     }
 

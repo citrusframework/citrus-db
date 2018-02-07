@@ -22,19 +22,19 @@ import com.consol.citrus.db.server.rules.Precondition;
 import com.consol.citrus.db.server.rules.Rule;
 
 /**
- * This class represents all rule builder that generate @{@link Rule} where the mapping result is a boolean value.
- * @param <T> {@inheritDoc}
+ * This class represents all rule builder that generate Rule where the mapping result is a boolean value.
+ * @param <T> The type of the rule this builder is creating
  * @param <P> The input type of the rule to be mapped to the boolean value
  */
 @SuppressWarnings("WeakerAccess")
 public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolean, T>, P>
         extends AbstractRuleBuilder<T, P, Boolean>{
 
-    /** The optional @{@link Precondition} to add to the @{@link Rule}*/
+    /** The optional Precondition to add to the Rule*/
     private Precondition<P> precondition;
 
     /**
-     * The constructor accepting a @{@link RuleBasedController}
+     * The constructor accepting a RuleBasedController
      * @param controller The controller to add the rules to
      */
     public AbstractDecisionMakingRuleBuilder(final RuleBasedController controller) {
@@ -112,12 +112,12 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
         return rule;
     }
 
-    /** Returns a @{@link Mapping} that accepts any value */
+    /** Returns a Mapping that accepts any value */
     private Mapping<P, Boolean> accept() {
         return (any) -> true;
     }
 
-    /** Return a @{@link Mapping}, that refuses any value */
+    /** Return a Mapping, that refuses any value */
     private Mapping<P, Boolean> refuse() {
         return (any) -> false;
     }

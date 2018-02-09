@@ -287,4 +287,45 @@ public class JdbcConnectionTest {
         //THEN
         //Exception is thrown
     }
+
+    @Test
+    public void testPrepareStatement() throws Exception{
+
+        //GIVEN
+        final String sql = "SELECT something FROM somewhere";
+        final JdbcStatement expectedStatement = new JdbcPreparedStatement(httpClient,sql, serverUrl);
+        when(statusLine.getStatusCode()).thenReturn(200);
+
+        //WHEN
+        final Statement statement = jdbcConnection.prepareStatement(sql);
+
+        //THEN
+        Assert.assertEquals(statement, expectedStatement);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testPrepareStatementHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcConnection.prepareStatement("sql");
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testPrepareStatementIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcConnection.prepareStatement("sql");
+
+        //THEN
+        //Exception is thrown
+    }
 }

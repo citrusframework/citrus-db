@@ -64,12 +64,12 @@ public class JdbcStatementTest {
     public void testExecuteQueryWithJsonResponse() throws Exception{
 
         //GIVEN
-        final String payload = "[{ \"foo\": \"bar\" }]";
+        final String responsePayload = "[{ \"foo\": \"bar\" }]";
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(payload.getBytes()));
+                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
 
         //WHEN
         final ResultSet resultSet = jdbcStatement.executeQuery("SELECT something FROM somewhere");
@@ -84,12 +84,12 @@ public class JdbcStatementTest {
     public void testExecuteQueryWithXmlResponse() throws Exception{
 
         //GIVEN
-        final String payload = "<dataset><row><foo>bar</foo></row></dataset>";
+        final String responsePayload = "<dataset><row><foo>bar</foo></row></dataset>";
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/xml"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(payload.getBytes()));
+                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
 
         //WHEN
         final ResultSet resultSet = jdbcStatement.executeQuery("SELECT something FROM somewhere");
@@ -101,7 +101,7 @@ public class JdbcStatementTest {
     }
 
     @Test(expectedExceptions = SQLException.class)
-    public void testRollbackHttpCallFailed() throws Exception{
+    public void testExecuteQueryHttpCallFailed() throws Exception{
 
         //GIVEN
         when(statusLine.getStatusCode()).thenReturn(500);
@@ -114,13 +114,57 @@ public class JdbcStatementTest {
     }
 
     @Test(expectedExceptions = SQLException.class)
-    public void testRollbackIoExceptionIsWrappedInSqlException() throws Exception{
+    public void testExecuteQueryIoExceptionIsWrappedInSqlException() throws Exception{
 
         //GIVEN
         when(httpClient.execute(any())).thenThrow(IOException.class);
 
         //WHEN
         jdbcStatement.executeQuery("query");
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test
+    public void testExecuteUpdate() throws Exception{
+
+        //GIVEN
+        final String responsePayload = "42";
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/xml"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
+
+        //WHEN
+        final int updatedRows = jdbcStatement.executeUpdate("update");
+
+        //THEN
+        assertEquals(42, updatedRows);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testExecuteUpdateHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcStatement.executeUpdate("update");
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testExecuteUpdateIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcStatement.executeUpdate("update");
 
         //THEN
         //Exception is thrown

@@ -24,6 +24,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,6 +42,7 @@ public class JdbcConnectionTest {
 
     private final HttpResponse httpResponse = mock(HttpResponse.class);
     private final StatusLine statusLine = mock(StatusLine.class);
+    private final HttpEntity httpEntity = mock(HttpEntity.class);
 
     @BeforeMethod
     public void setup() throws Exception{
@@ -50,7 +52,7 @@ public class JdbcConnectionTest {
 
         when(httpClient.execute(any())).thenReturn(httpResponse);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
-        when(httpResponse.getEntity()).thenReturn(mock(HttpEntity.class));
+        when(httpResponse.getEntity()).thenReturn(httpEntity);
     }
 
     @Test
@@ -163,7 +165,48 @@ public class JdbcConnectionTest {
         when(httpClient.execute(any())).thenThrow(IOException.class);
 
         //WHEN
-        jdbcConnection.close();
+        jdbcConnection.setAutoCommit(false);
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test
+    public void testGetAutoCommit() throws Exception{
+
+        //GIVEN
+        final String transactionState = "true";
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(transactionState.getBytes()));
+
+        //WHEN
+        final Boolean isAutoCommit = jdbcConnection.getAutoCommit();
+
+        //THEN
+        Assert.assertFalse(isAutoCommit);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testGetAutoCommitHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcConnection.getAutoCommit();
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testGetAutoCommitIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcConnection.getAutoCommit();
 
         //THEN
         //Exception is thrown

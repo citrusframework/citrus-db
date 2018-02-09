@@ -101,19 +101,4 @@ public class DataSet {
                 Objects.equals(rows, dataSet.rows) &&
                 Objects.equals(cursor.get(), dataSet.cursor.get());
     }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(rows, closed, cursor);
-    }
-
-    @Override
-    public String toString() {
-        return "DataSet{" +
-                "rows=" + rows +
-                ", closed=" + closed +
-                ", cursor=" + cursor +
-                '}';
-    }
 }

@@ -59,7 +59,7 @@ public class JdbcConnection implements Connection {
      * @param httpClient The http client to use for the db communication
      * @param serverUrl Thr url of the server
      */
-    public JdbcConnection(final HttpClient httpClient, final String serverUrl) {
+    JdbcConnection(final HttpClient httpClient, final String serverUrl) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
     }

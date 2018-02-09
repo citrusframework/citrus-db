@@ -95,4 +95,54 @@ public class JdbcConnectionTest {
         //THEN
         //Exception is thrown
     }
+
+    @Test
+    public void testClose() throws Exception{
+
+        //GIVEN
+        final HttpResponse httpResponse = mock(HttpResponse.class);
+        when(httpClient.execute(any())).thenReturn(httpResponse);
+
+
+        final StatusLine statusLine = mock(StatusLine.class);
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+
+        //WHEN
+        jdbcConnection.close();
+
+        //THEN
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testCloseHttpCallFailed() throws Exception{
+
+        //GIVEN
+        final HttpResponse httpResponse = mock(HttpResponse.class);
+        when(httpClient.execute(any())).thenReturn(httpResponse);
+        when(httpResponse.getEntity()).thenReturn(mock(HttpEntity.class));
+
+        final StatusLine statusLine = mock(StatusLine.class);
+        when(statusLine.getStatusCode()).thenReturn(500);
+        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+
+        //WHEN
+        jdbcConnection.close();
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testCloseIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcConnection.close();
+
+        //THEN
+        //Exception is thrown
+    }
 }

@@ -206,4 +206,42 @@ public class JdbcStatementTest {
         //THEN
         //Exception is thrown
     }
+
+    @Test
+    public void testClose() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+
+        //WHEN
+        jdbcStatement.close();
+
+        //THEN
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testCloseHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcStatement.close();
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testCloseIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcStatement.close();
+
+        //THEN
+        //Exception is thrown
+    }
 }

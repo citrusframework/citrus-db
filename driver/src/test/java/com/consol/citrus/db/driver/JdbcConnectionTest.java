@@ -34,6 +34,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("SqlNoDataSourceInspection")
 public class JdbcConnectionTest {
 
     private final HttpClient httpClient = mock(HttpClient.class);
@@ -44,6 +45,7 @@ public class JdbcConnectionTest {
     private final StatusLine statusLine = mock(StatusLine.class);
     private final HttpEntity httpEntity = mock(HttpEntity.class);
 
+    @SuppressWarnings("Duplicates")
     @BeforeMethod
     public void setup() throws Exception{
         reset(httpClient);

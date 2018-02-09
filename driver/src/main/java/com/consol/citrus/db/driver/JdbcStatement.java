@@ -49,15 +49,16 @@ public class JdbcStatement implements Statement {
 
     /**
      * Default constructor using remote client reference.
-     * @param httpClient
+     * @param httpClient The http client to use for the db communication
+     * @param serverUrl Thr url of the server
      */
-    public JdbcStatement(HttpClient httpClient, String serverUrl) {
+    JdbcStatement(final HttpClient httpClient, final String serverUrl) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
     }
 
     @Override
-    public java.sql.ResultSet executeQuery(String sqlQuery) throws SQLException {
+    public java.sql.ResultSet executeQuery(final String sqlQuery) throws SQLException {
         HttpResponse response = null;
         try {
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/query")
@@ -66,7 +67,7 @@ public class JdbcStatement implements Statement {
                     .build());
 
             if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
-                throw new SQLException("Failed to execute query: " + EntityUtils.toString(response.getEntity()));
+                throw new SQLException("Failed to execute query: " + sqlQuery);
             }
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {
@@ -76,7 +77,7 @@ public class JdbcStatement implements Statement {
             }
 
             return new JdbcResultSet(dataSet);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -84,7 +85,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public int executeUpdate(String sql) throws SQLException {
+    public int executeUpdate(final String sql) throws SQLException {
         HttpResponse response = null;
         try {
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/update")
@@ -95,9 +96,9 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute update: " + EntityUtils.toString(response.getEntity()));
             }
 
-            String responseBody = EntityUtils.toString(response.getEntity());
+            final String responseBody = EntityUtils.toString(response.getEntity());
             return Integer.valueOf(responseBody);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -105,7 +106,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public boolean execute(String sql) throws SQLException {
+    public boolean execute(final String sql) throws SQLException {
         HttpResponse response = null;
         try {
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/execute")
@@ -116,7 +117,7 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute statement: " + EntityUtils.toString(response.getEntity()));
             }
             return true;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -133,7 +134,7 @@ public class JdbcStatement implements Statement {
             if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                 throw new SQLException("Failed to close statement");
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -146,7 +147,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setMaxFieldSize(int max) throws SQLException {
+    public void setMaxFieldSize(final int max) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -156,12 +157,12 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setMaxRows(int max) throws SQLException {
+    public void setMaxRows(final int max) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setEscapeProcessing(boolean enable) throws SQLException {
+    public void setEscapeProcessing(final boolean enable) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -171,7 +172,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setQueryTimeout(int seconds) throws SQLException {
+    public void setQueryTimeout(final int seconds) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -191,7 +192,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setCursorName(String name) throws SQLException {
+    public void setCursorName(final String name) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -211,7 +212,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setFetchDirection(int direction) throws SQLException {
+    public void setFetchDirection(final int direction) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -221,7 +222,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setFetchSize(int rows) throws SQLException {
+    public void setFetchSize(final int rows) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -241,7 +242,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void addBatch(String sql) throws SQLException {
+    public void addBatch(final String sql) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -261,7 +262,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public boolean getMoreResults(int current) throws SQLException {
+    public boolean getMoreResults(final int current) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -271,32 +272,32 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public int executeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
+    public int executeUpdate(final String sql, final int autoGeneratedKeys) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public int executeUpdate(String sql, int[] columnIndexes) throws SQLException {
+    public int executeUpdate(final String sql, final int[] columnIndexes) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public int executeUpdate(String sql, String[] columnNames) throws SQLException {
+    public int executeUpdate(final String sql, final String[] columnNames) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public boolean execute(String sql, int autoGeneratedKeys) throws SQLException {
+    public boolean execute(final String sql, final int autoGeneratedKeys) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public boolean execute(String sql, int[] columnIndexes) throws SQLException {
+    public boolean execute(final String sql, final int[] columnIndexes) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public boolean execute(String sql, String[] columnNames) throws SQLException {
+    public boolean execute(final String sql, final String[] columnNames) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -311,7 +312,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setPoolable(boolean poolable) throws SQLException {
+    public void setPoolable(final boolean poolable) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -336,7 +337,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setLargeMaxRows(long max) throws SQLException {
+    public void setLargeMaxRows(final long max) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -351,40 +352,40 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public long executeLargeUpdate(String sql) throws SQLException {
+    public long executeLargeUpdate(final String sql) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public long executeLargeUpdate(String sql, int autoGeneratedKeys) throws SQLException {
+    public long executeLargeUpdate(final String sql, final int autoGeneratedKeys) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public long executeLargeUpdate(String sql, int[] columnIndexes) throws SQLException {
+    public long executeLargeUpdate(final String sql, final int[] columnIndexes) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public long executeLargeUpdate(String sql, String[] columnNames) throws SQLException {
+    public long executeLargeUpdate(final String sql, final String[] columnNames) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
+    public <T> T unwrap(final Class<T> iface) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JdbcStatement that = (JdbcStatement) o;
+        final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&
                 Objects.equals(serverUrl, that.serverUrl) &&
                 Objects.equals(dataSet, that.dataSet);

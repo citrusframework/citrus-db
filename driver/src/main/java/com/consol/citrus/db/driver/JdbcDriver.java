@@ -16,9 +16,12 @@
 
 package com.consol.citrus.db.driver;
 
-import org.apache.http.*;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.HttpClients;
@@ -27,7 +30,13 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.DriverPropertyInfo;
+import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -88,7 +97,7 @@ public class JdbcDriver implements Driver {
      * Constructor using http client.
      * @param httpClient
      */
-    public JdbcDriver(HttpClient httpClient) {
+    public JdbcDriver(final HttpClient httpClient) {
         this.httpClient = httpClient;
         this.defaultPort = Integer.valueOf(System.getProperty(DEFAULT_PORT_PROPERTY, (System.getenv(DEFAULT_PORT_ENV) != null ? System.getenv(DEFAULT_PORT_ENV) : String.valueOf(defaultPort))));
     }
@@ -96,20 +105,20 @@ public class JdbcDriver implements Driver {
     static {
         try {
             DriverManager.registerDriver(driverInstance);
-        } catch(Exception e) {
+        } catch(final Exception e) {
             LoggerFactory.getLogger(JdbcDriver.class).warn("Error registering jdbc driver", e);
         }
     }
 
     @Override
-    public Connection connect(String url, Properties info) throws SQLException {
+    public Connection connect(final String url, final Properties info) throws SQLException {
         JdbcConnection connection = null;
 
         if (acceptsURL(url)) {
             try {
                 connectRemote(url, info);
                 connection = new JdbcConnection(httpClient, serverUrl);
-            } catch(Exception ex) {
+            } catch(final Exception ex) {
                 throw(new SQLException(ex.getMessage(), ex));
             }
         }
@@ -122,24 +131,23 @@ public class JdbcDriver implements Driver {
      * @param connectionString
      * @param info
      */
-    private void connectRemote(String connectionString, Properties info) throws SQLException {
+    private void connectRemote(final String connectionString, final Properties info) throws SQLException {
         HttpResponse response = null;
         try {
-            URI uri = new URI(getServerUri(connectionString));
+            final URI uri = new URI(getServerUri(connectionString));
             serverUrl = "http://" + Optional.ofNullable(uri.getHost()).orElse("localhost") + (uri.getPort() > 0 ? ":" + uri.getPort() : ":" + defaultPort);
 
-            response = httpClient.execute(RequestBuilder.get(serverUrl + "/connection")
+            final HttpUriRequest uriRequest = RequestBuilder.get(serverUrl + "/connection")
                     .addParameter("database", getDatabaseName(uri))
-                    .addParameters(info.entrySet()
-                                        .stream()
-                                        .map(entry -> new BasicNameValuePair(entry.getKey().toString(), entry.getValue() != null ? entry.getValue().toString() : ""))
-                                        .collect(Collectors.toList()).toArray(new NameValuePair[info.size()]))
-                    .build());
+                    .addParameters(convertProperties(info))
+                    .build();
+
+            response = httpClient.execute(uriRequest);
 
             if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
                 throw new SQLException("Failed to connect to server: " + EntityUtils.toString(response.getEntity()));
             }
-        } catch(Exception ex) {
+        } catch(final Exception ex) {
             throw new SQLException(ex);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -147,8 +155,25 @@ public class JdbcDriver implements Driver {
     }
 
     @Override
-    public boolean acceptsURL(String url) throws SQLException {
+    public boolean acceptsURL(final String url) throws SQLException {
         return Stream.of(URL_PREFIX_SET).anyMatch(url::startsWith);
+    }
+
+    /**
+     * Converts the given properties to a NameValuePair array
+     * @param properties The properties to convert
+     * @return A NameValuePair array containing the properties
+     */
+    private NameValuePair[] convertProperties(final Properties properties) {
+        return properties.entrySet()
+                .stream()
+                .map(entry ->
+                        new BasicNameValuePair(
+                                entry.getKey().toString(),
+                                entry.getValue() != null ? entry.getValue().toString() : ""))
+                .sorted(Comparator.comparingInt(BasicNameValuePair::hashCode))
+                .collect(Collectors.toList())
+                .toArray(new NameValuePair[properties.size()]);
     }
 
     /**
@@ -156,7 +181,7 @@ public class JdbcDriver implements Driver {
      * @param uri
      * @return
      */
-    private String getDatabaseName(URI uri) {
+    private String getDatabaseName(final URI uri) {
         String resourcePath = uri.getSchemeSpecificPart();
 
         if (resourcePath.startsWith("//")) {
@@ -179,12 +204,12 @@ public class JdbcDriver implements Driver {
      * @param connectionString
      * @return
      */
-    private String getServerUri(String connectionString) {
+    private String getServerUri(final String connectionString) {
         String url = connectionString.substring(Stream.of(URL_PREFIX_SET).filter(connectionString::startsWith).findFirst().orElse("").length());
-        String localhost = "localhost/";
+        final String localhost = "localhost/";
 
         if (url.startsWith("@")) {
-            String[] tokens = url.substring(1).split(":");
+            final String[] tokens = url.substring(1).split(":");
 
             if (tokens.length > 2) {
                 url = tokens[0] + ":" + tokens[1] + "/" + tokens[2];
@@ -196,7 +221,7 @@ public class JdbcDriver implements Driver {
         }
 
         if (url.startsWith("mssqlserver4:")) {
-            String[] tokens = url.substring("mssqlserver4:".length()).split("@");
+            final String[] tokens = url.substring("mssqlserver4:".length()).split("@");
             url = tokens[1] + "/" + tokens[0];
         } else if (url.startsWith("odbc:")) {
             url = localhost + url.substring("odbc:".length());
@@ -232,7 +257,7 @@ public class JdbcDriver implements Driver {
     }
 
     @Override
-    public DriverPropertyInfo[] getPropertyInfo(String url, Properties loginProps) throws SQLException {
+    public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties loginProps) throws SQLException {
         return new DriverPropertyInfo[] {};
     }
 

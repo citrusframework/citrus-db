@@ -20,6 +20,9 @@ import com.consol.citrus.db.server.controller.JdbcController;
 import spark.Request;
 import spark.Response;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class OpenConnectionHandler extends AbstractJdbcRequestHandler {
 
 
@@ -29,7 +32,11 @@ public class OpenConnectionHandler extends AbstractJdbcRequestHandler {
 
     @Override
     public Object handle(final Request request, final Response response){
-        controller.openConnection(request.params());
+        final Map<String, String> parameters = new HashMap<>();
+        request.queryParams().forEach(
+                (parameter) -> parameters.put(parameter, request.queryParams(parameter)));
+
+        controller.openConnection(parameters);
         return "";
     }
 }

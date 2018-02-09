@@ -211,4 +211,42 @@ public class JdbcConnectionTest {
         //THEN
         //Exception is thrown
     }
+
+    @Test
+    public void testCommit() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+
+        //WHEN
+        jdbcConnection.commit();
+
+        //THEN
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testCommitHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcConnection.commit();
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testCommitIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcConnection.commit();
+
+        //THEN
+        //Exception is thrown
+    }
 }

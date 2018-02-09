@@ -249,4 +249,42 @@ public class JdbcConnectionTest {
         //THEN
         //Exception is thrown
     }
+
+    @Test
+    public void testRollback() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+
+        //WHEN
+        jdbcConnection.rollback();
+
+        //THEN
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testRollbackHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcConnection.rollback();
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testRollbackIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcConnection.rollback();
+
+        //THEN
+        //Exception is thrown
+    }
 }

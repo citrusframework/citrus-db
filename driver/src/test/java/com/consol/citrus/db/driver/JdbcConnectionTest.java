@@ -39,9 +39,18 @@ public class JdbcConnectionTest {
     private final String serverUrl = "db.klingon-empire.kr";
     private final JdbcConnection jdbcConnection = new JdbcConnection(httpClient, serverUrl);
 
+    private final HttpResponse httpResponse = mock(HttpResponse.class);
+    private final StatusLine statusLine = mock(StatusLine.class);
+
     @BeforeMethod
-    public void resetMocks(){
+    public void setup() throws Exception{
         reset(httpClient);
+        reset(httpResponse);
+        reset(statusLine);
+
+        when(httpClient.execute(any())).thenReturn(httpResponse);
+        when(httpResponse.getStatusLine()).thenReturn(statusLine);
+        when(httpResponse.getEntity()).thenReturn(mock(HttpEntity.class));
     }
 
     @Test
@@ -49,13 +58,7 @@ public class JdbcConnectionTest {
 
         //GIVEN
         final JdbcStatement expectedStatement = new JdbcStatement(httpClient, serverUrl);
-        final HttpResponse httpResponse = mock(HttpResponse.class);
-        when(httpClient.execute(any())).thenReturn(httpResponse);
-
-
-        final StatusLine statusLine = mock(StatusLine.class);
         when(statusLine.getStatusCode()).thenReturn(200);
-        when(httpResponse.getStatusLine()).thenReturn(statusLine);
 
         //WHEN
         final Statement statement = jdbcConnection.createStatement();
@@ -68,13 +71,7 @@ public class JdbcConnectionTest {
     public void testCreateStatementHttpCallFailed() throws Exception{
 
         //GIVEN
-        final HttpResponse httpResponse = mock(HttpResponse.class);
-        when(httpClient.execute(any())).thenReturn(httpResponse);
-        when(httpResponse.getEntity()).thenReturn(mock(HttpEntity.class));
-
-        final StatusLine statusLine = mock(StatusLine.class);
         when(statusLine.getStatusCode()).thenReturn(500);
-        when(httpResponse.getStatusLine()).thenReturn(statusLine);
 
         //WHEN
         jdbcConnection.createStatement();
@@ -100,13 +97,7 @@ public class JdbcConnectionTest {
     public void testClose() throws Exception{
 
         //GIVEN
-        final HttpResponse httpResponse = mock(HttpResponse.class);
-        when(httpClient.execute(any())).thenReturn(httpResponse);
-
-
-        final StatusLine statusLine = mock(StatusLine.class);
         when(statusLine.getStatusCode()).thenReturn(200);
-        when(httpResponse.getStatusLine()).thenReturn(statusLine);
 
         //WHEN
         jdbcConnection.close();
@@ -118,13 +109,7 @@ public class JdbcConnectionTest {
     public void testCloseHttpCallFailed() throws Exception{
 
         //GIVEN
-        final HttpResponse httpResponse = mock(HttpResponse.class);
-        when(httpClient.execute(any())).thenReturn(httpResponse);
-        when(httpResponse.getEntity()).thenReturn(mock(HttpEntity.class));
-
-        final StatusLine statusLine = mock(StatusLine.class);
         when(statusLine.getStatusCode()).thenReturn(500);
-        when(httpResponse.getStatusLine()).thenReturn(statusLine);
 
         //WHEN
         jdbcConnection.close();
@@ -135,6 +120,44 @@ public class JdbcConnectionTest {
 
     @Test(expectedExceptions = SQLException.class)
     public void testCloseIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcConnection.close();
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test
+    public void testSetAutoCommit() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+
+        //WHEN
+        jdbcConnection.setAutoCommit(true);
+
+        //THEN
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testSetAutoCommitHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcConnection.setAutoCommit(false);
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testSetAutoCommitIoExceptionIsWrappedInSqlException() throws Exception{
 
         //GIVEN
         when(httpClient.execute(any())).thenThrow(IOException.class);

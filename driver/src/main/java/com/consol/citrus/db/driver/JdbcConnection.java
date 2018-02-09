@@ -109,7 +109,7 @@ public class JdbcConnection implements Connection {
     public void setAutoCommit(final boolean autoCommit) throws SQLException {
         HttpResponse response = null;
         try {
-            HttpUriRequest request = RequestBuilder
+            final HttpUriRequest request = RequestBuilder
                     .post(serverUrl + "/connection/transaction")
                     .setEntity(new StringEntity(String.valueOf(!autoCommit)))
                     .build();

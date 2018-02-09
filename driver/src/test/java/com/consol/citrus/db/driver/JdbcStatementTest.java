@@ -132,8 +132,6 @@ public class JdbcStatementTest {
         //GIVEN
         final String responsePayload = "42";
         when(statusLine.getStatusCode()).thenReturn(200);
-        when(httpEntity.getContentType())
-                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/xml"));
         when(httpEntity.getContent())
                 .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
 
@@ -165,6 +163,45 @@ public class JdbcStatementTest {
 
         //WHEN
         jdbcStatement.executeUpdate("update");
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test
+    public void testExecute() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+
+        //WHEN
+        final boolean isSuccessful = jdbcStatement.execute("statement");
+
+        //THEN
+        assertTrue(isSuccessful);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testExecuteHttpCallFailed() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcStatement.execute("statement");
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testExecuteIoExceptionIsWrappedInSqlException() throws Exception{
+
+        //GIVEN
+        when(httpClient.execute(any())).thenThrow(IOException.class);
+
+        //WHEN
+        jdbcStatement.execute("statement");
 
         //THEN
         //Exception is thrown

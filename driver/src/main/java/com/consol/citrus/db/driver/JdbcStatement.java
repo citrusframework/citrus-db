@@ -19,7 +19,9 @@ package com.consol.citrus.db.driver;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
 import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
-import org.apache.http.*;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
@@ -29,7 +31,11 @@ import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
+import java.util.Objects;
 
 /**
  * @author Christoph Deppisch
@@ -372,5 +378,15 @@ public class JdbcStatement implements Statement {
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
         throw new SQLException("Not Supported");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JdbcStatement that = (JdbcStatement) o;
+        return Objects.equals(httpClient, that.httpClient) &&
+                Objects.equals(serverUrl, that.serverUrl) &&
+                Objects.equals(dataSet, that.dataSet);
     }
 }

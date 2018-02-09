@@ -56,8 +56,8 @@ public class JdbcConnection implements Connection {
 
     /**
      * Default constructor using remote connection reference.
-     * @param httpClient
-     * @param serverUrl
+     * @param httpClient The http client to use for the db communication
+     * @param serverUrl Thr url of the server
      */
     public JdbcConnection(final HttpClient httpClient, final String serverUrl) {
         this.httpClient = httpClient;

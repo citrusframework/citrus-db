@@ -21,6 +21,7 @@ import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,13 +39,13 @@ public class OpenConnectionHandlerTest {
 
         //GIVEN
         final Request requestMock = mock(Request.class);
+        when(requestMock.queryParams()).thenReturn(Collections.singleton("someKey"));
+        when(requestMock.queryParams("someKey")).thenReturn("someValue");
 
         final Map<String, String> expectedMap = new HashMap<>();
         expectedMap.put("someKey", "someValue");
-        when(requestMock.params()).thenReturn(expectedMap);
 
         final Response responseMock = mock(Response.class);
-
 
         //WHEN
         openConnectionHandler.handle(requestMock, responseMock);

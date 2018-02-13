@@ -39,20 +39,12 @@ import com.consol.citrus.db.server.transformer.XmlResponseTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
-import spark.Spark;
+import spark.Service;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import static spark.Spark.before;
-import static spark.Spark.delete;
-import static spark.Spark.exception;
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.post;
-import static spark.Spark.put;
 
 /**
  * @author Christoph Deppisch
@@ -67,6 +59,9 @@ public class JdbcServer {
 
     /** Controller handling requests */
     private JdbcController controller;
+
+    /** The spark service */
+    private Service service;
 
     /**
      * Default constructor initializing controller and configuration.
@@ -130,50 +125,54 @@ public class JdbcServer {
      * Start server instance and listen for incoming requests.
      */
     public void start() {
-        port(configuration.getPort());
+        service = Service.ignite();
 
-        before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
+        service.port(configuration.getPort());
 
-        get("/connection", new OpenConnectionHandler(controller));
+        service.before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
 
-        delete("/connection", new CloseConnectionHandler(controller));
+        service.get("/connection", new OpenConnectionHandler(controller));
 
-        get("/connection/transaction", new GetTransactionStateHandler(controller));
+        service.delete("/connection", new CloseConnectionHandler(controller));
 
-        post("/connection/transaction", new SetTransactionStateHandler(controller));
+        service.get("/connection/transaction", new GetTransactionStateHandler(controller));
 
-        put("/connection/transaction", new CommitTransactionStatementsHandler(controller));
+        service.post("/connection/transaction", new SetTransactionStateHandler(controller));
 
-        delete("/connection/transaction", new RollbackTransactionStatementsHandler(controller));
+        service.put("/connection/transaction", new CommitTransactionStatementsHandler(controller));
 
-        get("/statement", new CreateStatementHandler(controller));
+        service.delete("/connection/transaction", new RollbackTransactionStatementsHandler(controller));
 
-        delete("/statement", new CloseStatementHandler(controller));
+        service.get("/statement", new CreateStatementHandler(controller));
 
-        post("/statement", new CreatePreparedStatementHandler(controller));
+        service.delete("/statement", new CloseStatementHandler(controller));
 
-        post("/query",
+        service.post("/statement", new CreatePreparedStatementHandler(controller));
+
+        service.post("/query",
                 "application/json",
                 new ExecuteJsonQueryHandler(controller),
                 new JsonResponseTransformer());
 
-        post("/query",
+        service.post("/query",
                 "application/xml",
                 new ExecuteXmlQueryHandler(controller),
                 new XmlResponseTransformer());
 
-        post("/execute", new ExecuteStatementHandler(controller));
+        service.post("/execute", new ExecuteStatementHandler(controller));
 
-        post("/update", new ExecuteUpdateHandler(controller));
+        service.post("/update", new ExecuteUpdateHandler(controller));
 
-        exception(JdbcServerException.class, new JdbcServerExceptionHandler());
+        service.exception(JdbcServerException.class, new JdbcServerExceptionHandler());
     }
 
     /**
      * Stops the server instance.
      */
     public void stop() {
-        Spark.stop();
+        if(service != null){
+            service.stop();
+        }
     }
 
     /**
@@ -181,6 +180,6 @@ public class JdbcServer {
      */
     public void startAndAwaitInitialization(){
         start();
-        Spark.awaitInitialization();
+        service.awaitInitialization();
     }
 }

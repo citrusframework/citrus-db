@@ -43,7 +43,7 @@ import java.util.Objects;
 public class JdbcStatement implements Statement {
 
     protected final HttpClient httpClient;
-    private final String serverUrl;
+    private final String endpoint;
 
     protected DataSet dataSet;
 
@@ -54,14 +54,14 @@ public class JdbcStatement implements Statement {
      */
     JdbcStatement(final HttpClient httpClient, final String serverUrl) {
         this.httpClient = httpClient;
-        this.serverUrl = serverUrl;
+        this.endpoint = serverUrl + "/statement";
     }
 
     @Override
     public java.sql.ResultSet executeQuery(final String sqlQuery) throws SQLException {
         HttpResponse response = null;
         try {
-            response = httpClient.execute(RequestBuilder.post(serverUrl + "/query")
+            response = httpClient.execute(RequestBuilder.post(endpoint + "/query")
                     .addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/json"))
                     .setEntity(new StringEntity(sqlQuery, ContentType.create("text/plain", "UTF-8")))
                     .build());
@@ -88,7 +88,7 @@ public class JdbcStatement implements Statement {
     public int executeUpdate(final String sql) throws SQLException {
         HttpResponse response = null;
         try {
-            response = httpClient.execute(RequestBuilder.post(serverUrl + "/update")
+            response = httpClient.execute(RequestBuilder.post(endpoint + "/update")
                     .setEntity(new StringEntity(sql, ContentType.create("text/plain", "UTF-8")))
                     .build());
 
@@ -109,7 +109,7 @@ public class JdbcStatement implements Statement {
     public boolean execute(final String sql) throws SQLException {
         HttpResponse response = null;
         try {
-            response = httpClient.execute(RequestBuilder.post(serverUrl + "/execute")
+            response = httpClient.execute(RequestBuilder.post(endpoint + "/execute")
                     .setEntity(new StringEntity(sql, ContentType.create("text/plain", "UTF-8")))
                     .build());
 
@@ -128,7 +128,7 @@ public class JdbcStatement implements Statement {
     public void close() throws SQLException {
         HttpResponse response = null;
         try {
-            response = httpClient.execute(RequestBuilder.delete(serverUrl + "/statement")
+            response = httpClient.execute(RequestBuilder.delete(endpoint)
                     .build());
 
             if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
@@ -387,7 +387,7 @@ public class JdbcStatement implements Statement {
         if (o == null || getClass() != o.getClass()) return false;
         final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&
-                Objects.equals(serverUrl, that.serverUrl) &&
+                Objects.equals(endpoint, that.endpoint) &&
                 Objects.equals(dataSet, that.dataSet);
     }
 }

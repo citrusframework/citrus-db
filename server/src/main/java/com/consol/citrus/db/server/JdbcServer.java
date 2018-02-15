@@ -38,7 +38,6 @@ import com.consol.citrus.db.server.transformer.JsonResponseTransformer;
 import com.consol.citrus.db.server.transformer.XmlResponseTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import spark.Filter;
 import spark.Service;
 
 import java.util.concurrent.CompletableFuture;
@@ -126,44 +125,44 @@ public class JdbcServer {
      */
     public void start() {
         service = Service.ignite();
-
         service.port(configuration.getPort());
+        service.before((request, response) -> log.info(request.requestMethod() + " " + request.url()));
+        registerEndpoints();
+        service.exception(JdbcServerException.class, new JdbcServerExceptionHandler());
+    }
 
-        service.before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
+    private void registerEndpoints() {
+        registerConnectionEndpoint();
+        registerStatementEndpoint();
+    }
 
+    private void registerConnectionEndpoint() {
         service.get("/connection", new OpenConnectionHandler(controller));
-
         service.delete("/connection", new CloseConnectionHandler(controller));
 
         service.get("/connection/transaction", new GetTransactionStateHandler(controller));
-
         service.post("/connection/transaction", new SetTransactionStateHandler(controller));
-
         service.put("/connection/transaction", new CommitTransactionStatementsHandler(controller));
-
         service.delete("/connection/transaction", new RollbackTransactionStatementsHandler(controller));
+    }
 
+    private void registerStatementEndpoint() {
         service.get("/statement", new CreateStatementHandler(controller));
-
+        service.post("/statement", new CreatePreparedStatementHandler(controller));
         service.delete("/statement", new CloseStatementHandler(controller));
 
-        service.post("/statement", new CreatePreparedStatementHandler(controller));
-
-        service.post("/query",
+        service.post("/statement/query",
                 "application/json",
                 new ExecuteJsonQueryHandler(controller),
                 new JsonResponseTransformer());
-
-        service.post("/query",
+        service.post("/statement/query",
                 "application/xml",
                 new ExecuteXmlQueryHandler(controller),
                 new XmlResponseTransformer());
 
-        service.post("/execute", new ExecuteStatementHandler(controller));
+        service.post("/statement/execute", new ExecuteStatementHandler(controller));
 
-        service.post("/update", new ExecuteUpdateHandler(controller));
-
-        service.exception(JdbcServerException.class, new JdbcServerExceptionHandler());
+        service.post("/statement/update", new ExecuteUpdateHandler(controller));
     }
 
     /**

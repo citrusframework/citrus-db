@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.callablestatement;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
 import spark.Request;
 import spark.Response;
 
-public class ExecuteCallableStatementHandler extends AbstractJdbcRequestHandler {
+public class CloseCallableStatementHandler extends AbstractJdbcRequestHandler {
 
-    public ExecuteCallableStatementHandler(final JdbcController controller) {
+    public CloseCallableStatementHandler(final JdbcController controller) {
         super(controller);
     }
 

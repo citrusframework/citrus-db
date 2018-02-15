@@ -21,11 +21,14 @@ import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
+import com.consol.citrus.db.server.handler.CloseCallableStatementHandler;
 import com.consol.citrus.db.server.handler.CloseConnectionHandler;
 import com.consol.citrus.db.server.handler.CloseStatementHandler;
 import com.consol.citrus.db.server.handler.CommitTransactionStatementsHandler;
+import com.consol.citrus.db.server.handler.CreateCallableStatementHandler;
 import com.consol.citrus.db.server.handler.CreatePreparedStatementHandler;
 import com.consol.citrus.db.server.handler.CreateStatementHandler;
+import com.consol.citrus.db.server.handler.ExecuteCallableStatementHandler;
 import com.consol.citrus.db.server.handler.ExecuteJsonQueryHandler;
 import com.consol.citrus.db.server.handler.ExecuteStatementHandler;
 import com.consol.citrus.db.server.handler.ExecuteUpdateHandler;
@@ -134,6 +137,7 @@ public class JdbcServer {
     private void registerEndpoints() {
         registerConnectionEndpoint();
         registerStatementEndpoint();
+        registerCallableStatementEndpoint();
     }
 
     private void registerConnectionEndpoint() {
@@ -163,6 +167,12 @@ public class JdbcServer {
         service.post("/statement/execute", new ExecuteStatementHandler(controller));
 
         service.post("/statement/update", new ExecuteUpdateHandler(controller));
+    }
+
+    private void registerCallableStatementEndpoint() {
+        service.get("/callableStatement", new CreateCallableStatementHandler(controller));
+        service.delete("/callableStatement", new CloseCallableStatementHandler(controller));
+        service.post("/callableStatement", new ExecuteCallableStatementHandler(controller));
     }
 
     /**

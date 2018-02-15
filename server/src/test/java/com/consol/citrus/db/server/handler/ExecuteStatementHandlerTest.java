@@ -46,6 +46,6 @@ public class ExecuteStatementHandlerTest {
         executeStatementHandler.handle(requestMock, responseMock);
 
         //THEN
-        verify(controllerMock).execute(body);
+        verify(controllerMock).executeStatement(body);
     }
 }

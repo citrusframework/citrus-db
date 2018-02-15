@@ -94,7 +94,7 @@ public abstract class AbstractJdbcController implements JdbcController {
     }
 
     @Override
-    public void execute(final String sql) throws JdbcServerException {
+    public void executeStatement(final String sql) throws JdbcServerException {
         log.info("EXECUTE STATEMENT: " + sql);
         handleUpdate(sql);
         log.info("STATEMENT EXECUTION SUCCESSFUL");

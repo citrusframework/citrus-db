@@ -29,7 +29,7 @@ public class ExecuteStatementHandler extends AbstractJdbcRequestHandler {
 
     @Override
     public Object handle(final Request request, final Response response) {
-        controller.execute(request.body());
+        controller.executeStatement(request.body());
         return "";
     }
 }

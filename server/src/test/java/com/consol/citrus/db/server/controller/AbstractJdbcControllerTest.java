@@ -77,7 +77,7 @@ public class AbstractJdbcControllerTest {
         final String sql = "statement";
 
         //WHEN
-        jdbcController.execute(sql);
+        jdbcController.executeStatement(sql);
 
         //THEN
         verify(jdbcController).handleUpdate(sql);

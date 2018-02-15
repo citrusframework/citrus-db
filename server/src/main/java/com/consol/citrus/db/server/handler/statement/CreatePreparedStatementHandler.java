@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.statement;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
 import spark.Request;
 import spark.Response;
 
-public class ExecuteStatementHandler extends AbstractJdbcRequestHandler {
+public class CreatePreparedStatementHandler extends AbstractJdbcRequestHandler {
 
 
-    public ExecuteStatementHandler(final JdbcController controller) {
+    public CreatePreparedStatementHandler(final JdbcController controller) {
         super(controller);
     }
 
     @Override
     public Object handle(final Request request, final Response response) {
-        controller.executeStatement(request.body());
+        controller.createPreparedStatement(request.body());
         return "";
     }
 }

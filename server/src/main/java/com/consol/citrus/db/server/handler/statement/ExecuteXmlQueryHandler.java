@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.statement;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
 import spark.Request;
 import spark.Response;
 

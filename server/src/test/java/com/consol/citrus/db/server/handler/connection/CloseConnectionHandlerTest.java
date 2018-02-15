@@ -14,22 +14,33 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.connection;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
 
-public class RollbackTransactionStatementsHandler extends AbstractJdbcRequestHandler {
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+public class CloseConnectionHandlerTest {
 
-    public RollbackTransactionStatementsHandler(final JdbcController controller) {
-        super(controller);
+    private final JdbcController controllerMock = mock(JdbcController.class);
+    private final CloseConnectionHandler closeConnectionHandler = new CloseConnectionHandler(controllerMock);
+
+    @Test
+    public void testControllerIsUsed(){
+
+        //GIVEN
+        final Request requestMock = mock(Request.class);
+        final Response responseMock = mock(Response.class);
+
+        //WHEN
+        closeConnectionHandler.handle(requestMock, responseMock);
+
+        //THEN
+        verify(controllerMock).closeConnection();
     }
 
-    @Override
-    public Object handle(final Request request, final Response response) {
-        controller.rollbackStatements();
-        return "";
-    }
 }

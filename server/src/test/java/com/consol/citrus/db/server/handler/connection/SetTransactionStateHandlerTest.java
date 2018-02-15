@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.connection;
 
 import com.consol.citrus.db.server.controller.JdbcController;
 import org.testng.annotations.Test;
@@ -26,29 +26,27 @@ import java.util.Random;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.assertEquals;
 
-public class GetTransactionStateHandlerTest {
+public class SetTransactionStateHandlerTest {
 
     private final JdbcController controllerMock = mock(JdbcController.class);
-    private final GetTransactionStateHandler transactionStateHandler = new GetTransactionStateHandler(controllerMock);
+    private final SetTransactionStateHandler setTransactionStateHandler = new SetTransactionStateHandler(controllerMock);
 
     @Test
     public void testControllerIsUsed(){
 
         //GIVEN
         final Request requestMock = mock(Request.class);
+        final boolean desiredRequestState = new Random().nextBoolean();
+        when(requestMock.body()).thenReturn(String.valueOf(desiredRequestState));
+
         final Response responseMock = mock(Response.class);
 
-        final boolean expectedTransactionState = new Random().nextBoolean();
-        when(controllerMock.getTransactionState()).thenReturn(expectedTransactionState);
 
         //WHEN
-        final boolean transactionState = (Boolean) transactionStateHandler.handle(requestMock, responseMock);
+        setTransactionStateHandler.handle(requestMock, responseMock);
 
         //THEN
-        verify(controllerMock).getTransactionState();
-        assertEquals(transactionState, expectedTransactionState);
+        verify(controllerMock).setTransactionState(desiredRequestState);
     }
-
 }

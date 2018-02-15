@@ -14,39 +14,44 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.connection;
 
 import com.consol.citrus.db.server.controller.JdbcController;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
 
-import java.util.Random;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SetTransactionStateHandlerTest {
+public class OpenConnectionHandlerTest {
 
     private final JdbcController controllerMock = mock(JdbcController.class);
-    private final SetTransactionStateHandler setTransactionStateHandler = new SetTransactionStateHandler(controllerMock);
+    private final OpenConnectionHandler openConnectionHandler = new OpenConnectionHandler(controllerMock);
 
     @Test
     public void testControllerIsUsed(){
 
         //GIVEN
         final Request requestMock = mock(Request.class);
-        final boolean desiredRequestState = new Random().nextBoolean();
-        when(requestMock.body()).thenReturn(String.valueOf(desiredRequestState));
+        when(requestMock.queryParams()).thenReturn(Collections.singleton("someKey"));
+        when(requestMock.queryParams("someKey")).thenReturn("someValue");
+
+        final Map<String, String> expectedMap = new HashMap<>();
+        expectedMap.put("someKey", "someValue");
 
         final Response responseMock = mock(Response.class);
 
-
         //WHEN
-        setTransactionStateHandler.handle(requestMock, responseMock);
+        openConnectionHandler.handle(requestMock, responseMock);
 
         //THEN
-        verify(controllerMock).setTransactionState(desiredRequestState);
+        verify(controllerMock).openConnection(expectedMap);
     }
+
 }

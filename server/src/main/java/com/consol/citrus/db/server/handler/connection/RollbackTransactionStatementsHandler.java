@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.connection;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
 import spark.Request;
 import spark.Response;
 
-public class CommitTransactionStatementsHandler extends AbstractJdbcRequestHandler {
+public class RollbackTransactionStatementsHandler extends AbstractJdbcRequestHandler {
 
 
-    public CommitTransactionStatementsHandler(final JdbcController controller) {
+    public RollbackTransactionStatementsHandler(final JdbcController controller) {
         super(controller);
     }
 
     @Override
     public Object handle(final Request request, final Response response) {
-        controller.commitStatements();
+        controller.rollbackStatements();
         return "";
     }
 }

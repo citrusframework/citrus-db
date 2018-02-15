@@ -14,20 +14,24 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.connection;
 
 import com.consol.citrus.db.server.controller.JdbcController;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
 
+import java.util.Random;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
-public class CloseConnectionHandlerTest {
+public class GetTransactionStateHandlerTest {
 
     private final JdbcController controllerMock = mock(JdbcController.class);
-    private final CloseConnectionHandler closeConnectionHandler = new CloseConnectionHandler(controllerMock);
+    private final GetTransactionStateHandler transactionStateHandler = new GetTransactionStateHandler(controllerMock);
 
     @Test
     public void testControllerIsUsed(){
@@ -36,11 +40,15 @@ public class CloseConnectionHandlerTest {
         final Request requestMock = mock(Request.class);
         final Response responseMock = mock(Response.class);
 
+        final boolean expectedTransactionState = new Random().nextBoolean();
+        when(controllerMock.getTransactionState()).thenReturn(expectedTransactionState);
+
         //WHEN
-        closeConnectionHandler.handle(requestMock, responseMock);
+        final boolean transactionState = (Boolean) transactionStateHandler.handle(requestMock, responseMock);
 
         //THEN
-        verify(controllerMock).closeConnection();
+        verify(controllerMock).getTransactionState();
+        assertEquals(transactionState, expectedTransactionState);
     }
 
 }

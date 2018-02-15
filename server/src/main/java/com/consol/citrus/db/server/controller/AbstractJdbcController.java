@@ -139,4 +139,9 @@ public abstract class AbstractJdbcController implements JdbcController {
     public void rollbackStatements() {
         log.info("ROLLBACK STATEMENTS");
     }
+
+    @Override
+    public void createCallableStatement(final String sql){
+        log.info("CREATE CALLABLE STATEMENT: " + sql);
+    }
 }

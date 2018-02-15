@@ -21,6 +21,7 @@ import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.rules.CloseConnectionRule;
 import com.consol.citrus.db.server.rules.CloseStatementRule;
 import com.consol.citrus.db.server.rules.CommitTransactionRule;
+import com.consol.citrus.db.server.rules.CreateCallableStatementRule;
 import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
 import com.consol.citrus.db.server.rules.CreateStatementRule;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
@@ -51,6 +52,7 @@ public class RuleBasedController extends AbstractJdbcController{
     private List<StartTransactionRule> startTransactionRule = new ArrayList<>();
     private List<CommitTransactionRule> commitTransactionRule = new ArrayList<>();
     private List<RollbackTransactionRule> rollbackTransactionRule = new ArrayList<>();
+    private List<CreateCallableStatementRule> createCallableStatementRules = new ArrayList<>();
 
     public RuleBasedController() {
         delegateJdbcController = new SimpleJdbcController();
@@ -167,6 +169,17 @@ public class RuleBasedController extends AbstractJdbcController{
                 .applyOn(null);
 
         delegateJdbcController.rollbackStatements();
+    }
+
+    @Override
+    public void createCallableStatement(String sql) {
+        createCallableStatementRules.stream()
+                .filter(rule -> rule.matches(sql))
+                .findFirst()
+                .orElse(new CreateCallableStatementRule())
+                .applyOn(null);
+
+        delegateJdbcController.createStatement();
     }
 
     public RuleBasedController add(final Rule rule) {

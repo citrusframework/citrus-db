@@ -103,4 +103,9 @@ public interface JdbcController {
      * Rollback all statements since the current transaction has been started
      */
     void rollbackStatements();
+
+    /**
+     * Creates a callable statement with the given sql
+     */
+    void createCallableStatement(String sql);
 }

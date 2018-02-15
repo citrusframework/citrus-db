@@ -170,9 +170,9 @@ public class JdbcServer {
     }
 
     private void registerCallableStatementEndpoint() {
-        service.get("/callableStatement", new CreateCallableStatementHandler(controller));
+        service.post("/callableStatement", new CreateCallableStatementHandler(controller));
         service.delete("/callableStatement", new CloseCallableStatementHandler(controller));
-        service.post("/callableStatement", new ExecuteCallableStatementHandler(controller));
+        service.put("/callableStatement", new ExecuteCallableStatementHandler(controller));
     }
 
     /**

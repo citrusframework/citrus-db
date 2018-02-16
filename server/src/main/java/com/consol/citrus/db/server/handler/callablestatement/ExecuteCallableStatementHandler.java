@@ -29,6 +29,7 @@ public class ExecuteCallableStatementHandler extends AbstractJdbcRequestHandler 
 
     @Override
     public Object handle(final Request request, final Response response) throws Exception {
-        return null;
+        controller.executeStatement(request.body());
+        return "";
     }
 }

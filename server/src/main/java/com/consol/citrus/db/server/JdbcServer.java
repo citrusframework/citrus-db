@@ -21,9 +21,6 @@ import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.controller.RuleBasedController;
 import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
-import com.consol.citrus.db.server.handler.callablestatement.CloseCallableStatementHandler;
-import com.consol.citrus.db.server.handler.callablestatement.CreateCallableStatementHandler;
-import com.consol.citrus.db.server.handler.callablestatement.ExecuteCallableStatementHandler;
 import com.consol.citrus.db.server.handler.connection.CloseConnectionHandler;
 import com.consol.citrus.db.server.handler.connection.CommitTransactionStatementsHandler;
 import com.consol.citrus.db.server.handler.connection.GetTransactionStateHandler;
@@ -31,6 +28,7 @@ import com.consol.citrus.db.server.handler.connection.OpenConnectionHandler;
 import com.consol.citrus.db.server.handler.connection.RollbackTransactionStatementsHandler;
 import com.consol.citrus.db.server.handler.connection.SetTransactionStateHandler;
 import com.consol.citrus.db.server.handler.statement.CloseStatementHandler;
+import com.consol.citrus.db.server.handler.statement.CreateCallableStatementHandler;
 import com.consol.citrus.db.server.handler.statement.CreatePreparedStatementHandler;
 import com.consol.citrus.db.server.handler.statement.CreateStatementHandler;
 import com.consol.citrus.db.server.handler.statement.ExecuteJsonQueryHandler;
@@ -137,9 +135,13 @@ public class JdbcServer {
     private void registerEndpoints() {
         registerConnectionEndpoint();
         registerStatementEndpoint();
+        registerPreparedStatementEndpoint();
         registerCallableStatementEndpoint();
     }
 
+    /**
+     * Handles all operations concerning connection operations
+     */
     private void registerConnectionEndpoint() {
         service.get("/connection", new OpenConnectionHandler(controller));
         service.delete("/connection", new CloseConnectionHandler(controller));
@@ -150,29 +152,39 @@ public class JdbcServer {
         service.delete("/connection/transaction", new RollbackTransactionStatementsHandler(controller));
     }
 
+    /**
+     * Handles all operations that are valid for all kinds of statements
+     */
     private void registerStatementEndpoint() {
         service.get("/statement", new CreateStatementHandler(controller));
-        service.post("/statement", new CreatePreparedStatementHandler(controller));
         service.delete("/statement", new CloseStatementHandler(controller));
 
-        service.post("/statement/query",
+        service.post("/query",
                 "application/json",
                 new ExecuteJsonQueryHandler(controller),
                 new JsonResponseTransformer());
-        service.post("/statement/query",
+        service.post("/query",
                 "application/xml",
                 new ExecuteXmlQueryHandler(controller),
                 new XmlResponseTransformer());
 
-        service.post("/statement/execute", new ExecuteStatementHandler(controller));
+        service.post("/execute", new ExecuteStatementHandler(controller));
 
-        service.post("/statement/update", new ExecuteUpdateHandler(controller));
+        service.post("/update", new ExecuteUpdateHandler(controller));
     }
 
+    /**
+     * Handles all operations that are prepared statement specific
+     */
+    private void registerPreparedStatementEndpoint(){
+        service.post("/preparedStatement", new CreatePreparedStatementHandler(controller));
+    }
+
+    /**
+     * Handles all operations that are callable statement specific
+     */
     private void registerCallableStatementEndpoint() {
         service.post("/callableStatement", new CreateCallableStatementHandler(controller));
-        service.delete("/callableStatement", new CloseCallableStatementHandler(controller));
-        service.put("/callableStatement", new ExecuteCallableStatementHandler(controller));
     }
 
     /**

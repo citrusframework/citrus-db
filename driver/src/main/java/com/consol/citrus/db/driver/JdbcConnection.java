@@ -234,7 +234,7 @@ public class JdbcConnection implements Connection {
     public PreparedStatement prepareStatement(final String sql) throws SQLException {
         HttpResponse response = null;
         try {
-            response = httpClient.execute(RequestBuilder.post(serverUrl + "/statement")
+            response = httpClient.execute(RequestBuilder.post(serverUrl + "/preparedStatement")
                     .setEntity(new StringEntity(sql))
                     .build());
 

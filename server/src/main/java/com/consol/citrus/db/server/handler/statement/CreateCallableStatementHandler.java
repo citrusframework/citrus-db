@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler.callablestatement;
+package com.consol.citrus.db.server.handler.statement;
 
 import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;

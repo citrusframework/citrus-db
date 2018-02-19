@@ -65,7 +65,7 @@ public interface JdbcController {
      * @param sql The statement to execute
      * @throws JdbcServerException In case that the statement could not be executed
      */
-    void executeStatement(String sql) throws JdbcServerException;
+    DataSet executeStatement(String sql) throws JdbcServerException;
 
     /**
      * Execute update statement.

@@ -17,7 +17,7 @@
 package com.consol.citrus.db.server.handler;
 
 import com.consol.citrus.db.server.controller.JdbcController;
-import com.consol.citrus.db.server.handler.statement.ExecuteJsonQueryHandler;
+import com.consol.citrus.db.server.handler.statement.ExecuteQueryHandler;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
@@ -28,10 +28,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class ExecuteJsonQueryHandlerTest {
+public class ExecuteQueryHandlerTest {
 
     private final JdbcController controllerMock = mock(JdbcController.class);
-    private final ExecuteJsonQueryHandler executeJsonQueryHandler = new ExecuteJsonQueryHandler(controllerMock);
+    private final ExecuteQueryHandler executeQueryHandler = new ExecuteQueryHandler(controllerMock);
 
     @Test
     public void testControllerIsUsed(){
@@ -45,7 +45,7 @@ public class ExecuteJsonQueryHandlerTest {
         final String expectedResponseType = "application/json";
 
         //WHEN
-        executeJsonQueryHandler.handle(requestMock, responseMock);
+        executeQueryHandler.handle(requestMock, responseMock);
 
         //THEN
         verify(controllerMock).executeQuery(body);

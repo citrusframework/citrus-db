@@ -31,12 +31,10 @@ import com.consol.citrus.db.server.handler.statement.CloseStatementHandler;
 import com.consol.citrus.db.server.handler.statement.CreateCallableStatementHandler;
 import com.consol.citrus.db.server.handler.statement.CreatePreparedStatementHandler;
 import com.consol.citrus.db.server.handler.statement.CreateStatementHandler;
-import com.consol.citrus.db.server.handler.statement.ExecuteJsonQueryHandler;
+import com.consol.citrus.db.server.handler.statement.ExecuteQueryHandler;
 import com.consol.citrus.db.server.handler.statement.ExecuteStatementHandler;
 import com.consol.citrus.db.server.handler.statement.ExecuteUpdateHandler;
-import com.consol.citrus.db.server.handler.statement.ExecuteXmlQueryHandler;
 import com.consol.citrus.db.server.transformer.JsonResponseTransformer;
-import com.consol.citrus.db.server.transformer.XmlResponseTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Service;
@@ -160,15 +158,12 @@ public class JdbcServer {
         service.delete("/statement", new CloseStatementHandler(controller));
 
         service.post("/query",
-                "application/json",
-                new ExecuteJsonQueryHandler(controller),
+                new ExecuteQueryHandler(controller),
                 new JsonResponseTransformer());
-        service.post("/query",
-                "application/xml",
-                new ExecuteXmlQueryHandler(controller),
-                new XmlResponseTransformer());
 
-        service.post("/execute", new ExecuteStatementHandler(controller));
+        service.post("/execute",
+                new ExecuteStatementHandler(controller),
+                new JsonResponseTransformer());
 
         service.post("/update", new ExecuteUpdateHandler(controller));
     }

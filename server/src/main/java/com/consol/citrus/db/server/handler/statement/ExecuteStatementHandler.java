@@ -30,7 +30,7 @@ public class ExecuteStatementHandler extends AbstractJdbcRequestHandler {
 
     @Override
     public Object handle(final Request request, final Response response) {
-        controller.executeStatement(request.body());
-        return "";
+        response.type("application/json");
+        return controller.executeStatement(request.body());
     }
 }

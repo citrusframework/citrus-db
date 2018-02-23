@@ -172,7 +172,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    public void createCallableStatement(String sql) {
+    public void createCallableStatement(final String sql) {
         createCallableStatementRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
@@ -203,6 +203,8 @@ public class RuleBasedController extends AbstractJdbcController{
             add((CommitTransactionRule) rule);
         } else if (rule instanceof RollbackTransactionRule) {
             add((RollbackTransactionRule) rule);
+        } else if (rule instanceof CreateCallableStatementRule) {
+            add((CreateCallableStatementRule) rule);
         }
 
         return this;
@@ -246,6 +248,10 @@ public class RuleBasedController extends AbstractJdbcController{
 
     private void add(final RollbackTransactionRule rule) {
         this.rollbackTransactionRule.add(rule);
+    }
+
+    private void add(final CreateCallableStatementRule rule) {
+        this.createCallableStatementRules.add(rule);
     }
 
 }

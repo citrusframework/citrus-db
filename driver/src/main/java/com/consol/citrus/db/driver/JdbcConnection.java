@@ -19,13 +19,28 @@ package com.consol.citrus.db.driver;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.CallableStatement;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.NClob;
+import java.sql.PreparedStatement;
+import java.sql.SQLClientInfoException;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Savepoint;
+import java.sql.Statement;
+import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
@@ -41,10 +56,10 @@ public class JdbcConnection implements Connection {
 
     /**
      * Default constructor using remote connection reference.
-     * @param httpClient
-     * @param serverUrl
+     * @param httpClient The http client to use for the db communication
+     * @param serverUrl Thr url of the server
      */
-    public JdbcConnection(HttpClient httpClient, String serverUrl) {
+    JdbcConnection(final HttpClient httpClient, final String serverUrl) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
     }
@@ -61,7 +76,7 @@ public class JdbcConnection implements Connection {
             }
 
             return new JdbcStatement(httpClient, serverUrl);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -78,7 +93,7 @@ public class JdbcConnection implements Connection {
             if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
                 throw new SQLException("Failed to close connection: " + EntityUtils.toString(response.getEntity()));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -86,25 +101,87 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public String nativeSQL(String sql) throws SQLException {
+    public String nativeSQL(final String sql) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
+    public void setAutoCommit(final boolean autoCommit) throws SQLException {
+        HttpResponse response = null;
+        try {
+            final HttpUriRequest request = RequestBuilder
+                    .post(serverUrl + "/connection/transaction")
+                    .setEntity(new StringEntity(String.valueOf(!autoCommit)))
+                    .build();
+            response = httpClient.execute(request);
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to transmit auto commit value: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override
     public boolean getAutoCommit() throws SQLException {
-        return true;
+        HttpResponse response = null;
+        try {
+            response = httpClient.execute(
+                    RequestBuilder.get(serverUrl + "/connection/transaction")
+                            .build());
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to get auto commit value: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+            return !Boolean.valueOf(EntityUtils.toString(response.getEntity()));
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override
     public void commit() throws SQLException {
+        HttpResponse response = null;
+        try {
+            response = httpClient.execute(
+                    RequestBuilder.put(serverUrl + "/connection/transaction")
+                            .build());
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to commit statements: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override
     public void rollback() throws SQLException {
+        HttpResponse response = null;
+        try {
+            response = httpClient.execute(
+                    RequestBuilder.delete(serverUrl + "/connection/transaction")
+                            .build());
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to rollback database: " +
+                        EntityUtils.toString(response.getEntity()));
+            }
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override
@@ -118,7 +195,7 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public void setReadOnly(boolean readOnly) throws SQLException {
+    public void setReadOnly(final boolean readOnly) throws SQLException {
     }
 
     @Override
@@ -127,7 +204,7 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public void setCatalog(String catalog) throws SQLException {
+    public void setCatalog(final String catalog) throws SQLException {
     }
 
     @Override
@@ -136,7 +213,7 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public void setTransactionIsolation(int level) throws SQLException {
+    public void setTransactionIsolation(final int level) throws SQLException {
     }
 
     @Override
@@ -154,7 +231,7 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql) throws SQLException {
         HttpResponse response = null;
         try {
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/statement")
@@ -166,7 +243,7 @@ public class JdbcConnection implements Connection {
             }
 
             return new JdbcPreparedStatement(httpClient, sql, serverUrl);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -174,27 +251,27 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public CallableStatement prepareCall(String sql) throws SQLException {
+    public CallableStatement prepareCall(final String sql) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql,int resultSetType,int resultSetConcurrency) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
         return prepareStatement(sql);
     }
 
     @Override
-    public CallableStatement prepareCall(String sql,int resultSetType,int resultSetConcurrency) throws SQLException {
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public Statement createStatement(int resultSetType,int resultSetConcurrency) throws SQLException {
+    public Statement createStatement(final int resultSetType, final int resultSetConcurrency) throws SQLException {
         return createStatement();
     }
 
     @Override
-    public void setTypeMap(Map<String,Class<?>> map) throws SQLException {
+    public void setTypeMap(final Map<String,Class<?>> map) throws SQLException {
     }
 
     @Override
@@ -203,7 +280,7 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public void setHoldability(int holdability) throws SQLException {
+    public void setHoldability(final int holdability) throws SQLException {
     }
 
     @Override
@@ -217,45 +294,45 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public Savepoint setSavepoint(String name) throws SQLException {
+    public Savepoint setSavepoint(final String name) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void rollback(Savepoint savepoint) throws SQLException {
+    public void rollback(final Savepoint savepoint) throws SQLException {
     }
 
     @Override
-    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+    public void releaseSavepoint(final Savepoint savepoint) throws SQLException {
     }
 
     @Override
-    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    public Statement createStatement(final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
         return createStatement();
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
         return prepareStatement(sql);
     }
 
     @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int autoGeneratedKeys) throws SQLException {
         return prepareStatement(sql);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final int[] columnIndexes) throws SQLException {
         return prepareStatement(sql);
     }
 
     @Override
-    public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
+    public PreparedStatement prepareStatement(final String sql, final String[] columnNames) throws SQLException {
         return prepareStatement(sql);
     }
 
@@ -280,20 +357,20 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public boolean isValid(int timeout) throws SQLException {
+    public boolean isValid(final int timeout) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setClientInfo(String name, String value) throws SQLClientInfoException {
+    public void setClientInfo(final String name, final String value) throws SQLClientInfoException {
     }
 
     @Override
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+    public void setClientInfo(final Properties properties) throws SQLClientInfoException {
     }
 
     @Override
-    public String getClientInfo(String name) throws SQLException {
+    public String getClientInfo(final String name) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -303,17 +380,17 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+    public Array createArrayOf(final String typeName, final Object[] elements) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+    public Struct createStruct(final String typeName, final Object[] attributes) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setSchema(String schema) throws SQLException {
+    public void setSchema(final String schema) throws SQLException {
     }
 
     @Override
@@ -322,11 +399,11 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public void abort(Executor executor) throws SQLException {
+    public void abort(final Executor executor) throws SQLException {
     }
 
     @Override
-    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+    public void setNetworkTimeout(final Executor executor, final int milliseconds) throws SQLException {
     }
 
     @Override
@@ -335,12 +412,12 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
+    public <T> T unwrap(final Class<T> iface) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         throw new SQLException("Not Supported");
     }
 }

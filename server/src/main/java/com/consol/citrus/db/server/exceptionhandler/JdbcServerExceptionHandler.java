@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.rules;
+package com.consol.citrus.db.server.exceptionhandler;
 
-/**
- * @author Christoph Deppisch
- */
-public interface RuleMatcher<P> {
+import com.consol.citrus.db.server.JdbcServerException;
+import spark.ExceptionHandler;
+import spark.Request;
+import spark.Response;
 
-    boolean match(P predicate);
+public class JdbcServerExceptionHandler implements ExceptionHandler<JdbcServerException> {
 
-    /**
-     * Rule matcher that matches all predicates.
-     * @return
-     */
-    static <T> RuleMatcher<T> matchAll() {
-        return (any) -> true;
+    @Override
+    public void handle(final JdbcServerException exception, final Request request, final Response response) {
+        response.status(500);
+        response.body(exception.getMessage());
     }
 }

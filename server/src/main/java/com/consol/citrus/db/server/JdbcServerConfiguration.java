@@ -38,7 +38,7 @@ public class JdbcServerConfiguration {
         return host;
     }
 
-    public void setHost(String host) {
+    public void setHost(final String host) {
         this.host = host;
     }
 
@@ -46,14 +46,14 @@ public class JdbcServerConfiguration {
         return port;
     }
 
-    public void setPort(int port) {
+    public void setPort(final int port) {
         this.port = port;
     }
 
     /**
      * Gets the databaseName.
      *
-     * @return
+     * @return The name of the database
      */
     public String getDatabaseName() {
         return databaseName;
@@ -62,16 +62,16 @@ public class JdbcServerConfiguration {
     /**
      * Sets the databaseName.
      *
-     * @param databaseName
+     * @param databaseName The database name to set
      */
-    public void setDatabaseName(String databaseName) {
+    public void setDatabaseName(final String databaseName) {
         this.databaseName = databaseName;
     }
 
     /**
      * Gets the maxConnections.
      *
-     * @return
+     * @return the amount of max connections
      */
     public int getMaxConnections() {
         return maxConnections;
@@ -80,16 +80,16 @@ public class JdbcServerConfiguration {
     /**
      * Sets the maxConnections.
      *
-     * @param maxConnections
+     * @param maxConnections The amount of max connections
      */
-    public void setMaxConnections(int maxConnections) {
+    public void setMaxConnections(final int maxConnections) {
         this.maxConnections = maxConnections;
     }
 
     /**
      * Gets the timeToLive.
      *
-     * @return
+     * @return The time to live for the server
      */
     public long getTimeToLive() {
         return timeToLive;
@@ -98,9 +98,9 @@ public class JdbcServerConfiguration {
     /**
      * Sets the timeToLive.
      *
-     * @param timeToLive
+     * @param timeToLive The time to live for the server
      */
-    public void setTimeToLive(long timeToLive) {
+    public void setTimeToLive(final long timeToLive) {
         this.timeToLive = timeToLive;
     }
 }

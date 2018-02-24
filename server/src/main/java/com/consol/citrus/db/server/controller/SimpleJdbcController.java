@@ -30,31 +30,31 @@ public class SimpleJdbcController extends AbstractJdbcController {
     private final DataSetProducer dataSetProducer;
 
     /**
-     * Default constructor using default dataset producer.
+     * Default constructor using default dataSet producer.
      */
     public SimpleJdbcController() {
         this(DataSet::new);
     }
 
     /**
-     * Constructor initializes dataset producer.
-     * @param dataSetProducer
+     * Constructor initializes dataSet producer.
+     * @param dataSetProducer The producer to create dataSets
      */
-    public SimpleJdbcController(DataSetProducer dataSetProducer) {
+    public SimpleJdbcController(final DataSetProducer dataSetProducer) {
         this.dataSetProducer = dataSetProducer;
     }
 
     @Override
-    protected DataSet handleQuery(String sql) throws JdbcServerException {
+    protected DataSet handleQuery(final String sql) throws JdbcServerException {
         try {
             return dataSetProducer.produce();
-        } catch (SQLException e) {
-            throw new JdbcServerException("Failed to produce datase", e);
+        } catch (final SQLException e) {
+            throw new JdbcServerException("Failed to produce dataSet", e);
         }
     }
 
     @Override
-    protected int handleUpdate(String sql) throws JdbcServerException {
+    protected int handleUpdate(final String sql) throws JdbcServerException {
         return 0;
     }
 }

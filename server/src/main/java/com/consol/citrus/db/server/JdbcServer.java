@@ -16,18 +16,35 @@
 
 package com.consol.citrus.db.server;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.json.JsonDataSetWriter;
-import com.consol.citrus.db.driver.xml.XmlDataSetWriter;
-import com.consol.citrus.db.server.controller.*;
+import com.consol.citrus.db.server.builder.RuleBasedControllerBuilder;
+import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.controller.RuleBasedController;
+import com.consol.citrus.db.server.controller.SimpleJdbcController;
+import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
+import com.consol.citrus.db.server.handler.CloseConnectionHandler;
+import com.consol.citrus.db.server.handler.CloseStatementHandler;
+import com.consol.citrus.db.server.handler.CommitTransactionStatementsHandler;
+import com.consol.citrus.db.server.handler.CreatePreparedStatementHandler;
+import com.consol.citrus.db.server.handler.CreateStatementHandler;
+import com.consol.citrus.db.server.handler.ExecuteJsonQueryHandler;
+import com.consol.citrus.db.server.handler.ExecuteStatementHandler;
+import com.consol.citrus.db.server.handler.ExecuteUpdateHandler;
+import com.consol.citrus.db.server.handler.ExecuteXmlQueryHandler;
+import com.consol.citrus.db.server.handler.GetTransactionStateHandler;
+import com.consol.citrus.db.server.handler.OpenConnectionHandler;
+import com.consol.citrus.db.server.handler.RollbackTransactionStatementsHandler;
+import com.consol.citrus.db.server.handler.SetTransactionStateHandler;
+import com.consol.citrus.db.server.transformer.JsonResponseTransformer;
+import com.consol.citrus.db.server.transformer.XmlResponseTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Filter;
-import spark.Spark;
+import spark.Service;
 
-import java.util.concurrent.*;
-
-import static spark.Spark.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Christoph Deppisch
@@ -43,6 +60,9 @@ public class JdbcServer {
     /** Controller handling requests */
     private JdbcController controller;
 
+    /** The spark service */
+    private Service service;
+
     /**
      * Default constructor initializing controller and configuration.
      */
@@ -51,24 +71,24 @@ public class JdbcServer {
     }
 
     /**
-     * Default constructor using controller and configuration.
-     * @param configuration
+     * Default constructor using a given configuration.
+     * @param configuration The configuration of the jdbc server
      */
-    public JdbcServer(JdbcServerConfiguration configuration) {
+    public JdbcServer(final JdbcServerConfiguration configuration) {
         this(new SimpleJdbcController(), configuration);
     }
 
     /**
      * Default constructor using controller and configuration.
-     * @param controller
-     * @param configuration
+     * @param controller The controller to use for request handling
+     * @param configuration The configuration of the jdbc server
      */
-    public JdbcServer(JdbcController controller, JdbcServerConfiguration configuration) {
+    public JdbcServer(final JdbcController controller, final JdbcServerConfiguration configuration) {
         this.controller = controller;
         this.configuration = configuration;
     }
 
-    public JdbcServer(String[] args) throws JdbcServerException {
+    public JdbcServer(final String[] args) throws JdbcServerException {
         this();
         new JdbcServerOptions().apply(configuration, args);
     }
@@ -83,10 +103,10 @@ public class JdbcServer {
 
     /**
      * Main method
-     * @param args
+     * @param args The command line arguments of the java call
      */
-    public static void main(String[] args) throws JdbcServerException {
-        JdbcServer server = new JdbcServer(args);
+    public static void main(final String[] args) throws JdbcServerException {
+        final JdbcServer server = new JdbcServer(args);
 
         if (server.configuration.getTimeToLive() > 0) {
             CompletableFuture.runAsync(() -> {
@@ -105,62 +125,61 @@ public class JdbcServer {
      * Start server instance and listen for incoming requests.
      */
     public void start() {
-        port(configuration.getPort());
+        service = Service.ignite();
 
-        before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
+        service.port(configuration.getPort());
 
-        get("/connection", (req, res) -> {
-            controller.openConnection(req.params());
-            return "";
-        });
+        service.before((Filter) (request, response) -> log.info(request.requestMethod() + " " + request.url()));
 
-        delete("/connection", (req, res) -> {
-            controller.closeConnection();
-            return "";
-        });
+        service.get("/connection", new OpenConnectionHandler(controller));
 
-        get("/statement", (req, res) -> {
-            controller.createStatement();
-            return "";
-        });
+        service.delete("/connection", new CloseConnectionHandler(controller));
 
-        delete("/statement", (req, res) -> {
-            controller.closeStatement();
-            return "";
-        });
+        service.get("/connection/transaction", new GetTransactionStateHandler(controller));
 
-        post("/statement", (req, res) -> {
-            controller.createPreparedStatement(req.body());
-            return "";
-        });
+        service.post("/connection/transaction", new SetTransactionStateHandler(controller));
 
-        post("/query", "application/json", (req, res) -> {
-            res.type("application/json");
-            return controller.executeQuery(req.body());
-        }, model -> new JsonDataSetWriter().write((DataSet) model));
+        service.put("/connection/transaction", new CommitTransactionStatementsHandler(controller));
 
-        post("/query", "application/xml", (req, res) -> {
-            res.type("application/xml");
-            return controller.executeQuery(req.body());
-        }, model -> new XmlDataSetWriter().write((DataSet) model));
+        service.delete("/connection/transaction", new RollbackTransactionStatementsHandler(controller));
 
-        post("/execute", (req, res) -> {
-            controller.execute(req.body());
-            return "";
-        });
+        service.get("/statement", new CreateStatementHandler(controller));
 
-        post("/update", (req, res) -> controller.executeUpdate(req.body()));
+        service.delete("/statement", new CloseStatementHandler(controller));
 
-        exception(JdbcServerException.class, (exception, request, response) -> {
-            response.status(500);
-            response.body(exception.getMessage());
-        });
+        service.post("/statement", new CreatePreparedStatementHandler(controller));
+
+        service.post("/query",
+                "application/json",
+                new ExecuteJsonQueryHandler(controller),
+                new JsonResponseTransformer());
+
+        service.post("/query",
+                "application/xml",
+                new ExecuteXmlQueryHandler(controller),
+                new XmlResponseTransformer());
+
+        service.post("/execute", new ExecuteStatementHandler(controller));
+
+        service.post("/update", new ExecuteUpdateHandler(controller));
+
+        service.exception(JdbcServerException.class, new JdbcServerExceptionHandler());
     }
 
     /**
      * Stops the server instance.
      */
     public void stop() {
-        Spark.stop();
+        if(service != null){
+            service.stop();
+        }
+    }
+
+    /**
+     * Starts the server and awaits its initialization
+     */
+    public void startAndAwaitInitialization(){
+        start();
+        service.awaitInitialization();
     }
 }

@@ -19,7 +19,9 @@ package com.consol.citrus.db.driver.dataset;
 import com.consol.citrus.db.driver.data.Row;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -88,5 +90,15 @@ public class DataSet {
         if (closed) {
             throw new SQLException("Result set already closed");
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DataSet dataSet = (DataSet) o;
+        return closed == dataSet.closed &&
+                Objects.equals(rows, dataSet.rows) &&
+                Objects.equals(cursor.get(), dataSet.cursor.get());
     }
 }

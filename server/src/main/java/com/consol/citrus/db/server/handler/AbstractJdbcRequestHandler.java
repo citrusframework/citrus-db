@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.rules;
+package com.consol.citrus.db.server.handler;
 
-import com.consol.citrus.db.server.JdbcServerException;
+import com.consol.citrus.db.server.controller.JdbcController;
+import spark.Route;
 
-/**
- * @author Christoph Deppisch
- */
-public interface RuleExecutor<P, R> {
+abstract class AbstractJdbcRequestHandler implements Route {
 
-    R then(P predicate) throws JdbcServerException;
+    JdbcController controller;
+
+    AbstractJdbcRequestHandler(final JdbcController controller){
+        this.controller = controller;
+    }
 }

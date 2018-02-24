@@ -27,11 +27,11 @@ public class ExecuteQueryRule extends Rule<String, DataSet, ExecuteQueryRule> {
         super();
     }
 
-    public ExecuteQueryRule(RuleExecutor<String, DataSet> ruleExecutor) {
-        super(ruleExecutor);
+    public ExecuteQueryRule(final Mapping<String, DataSet> mapping) {
+        super(mapping);
     }
 
-    public ExecuteQueryRule(RuleMatcher<String> ruleMatcher, RuleExecutor<String, DataSet> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public ExecuteQueryRule(final Precondition<String> precondition, final Mapping<String, DataSet> mapping) {
+        super(precondition, mapping);
     }
 }

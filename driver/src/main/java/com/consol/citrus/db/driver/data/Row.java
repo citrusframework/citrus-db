@@ -16,7 +16,11 @@
 
 package com.consol.citrus.db.driver.data;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Christoph Deppisch
@@ -68,5 +72,26 @@ public class Row {
      */
     public void setValues(Map<String, String> values) {
         this.values = values;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Row row = (Row) o;
+        return Objects.equals(values, row.values);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(values);
+    }
+
+    @Override
+    public String toString() {
+        return "Row{" +
+                "values=" + values +
+                '}';
     }
 }

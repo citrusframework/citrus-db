@@ -25,11 +25,11 @@ public class CreateStatementRule extends Rule<Void, Boolean, CreateStatementRule
         super();
     }
 
-    public CreateStatementRule(RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public CreateStatementRule(Mapping<Void, Boolean> mapping) {
+        super(mapping);
     }
 
-    public CreateStatementRule(RuleMatcher<Void> ruleMatcher, RuleExecutor<Void, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public CreateStatementRule(Precondition<Void> precondition, Mapping<Void, Boolean> mapping) {
+        super(precondition, mapping);
     }
 }

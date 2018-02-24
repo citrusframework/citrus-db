@@ -25,11 +25,11 @@ public class CreatePreparedStatementRule extends Rule<String, Boolean, CreatePre
         super();
     }
 
-    public CreatePreparedStatementRule(RuleExecutor<String, Boolean> ruleExecutor) {
-        super(ruleExecutor);
+    public CreatePreparedStatementRule(Mapping<String, Boolean> mapping) {
+        super(mapping);
     }
 
-    public CreatePreparedStatementRule(RuleMatcher<String> ruleMatcher, RuleExecutor<String, Boolean> ruleExecutor) {
-        super(ruleMatcher, ruleExecutor);
+    public CreatePreparedStatementRule(Precondition<String> precondition, Mapping<String, Boolean> mapping) {
+        super(precondition, mapping);
     }
 }

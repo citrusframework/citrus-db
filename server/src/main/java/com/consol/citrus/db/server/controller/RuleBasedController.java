@@ -18,14 +18,28 @@ package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.server.JdbcServerException;
-import com.consol.citrus.db.server.rules.*;
+import com.consol.citrus.db.server.rules.CloseConnectionRule;
+import com.consol.citrus.db.server.rules.CloseStatementRule;
+import com.consol.citrus.db.server.rules.CommitTransactionRule;
+import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
+import com.consol.citrus.db.server.rules.CreateStatementRule;
+import com.consol.citrus.db.server.rules.ExecuteQueryRule;
+import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
+import com.consol.citrus.db.server.rules.OpenConnectionRule;
+import com.consol.citrus.db.server.rules.RollbackTransactionRule;
+import com.consol.citrus.db.server.rules.Rule;
+import com.consol.citrus.db.server.rules.StartTransactionRule;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Christoph Deppisch
  */
-public class RuleBasedController extends SimpleJdbcController {
+public class RuleBasedController extends AbstractJdbcController{
+
+    private final AbstractJdbcController delegateJdbcController;
 
     private List<OpenConnectionRule> openConnectionRules = new ArrayList<>();
     private List<CloseConnectionRule> closeConnectionRules = new ArrayList<>();
@@ -34,34 +48,46 @@ public class RuleBasedController extends SimpleJdbcController {
     private List<CloseStatementRule> closeStatementRules = new ArrayList<>();
     private List<ExecuteQueryRule> executeQueryRules = new ArrayList<>();
     private List<ExecuteUpdateRule> executeUpdateRules = new ArrayList<>();
+    private List<StartTransactionRule> startTransactionRule = new ArrayList<>();
+    private List<CommitTransactionRule> commitTransactionRule = new ArrayList<>();
+    private List<RollbackTransactionRule> rollbackTransactionRule = new ArrayList<>();
+
+    public RuleBasedController() {
+        delegateJdbcController = new SimpleJdbcController();
+    }
+
+    RuleBasedController(final AbstractJdbcController delegateJdbcController) {
+        this.delegateJdbcController = delegateJdbcController;
+    }
+
 
     @Override
-    protected DataSet handleQuery(String sql) throws JdbcServerException {
+    protected DataSet handleQuery(final String sql) throws JdbcServerException {
         return executeQueryRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
-                .orElse(new ExecuteQueryRule(super::handleQuery))
-                .apply(sql);
+                .orElse(new ExecuteQueryRule(delegateJdbcController::handleQuery))
+                .applyOn(sql);
     }
 
     @Override
-    protected int handleUpdate(String sql) throws JdbcServerException {
+    protected int handleUpdate(final String sql) throws JdbcServerException {
         return executeUpdateRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
-                .orElse(new ExecuteUpdateRule(super::handleUpdate))
-                .apply(sql);
+                .orElse(new ExecuteUpdateRule(delegateJdbcController::handleUpdate))
+                .applyOn(sql);
     }
 
     @Override
-    public void openConnection(Map<String, String> properties) throws JdbcServerException {
+    public void openConnection(final Map<String, String> properties) throws JdbcServerException {
         openConnectionRules.stream()
                 .filter(rule -> rule.matches(properties))
                 .findFirst()
                 .orElse(new OpenConnectionRule())
-                .apply(properties);
+                .applyOn(properties);
 
-        super.openConnection(properties);
+        delegateJdbcController.openConnection(properties);
     }
 
     @Override
@@ -70,9 +96,9 @@ public class RuleBasedController extends SimpleJdbcController {
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new CloseConnectionRule())
-                .apply(null);
+                .applyOn(null);
 
-        super.closeConnection();
+        delegateJdbcController.closeConnection();
     }
 
     @Override
@@ -81,20 +107,20 @@ public class RuleBasedController extends SimpleJdbcController {
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new CreateStatementRule())
-                .apply(null);
+                .applyOn(null);
 
-        super.createStatement();
+        delegateJdbcController.createStatement();
     }
 
     @Override
-    public void createPreparedStatement(String sql) throws JdbcServerException {
+    public void createPreparedStatement(final String sql) throws JdbcServerException {
         createPreparedStatementRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
                 .orElse(new CreatePreparedStatementRule())
-                .apply(null);
+                .applyOn(null);
 
-        super.createPreparedStatement(sql);
+        delegateJdbcController.createPreparedStatement(sql);
     }
 
     @Override
@@ -103,12 +129,47 @@ public class RuleBasedController extends SimpleJdbcController {
                 .filter(rule -> rule.matches(null))
                 .findFirst()
                 .orElse(new CloseStatementRule())
-                .apply(null);
+                .applyOn(null);
 
-        super.closeStatement();
+        delegateJdbcController.closeStatement();
     }
 
-    RuleBasedController add(Rule rule) {
+    @Override
+    public void setTransactionState(final boolean transactionState) {
+        if(transactionState){
+            startTransactionRule.stream()
+                    .filter(rule -> rule.matches(null))
+                    .findFirst()
+                    .orElse(new StartTransactionRule())
+                    .applyOn(null);
+        }
+
+        delegateJdbcController.setTransactionState(transactionState);
+    }
+
+    @Override
+    public void commitStatements() {
+        commitTransactionRule.stream()
+                .filter(rule -> rule.matches(null))
+                .findFirst()
+                .orElse(new CommitTransactionRule())
+                .applyOn(null);
+
+        delegateJdbcController.commitStatements();
+    }
+
+    @Override
+    public void rollbackStatements() {
+        rollbackTransactionRule.stream()
+                .filter(rule -> rule.matches(null))
+                .findFirst()
+                .orElse(new RollbackTransactionRule())
+                .applyOn(null);
+
+        delegateJdbcController.rollbackStatements();
+    }
+
+    public RuleBasedController add(final Rule rule) {
         if (rule instanceof OpenConnectionRule) {
             add((OpenConnectionRule) rule);
         } else if (rule instanceof CloseConnectionRule) {
@@ -123,36 +184,55 @@ public class RuleBasedController extends SimpleJdbcController {
             add((ExecuteQueryRule) rule);
         } else if (rule instanceof ExecuteUpdateRule) {
             add((ExecuteUpdateRule) rule);
+        } else if (rule instanceof StartTransactionRule) {
+            add((StartTransactionRule) rule);
+        } else if (rule instanceof CommitTransactionRule) {
+            add((CommitTransactionRule) rule);
+        } else if (rule instanceof RollbackTransactionRule) {
+            add((RollbackTransactionRule) rule);
         }
 
         return this;
     }
 
-    private void add(OpenConnectionRule rule) {
+    private void add(final OpenConnectionRule rule) {
         this.openConnectionRules.add(rule);
     }
 
-    private void add(CloseConnectionRule rule) {
+    private void add(final CloseConnectionRule rule) {
         this.closeConnectionRules.add(rule);
     }
 
-    private void add(CreateStatementRule rule) {
+    private void add(final CreateStatementRule rule) {
         this.createStatementRules.add(rule);
     }
 
-    private void add(CreatePreparedStatementRule rule) {
+    private void add(final CreatePreparedStatementRule rule) {
         this.createPreparedStatementRules.add(rule);
     }
 
-    private void add(CloseStatementRule rule) {
+    private void add(final CloseStatementRule rule) {
         this.closeStatementRules.add(rule);
     }
 
-    private void add(ExecuteQueryRule rule) {
+    private void add(final ExecuteQueryRule rule) {
         this.executeQueryRules.add(rule);
     }
 
-    private void add(ExecuteUpdateRule rule) {
+    private void add(final ExecuteUpdateRule rule) {
         this.executeUpdateRules.add(rule);
     }
+
+    private void add(final StartTransactionRule rule) {
+        this.startTransactionRule.add(rule);
+    }
+
+    private void add(final CommitTransactionRule rule) {
+        this.commitTransactionRule.add(rule);
+    }
+
+    private void add(final RollbackTransactionRule rule) {
+        this.rollbackTransactionRule.add(rule);
+    }
+
 }

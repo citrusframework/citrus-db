@@ -28,60 +28,79 @@ public interface JdbcController {
 
     /**
      * Get connection from db server.
-     * @param properties
-     * @return
-     * @throws JdbcServerException
+     * @param properties The properties to open the connection with
+     * @throws JdbcServerException In case that the connection could not be opened
      */
     void openConnection(Map<String, String> properties) throws JdbcServerException;
 
     /**
      * Create statement request.
-     * @return
-     * @throws JdbcServerException
+     * @throws JdbcServerException In case that the statement could not be created
      */
     void createStatement() throws JdbcServerException;
 
     /**
      * Close connection request.
-     * @throws JdbcServerException
+     * @throws JdbcServerException In case that the connection could not be closed
      */
     void closeConnection() throws JdbcServerException;
 
     /**
      * Create new prepared statement.
-     * @param sql
-     * @return
-     * @throws JdbcServerException
+     * @param sql The SQL statement to prepare
+     * @throws JdbcServerException In that the statement could not be created
      */
     void createPreparedStatement(String sql) throws JdbcServerException;
 
     /**
      * Execute query statement
-     * @param sql
-     * @throws JdbcServerException
-     * @return
+     * @param sql The query to execute
+     * @throws JdbcServerException In case there was an error processing the query
+     * @return The result of the query
      */
     DataSet executeQuery(String sql) throws JdbcServerException;
 
     /**
      * Execute statement.
-     * @param sql
-     * @return
-     * @throws JdbcServerException
+     * @param sql The statement to execute
+     * @throws JdbcServerException In case that the statement could not be executed
      */
     void execute(String sql) throws JdbcServerException;
 
     /**
      * Execute update statement.
-     * @param sql
-     * @return
-     * @throws JdbcServerException
+     * @param sql The update to execute
+     * @return The number of affected rows
+     * @throws JdbcServerException In case that the update could not be performed
      */
     int executeUpdate(String sql) throws JdbcServerException;
 
     /**
      * Close request.
-     * @throws JdbcServerException
+     * @throws JdbcServerException In case the statement could not be closed
      */
     void closeStatement() throws JdbcServerException;
+
+    /**
+     * Sets whether the server is in a transaction state or not.
+     * @param transactionState The boolean value whether the server is in transaction state.
+     */
+    void setTransactionState(boolean transactionState);
+
+
+    /**
+     * Gets the current transaction state of the server
+     * @return The transaction state of the server
+     */
+    boolean getTransactionState();
+
+    /**
+     * Commits all statements in the current transaction
+     */
+    void commitStatements();
+
+    /**
+     * Rollback all statements since the current transaction has been started
+     */
+    void rollbackStatements();
 }

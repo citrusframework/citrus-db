@@ -35,6 +35,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @SuppressWarnings("SqlNoDataSourceInspection")
@@ -61,7 +62,7 @@ public class JdbcStatementTest {
     }
 
     @Test
-    public void testExecuteQueryWithJsonResponse() throws Exception{
+    public void testExecuteQuery() throws Exception{
 
         //GIVEN
         final String responsePayload = "[{ \"foo\": \"bar\" }]";
@@ -80,31 +81,26 @@ public class JdbcStatementTest {
         assertEquals(resultSet.getString(1), "bar");
     }
 
-    @Test
-    public void testExecuteQueryWithXmlResponse() throws Exception{
-
-        //GIVEN
-        final String responsePayload = "<dataset><row><foo>bar</foo></row></dataset>";
-        when(statusLine.getStatusCode()).thenReturn(200);
-        when(httpEntity.getContentType())
-                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/xml"));
-        when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
-
-        //WHEN
-        final ResultSet resultSet = jdbcStatement.executeQuery("SELECT something FROM somewhere");
-
-        //THEN
-        assertTrue(resultSet.next());
-        assertEquals(resultSet.getMetaData().getColumnLabel(1), "foo");
-        assertEquals(resultSet.getString(1), "bar");
-    }
-
     @Test(expectedExceptions = SQLException.class)
     public void testExecuteQueryHttpCallFailed() throws Exception{
 
         //GIVEN
         when(statusLine.getStatusCode()).thenReturn(500);
+
+        //WHEN
+        jdbcStatement.executeQuery("query");
+
+        //THEN
+        //Exception is thrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testExecuteQueryWithUnknownContentType() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/unknown"));
 
         //WHEN
         jdbcStatement.executeQuery("query");
@@ -172,13 +168,18 @@ public class JdbcStatementTest {
     public void testExecute() throws Exception{
 
         //GIVEN
+        final String responsePayload = "[{ \"foo\": \"bar\" }]";
         when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
 
         //WHEN
-        final boolean isSuccessful = jdbcStatement.execute("statement");
+        final boolean isResultSet = jdbcStatement.execute("statement");
 
         //THEN
-        assertTrue(isSuccessful);
+        assertTrue(isResultSet);
     }
 
     @Test(expectedExceptions = SQLException.class)
@@ -192,6 +193,21 @@ public class JdbcStatementTest {
 
         //THEN
         //Exception is thrown
+    }
+
+    @Test
+    public void testExecuteWithContentTypeOtherThanJson() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/unknown"));
+
+        //WHEN
+        final boolean isResultSet = jdbcStatement.execute("statement");
+
+        //THEN
+        assertFalse(isResultSet);
     }
 
     @Test(expectedExceptions = SQLException.class)

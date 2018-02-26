@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.connection;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
 import spark.Request;
 import spark.Response;
 
-public class ExecuteJsonQueryHandler extends AbstractJdbcRequestHandler {
+public class SetTransactionStateHandler extends AbstractJdbcRequestHandler {
 
 
-    public ExecuteJsonQueryHandler(final JdbcController controller) {
+    public SetTransactionStateHandler(final JdbcController controller) {
         super(controller);
     }
 
     @Override
     public Object handle(final Request request, final Response response) {
-        response.type("application/json");
-        return controller.executeQuery(request.body());
+        controller.setTransactionState(Boolean.valueOf(request.body()));
+        return "";
     }
 }

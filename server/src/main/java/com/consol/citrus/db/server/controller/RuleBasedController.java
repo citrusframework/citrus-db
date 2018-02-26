@@ -21,6 +21,7 @@ import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.rules.CloseConnectionRule;
 import com.consol.citrus.db.server.rules.CloseStatementRule;
 import com.consol.citrus.db.server.rules.CommitTransactionRule;
+import com.consol.citrus.db.server.rules.CreateCallableStatementRule;
 import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
 import com.consol.citrus.db.server.rules.CreateStatementRule;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
@@ -51,6 +52,7 @@ public class RuleBasedController extends AbstractJdbcController{
     private List<StartTransactionRule> startTransactionRule = new ArrayList<>();
     private List<CommitTransactionRule> commitTransactionRule = new ArrayList<>();
     private List<RollbackTransactionRule> rollbackTransactionRule = new ArrayList<>();
+    private List<CreateCallableStatementRule> createCallableStatementRules = new ArrayList<>();
 
     public RuleBasedController() {
         delegateJdbcController = new SimpleJdbcController();
@@ -169,6 +171,17 @@ public class RuleBasedController extends AbstractJdbcController{
         delegateJdbcController.rollbackStatements();
     }
 
+    @Override
+    public void createCallableStatement(final String sql) {
+        createCallableStatementRules.stream()
+                .filter(rule -> rule.matches(sql))
+                .findFirst()
+                .orElse(new CreateCallableStatementRule())
+                .applyOn(null);
+
+        delegateJdbcController.createStatement();
+    }
+
     public RuleBasedController add(final Rule rule) {
         if (rule instanceof OpenConnectionRule) {
             add((OpenConnectionRule) rule);
@@ -190,6 +203,8 @@ public class RuleBasedController extends AbstractJdbcController{
             add((CommitTransactionRule) rule);
         } else if (rule instanceof RollbackTransactionRule) {
             add((RollbackTransactionRule) rule);
+        } else if (rule instanceof CreateCallableStatementRule) {
+            add((CreateCallableStatementRule) rule);
         }
 
         return this;
@@ -233,6 +248,10 @@ public class RuleBasedController extends AbstractJdbcController{
 
     private void add(final RollbackTransactionRule rule) {
         this.rollbackTransactionRule.add(rule);
+    }
+
+    private void add(final CreateCallableStatementRule rule) {
+        this.createCallableStatementRules.add(rule);
     }
 
 }

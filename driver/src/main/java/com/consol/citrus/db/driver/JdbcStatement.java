@@ -18,8 +18,6 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
-import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -27,7 +25,6 @@ import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -45,7 +42,7 @@ public class JdbcStatement implements Statement {
     protected final HttpClient httpClient;
     private final String serverUrl;
 
-    protected DataSet dataSet;
+    protected DataSet dataSet = new DataSet();
 
     /**
      * Default constructor using remote client reference.
@@ -62,19 +59,15 @@ public class JdbcStatement implements Statement {
         HttpResponse response = null;
         try {
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/query")
-                    .addHeader(new BasicHeader(HttpHeaders.ACCEPT, "application/json"))
                     .setEntity(new StringEntity(sqlQuery, ContentType.create("text/plain", "UTF-8")))
                     .build());
 
-            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()
+                    || !response.getEntity().getContentType().getValue().equals("application/json")) {
                 throw new SQLException("Failed to execute query: " + sqlQuery);
             }
 
-            if (response.getEntity().getContentType().getValue().equals("application/json")) {
-                dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
-            } else if (response.getEntity().getContentType().getValue().equals("application/xml")) {
-                dataSet = new XmlDataSetProducer(response.getEntity().getContent()).produce();
-            }
+            dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
 
             return new JdbcResultSet(dataSet);
         } catch (final IOException e) {
@@ -114,9 +107,15 @@ public class JdbcStatement implements Statement {
                     .build());
 
             if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
-                throw new SQLException("Failed to execute statement: " + EntityUtils.toString(response.getEntity()));
+                throw new SQLException("Failed to execute statement: " + sql);
             }
-            return true;
+
+            if (response.getEntity().getContentType().getValue().equals("application/json")) {
+                dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+                return true;
+            }
+
+            return false;
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -198,7 +197,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public java.sql.ResultSet getResultSet() throws SQLException {
-        throw new SQLException("Not Supported");
+        return new JdbcResultSet(dataSet);
     }
 
     @Override

@@ -94,10 +94,11 @@ public abstract class AbstractJdbcController implements JdbcController {
     }
 
     @Override
-    public void execute(final String sql) throws JdbcServerException {
+    public DataSet executeStatement(final String sql) throws JdbcServerException {
         log.info("EXECUTE STATEMENT: " + sql);
         handleUpdate(sql);
         log.info("STATEMENT EXECUTION SUCCESSFUL");
+        return null;
     }
 
     @Override
@@ -138,5 +139,10 @@ public abstract class AbstractJdbcController implements JdbcController {
     @Override
     public void rollbackStatements() {
         log.info("ROLLBACK STATEMENTS");
+    }
+
+    @Override
+    public void createCallableStatement(final String sql){
+        log.info("CREATE CALLABLE STATEMENT: " + sql);
     }
 }

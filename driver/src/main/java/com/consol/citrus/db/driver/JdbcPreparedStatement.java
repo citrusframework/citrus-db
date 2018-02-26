@@ -18,12 +18,28 @@ package com.consol.citrus.db.driver;
 
 import org.apache.http.client.HttpClient;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Date;
-import java.util.*;
+import java.sql.NClob;
+import java.sql.ParameterMetaData;
+import java.sql.PreparedStatement;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLXML;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -34,103 +50,103 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     private final String preparedStatement;
     private List<Object> parameters = new ArrayList<>();
 
-    public JdbcPreparedStatement(HttpClient httpClient, String preparedStatement, String serverUrl) {
+    public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl) {
         super(httpClient, serverUrl);
         this.preparedStatement = preparedStatement;
     }
 
     @Override
     public ResultSet executeQuery() throws SQLException {
-        return super.executeQuery(preparedStatement + " - (" + parameters.stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")");
+        return super.executeQuery(composeStatement());
     }
 
     @Override
     public int executeUpdate() throws SQLException {
-        return super.executeUpdate(preparedStatement + " - (" + parameters.stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")");
+        return super.executeUpdate(composeStatement());
     }
 
     @Override
-    public void setNull(int parameterIndex, int sqlType) throws SQLException {
+    public void setNull(final int parameterIndex, final int sqlType) throws SQLException {
         parameters.add(parameterIndex, null);
     }
 
     @Override
-    public void setBoolean(int parameterIndex, boolean x) throws SQLException {
+    public void setBoolean(final int parameterIndex, final boolean x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setByte(int parameterIndex, byte x) throws SQLException {
+    public void setByte(final int parameterIndex, final byte x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setShort(int parameterIndex, short x) throws SQLException {
+    public void setShort(final int parameterIndex, final short x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setInt(int parameterIndex, int x) throws SQLException {
+    public void setInt(final int parameterIndex, final int x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setLong(int parameterIndex, long x) throws SQLException {
+    public void setLong(final int parameterIndex, final long x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setFloat(int parameterIndex, float x) throws SQLException {
+    public void setFloat(final int parameterIndex, final float x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setDouble(int parameterIndex, double x) throws SQLException {
+    public void setDouble(final int parameterIndex, final double x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setBigDecimal(int parameterIndex, BigDecimal x) throws SQLException {
+    public void setBigDecimal(final int parameterIndex, final BigDecimal x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setString(int parameterIndex, String x) throws SQLException {
+    public void setString(final int parameterIndex, final String x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setBytes(int parameterIndex, byte[] x) throws SQLException {
+    public void setBytes(final int parameterIndex, final byte[] x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setDate(int parameterIndex, Date x) throws SQLException {
+    public void setDate(final int parameterIndex, final Date x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setTime(int parameterIndex, Time x) throws SQLException {
+    public void setTime(final int parameterIndex, final Time x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
+    public void setTimestamp(final int parameterIndex, final Timestamp x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setAsciiStream(int parameterIndex, InputStream x, int length) throws SQLException {
+    public void setAsciiStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
+    public void setUnicodeStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setBinaryStream(int parameterIndex, InputStream x, int length) throws SQLException {
+    public void setBinaryStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
@@ -140,18 +156,18 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setObject(int parameterIndex, Object x, int targetSqlType) throws SQLException {
+    public void setObject(final int parameterIndex, final Object x, final int targetSqlType) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setObject(int parameterIndex, Object x) throws SQLException {
+    public void setObject(final int parameterIndex, final Object x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
     public boolean execute() throws SQLException {
-        return executeUpdate() > 0;
+        return super.execute(composeStatement());
     }
 
     @Override
@@ -159,27 +175,27 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setCharacterStream(int parameterIndex, Reader reader, int length) throws SQLException {
+    public void setCharacterStream(final int parameterIndex, final Reader reader, final int length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setRef(int parameterIndex, Ref x) throws SQLException {
+    public void setRef(final int parameterIndex, final Ref x) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setBlob(int parameterIndex, Blob x) throws SQLException {
+    public void setBlob(final int parameterIndex, final Blob x) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setClob(int parameterIndex, Clob x) throws SQLException {
+    public void setClob(final int parameterIndex, final Clob x) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setArray(int parameterIndex, Array x) throws SQLException {
+    public void setArray(final int parameterIndex, final Array x) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
@@ -189,27 +205,27 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setDate(int parameterIndex, Date x, Calendar cal) throws SQLException {
+    public void setDate(final int parameterIndex, final Date x, final Calendar cal) throws SQLException {
         parameters.add(parameterIndex - 1, x.toString());
     }
 
     @Override
-    public void setTime(int parameterIndex, Time x, Calendar cal) throws SQLException {
+    public void setTime(final int parameterIndex, final Time x, final Calendar cal) throws SQLException {
         parameters.add(parameterIndex - 1, x.getTime());
     }
 
     @Override
-    public void setTimestamp(int parameterIndex, Timestamp x, Calendar cal) throws SQLException {
+    public void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) throws SQLException {
         parameters.add(parameterIndex - 1, x.getTime());
     }
 
     @Override
-    public void setNull(int parameterIndex, int sqlType, String typeName) throws SQLException {
+    public void setNull(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
         parameters.add(parameterIndex, null);
     }
 
     @Override
-    public void setURL(int parameterIndex, URL x) throws SQLException {
+    public void setURL(final int parameterIndex, final URL x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
@@ -219,97 +235,101 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setRowId(int parameterIndex, RowId x) throws SQLException {
+    public void setRowId(final int parameterIndex, final RowId x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setNString(int parameterIndex, String x) throws SQLException {
+    public void setNString(final int parameterIndex, final String x) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException {
+    public void setNCharacterStream(final int parameterIndex, final Reader value, final long length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setNClob(int parameterIndex, NClob value) throws SQLException {
+    public void setNClob(final int parameterIndex, final NClob value) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setClob(int parameterIndex, Reader reader, long length) throws SQLException {
+    public void setClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException {
+    public void setBlob(final int parameterIndex, final InputStream inputStream, final long length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException {
+    public void setNClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException {
+    public void setSQLXML(final int parameterIndex, final SQLXML xmlObject) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setObject(int parameterIndex, Object x, int targetSqlType, int scaleOrLength) throws SQLException {
+    public void setObject(final int parameterIndex, final Object x, final int targetSqlType, final int scaleOrLength) throws SQLException {
         parameters.add(parameterIndex - 1, x);
     }
 
     @Override
-    public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException {
+    public void setAsciiStream(final int parameterIndex, final InputStream x, final long length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException {
+    public void setBinaryStream(final int parameterIndex, final InputStream x, final long length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException {
+    public void setCharacterStream(final int parameterIndex, final Reader reader, final long length) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException {
+    public void setAsciiStream(final int parameterIndex, final InputStream x) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException {
+    public void setBinaryStream(final int parameterIndex, final InputStream x) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException {
+    public void setCharacterStream(final int parameterIndex, final Reader reader) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException {
+    public void setNCharacterStream(final int parameterIndex, final Reader value) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setClob(int parameterIndex, Reader reader) throws SQLException {
+    public void setClob(final int parameterIndex, final Reader reader) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException {
+    public void setBlob(final int parameterIndex, final InputStream inputStream) throws SQLException {
         throw new SQLException("Not Supported");
     }
 
     @Override
-    public void setNClob(int parameterIndex, Reader reader) throws SQLException {
+    public void setNClob(final int parameterIndex, final Reader reader) throws SQLException {
         throw new SQLException("Not Supported");
+    }
+
+    private String composeStatement() {
+        return preparedStatement + " - (" + parameters.stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
     }
 }

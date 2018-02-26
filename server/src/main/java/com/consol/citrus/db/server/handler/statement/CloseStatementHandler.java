@@ -14,16 +14,23 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.statement;
 
 import com.consol.citrus.db.server.controller.JdbcController;
-import spark.Route;
+import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
+import spark.Request;
+import spark.Response;
 
-public abstract class AbstractJdbcRequestHandler implements Route {
+public class CloseStatementHandler extends AbstractJdbcRequestHandler {
 
-    protected JdbcController controller;
 
-    public AbstractJdbcRequestHandler(final JdbcController controller){
-        this.controller = controller;
+    public CloseStatementHandler(final JdbcController controller) {
+        super(controller);
+    }
+
+    @Override
+    public Object handle(final Request request, final Response response) {
+        controller.closeStatement();
+        return "";
     }
 }

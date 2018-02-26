@@ -17,6 +17,7 @@
 package com.consol.citrus.db.server.handler;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.statement.CreateStatementHandler;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;

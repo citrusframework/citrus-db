@@ -65,7 +65,7 @@ public interface JdbcController {
      * @param sql The statement to execute
      * @throws JdbcServerException In case that the statement could not be executed
      */
-    void execute(String sql) throws JdbcServerException;
+    DataSet executeStatement(String sql) throws JdbcServerException;
 
     /**
      * Execute update statement.
@@ -103,4 +103,9 @@ public interface JdbcController {
      * Rollback all statements since the current transaction has been started
      */
     void rollbackStatements();
+
+    /**
+     * Creates a callable statement with the given sql
+     */
+    void createCallableStatement(String sql);
 }

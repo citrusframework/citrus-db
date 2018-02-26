@@ -234,7 +234,7 @@ public class JdbcConnection implements Connection {
     public PreparedStatement prepareStatement(final String sql) throws SQLException {
         HttpResponse response = null;
         try {
-            response = httpClient.execute(RequestBuilder.post(serverUrl + "/statement")
+            response = httpClient.execute(RequestBuilder.post(serverUrl + "/preparedStatement")
                     .setEntity(new StringEntity(sql))
                     .build());
 
@@ -252,7 +252,22 @@ public class JdbcConnection implements Connection {
 
     @Override
     public CallableStatement prepareCall(final String sql) throws SQLException {
-        throw new SQLException("Not Supported");
+        HttpResponse response = null;
+        try {
+            response = httpClient.execute(RequestBuilder.post(serverUrl + "/callableStatement")
+                    .setEntity(new StringEntity(sql))
+                    .build());
+
+            if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
+                throw new SQLException("Failed to create prepare call: " + EntityUtils.toString(response.getEntity()));
+            }
+
+            return new JdbcCallableStatement(httpClient, sql, serverUrl);
+        } catch (final IOException e) {
+            throw new SQLException(e);
+        } finally {
+            HttpClientUtils.closeQuietly(response);
+        }
     }
 
     @Override

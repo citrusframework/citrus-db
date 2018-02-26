@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.handler.statement;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
 import spark.Request;
 import spark.Response;
 
-public class CloseConnectionHandler extends AbstractJdbcRequestHandler {
+import java.io.IOException;
+
+public class CreateStatementHandler extends AbstractJdbcRequestHandler {
 
 
-    public CloseConnectionHandler(final JdbcController controller) {
+    public CreateStatementHandler(final JdbcController controller) {
         super(controller);
     }
 
     @Override
-    public Object handle(final Request request, final Response response){
-        controller.closeConnection();
+    public Object handle(final Request request, final Response response) throws IOException {
+        controller.createStatement();
         return "";
     }
 }

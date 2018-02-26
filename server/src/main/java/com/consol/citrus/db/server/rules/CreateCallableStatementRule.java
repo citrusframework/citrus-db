@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler;
+package com.consol.citrus.db.server.rules;
 
-import com.consol.citrus.db.server.controller.JdbcController;
-import spark.Request;
-import spark.Response;
+public class CreateCallableStatementRule extends Rule<String, Boolean, CreateCallableStatementRule>{
 
-import java.io.IOException;
-
-public class CreateStatementHandler extends AbstractJdbcRequestHandler {
-
-
-    public CreateStatementHandler(final JdbcController controller) {
-        super(controller);
+    public CreateCallableStatementRule() {
+        super();
     }
 
-    @Override
-    public Object handle(final Request request, final Response response) throws IOException {
-        controller.createStatement();
-        return "";
+    public CreateCallableStatementRule(final Mapping<String, Boolean> mapping) {
+        super(mapping);
+    }
+
+    public CreateCallableStatementRule(final Precondition<String> precondition, final Mapping<String, Boolean> mapping) {
+        super(precondition, mapping);
     }
 }

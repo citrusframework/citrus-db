@@ -17,36 +17,38 @@
 package com.consol.citrus.db.server.handler;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.statement.ExecuteQueryHandler;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
 
-import java.util.Random;
+import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class SetTransactionStateHandlerTest {
+public class ExecuteQueryHandlerTest {
 
     private final JdbcController controllerMock = mock(JdbcController.class);
-    private final SetTransactionStateHandler setTransactionStateHandler = new SetTransactionStateHandler(controllerMock);
+    private final ExecuteQueryHandler executeQueryHandler = new ExecuteQueryHandler(controllerMock);
 
     @Test
     public void testControllerIsUsed(){
 
         //GIVEN
+        final String body = String.valueOf(UUID.randomUUID());
         final Request requestMock = mock(Request.class);
-        final boolean desiredRequestState = new Random().nextBoolean();
-        when(requestMock.body()).thenReturn(String.valueOf(desiredRequestState));
+        when(requestMock.body()).thenReturn(body);
 
         final Response responseMock = mock(Response.class);
-
+        final String expectedResponseType = "application/json";
 
         //WHEN
-        setTransactionStateHandler.handle(requestMock, responseMock);
+        executeQueryHandler.handle(requestMock, responseMock);
 
         //THEN
-        verify(controllerMock).setTransactionState(desiredRequestState);
+        verify(controllerMock).executeQuery(body);
+        verify(responseMock).type(expectedResponseType);
     }
 }

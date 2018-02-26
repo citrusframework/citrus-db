@@ -17,6 +17,7 @@
 package com.consol.citrus.db.server.handler;
 
 import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.handler.statement.ExecuteStatementHandler;
 import org.testng.annotations.Test;
 import spark.Request;
 import spark.Response;
@@ -46,6 +47,6 @@ public class ExecuteStatementHandlerTest {
         executeStatementHandler.handle(requestMock, responseMock);
 
         //THEN
-        verify(controllerMock).execute(body);
+        verify(controllerMock).executeStatement(body);
     }
 }

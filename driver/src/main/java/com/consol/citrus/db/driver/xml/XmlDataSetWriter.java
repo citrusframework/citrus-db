@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.driver.xml;
 
+import com.consol.citrus.db.driver.JdbcDriverException;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetWriter;
 import org.w3c.dom.Node;
@@ -34,32 +35,36 @@ public class XmlDataSetWriter implements DataSetWriter {
     private String spaces = "  ";
 
     @Override
-    public String write(DataSet dataSet) throws SQLException {
-        StringBuilder xmlOutput = new StringBuilder();
+    public String write(DataSet dataSet) {
+        try {
+            StringBuilder xmlOutput = new StringBuilder();
 
-        xmlOutput.append("<").append(DATASET).append(">\n");
+            xmlOutput.append("<").append(DATASET).append(">\n");
 
-        dataSet.getRows().forEach(row -> {
-            if (mode == Node.ELEMENT_NODE) {
-                xmlOutput.append(spaces).append("<").append(ROW).append(">\n");
-                row.getValues().forEach((key, value) -> {
-                    xmlOutput.append(spaces).append(spaces).append("<").append(key).append(">");
-                    xmlOutput.append(value);
-                    xmlOutput.append("</").append(key).append(">\n");
-                });
-                xmlOutput.append(spaces).append("</").append(ROW).append(">\n");
-            } else if (mode == Node.ATTRIBUTE_NODE) {
-                xmlOutput.append(spaces).append("<").append(ROW).append("\n");
-                row.getValues().forEach((key, value) -> {
-                    xmlOutput.append(spaces).append(spaces).append(key).append("=\"").append(value).append("\"").append("\n");
-                });
-                xmlOutput.append(spaces).append(spaces).append("/>\n");
-            }
-        });
+            dataSet.getRows().forEach(row -> {
+                if (mode == Node.ELEMENT_NODE) {
+                    xmlOutput.append(spaces).append("<").append(ROW).append(">\n");
+                    row.getValues().forEach((key, value) -> {
+                        xmlOutput.append(spaces).append(spaces).append("<").append(key).append(">");
+                        xmlOutput.append(value);
+                        xmlOutput.append("</").append(key).append(">\n");
+                    });
+                    xmlOutput.append(spaces).append("</").append(ROW).append(">\n");
+                } else if (mode == Node.ATTRIBUTE_NODE) {
+                    xmlOutput.append(spaces).append("<").append(ROW).append("\n");
+                    row.getValues().forEach((key, value) -> {
+                        xmlOutput.append(spaces).append(spaces).append(key).append("=\"").append(value).append("\"").append("\n");
+                    });
+                    xmlOutput.append(spaces).append(spaces).append("/>\n");
+                }
+            });
 
-        xmlOutput.append("</").append(DATASET).append(">");
+            xmlOutput.append("</").append(DATASET).append(">");
 
-        return xmlOutput.toString();
+            return xmlOutput.toString();
+        } catch (SQLException e) {
+            throw new JdbcDriverException("Failed to write xml dataset", e);
+        }
     }
 
     /**

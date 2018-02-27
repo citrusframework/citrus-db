@@ -32,15 +32,15 @@ import java.util.*;
 public class JsonDataSetWriter implements DataSetWriter {
 
     @Override
-    public String write(DataSet dataSet) throws SQLException {
-        List<Map<String, String>> rawDataSet = new ArrayList<>();
-        dataSet.getRows().forEach(row -> rawDataSet.add(row.getValues()));
-
+    public String write(DataSet dataSet) {
         try {
+            List<Map<String, String>> rawDataSet = new ArrayList<>();
+            dataSet.getRows().forEach(row -> rawDataSet.add(row.getValues()));
+
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             return mapper.writeValueAsString(rawDataSet);
-        } catch (JsonProcessingException e) {
+        } catch (JsonProcessingException | SQLException e) {
             throw new JdbcDriverException("Failed to write json dataset", e);
         }
     }

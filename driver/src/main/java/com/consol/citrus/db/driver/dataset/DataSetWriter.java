@@ -16,8 +16,6 @@
 
 package com.consol.citrus.db.driver.dataset;
 
-import java.sql.SQLException;
-
 /**
  * @author Christoph Deppisch
  */
@@ -28,5 +26,5 @@ public interface DataSetWriter {
      * @param dataSet
      * @return
      */
-    String write(DataSet dataSet) throws SQLException;
+    String write(DataSet dataSet);
 }

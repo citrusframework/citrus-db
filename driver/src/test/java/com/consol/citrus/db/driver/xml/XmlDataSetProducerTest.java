@@ -26,6 +26,17 @@ import java.nio.file.Paths;
  * @author Christoph Deppisch
  */
 public class XmlDataSetProducerTest {
+    
+    @Test
+    public void testProduceEmpty() throws Exception {
+        XmlDataSetProducer dataSetProducer = new XmlDataSetProducer("<dataset></dataset>");
+
+        DataSet dataSet = dataSetProducer.produce();
+
+        Assert.assertEquals(dataSet.getColumns().size(), 0L);
+        Assert.assertEquals(dataSet.getRows().size(), 0L);
+    }
+
     @Test
     public void testProduce() throws Exception {
         XmlDataSetProducer dataSetProducer = new XmlDataSetProducer(Paths.get(ClassLoader.getSystemResource("dataset.xml").toURI()));

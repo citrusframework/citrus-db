@@ -28,6 +28,16 @@ import java.nio.file.Paths;
 public class JsonDataSetProducerTest {
 
     @Test
+    public void testProduceEmpty() throws Exception {
+        JsonDataSetProducer dataSetProducer = new JsonDataSetProducer("[]");
+
+        DataSet dataSet = dataSetProducer.produce();
+
+        Assert.assertEquals(dataSet.getColumns().size(), 0L);
+        Assert.assertEquals(dataSet.getRows().size(), 0L);
+    }
+
+    @Test
     public void testProduce() throws Exception {
         JsonDataSetProducer dataSetProducer = new JsonDataSetProducer(Paths.get(ClassLoader.getSystemResource("dataset.json").toURI()));
 

@@ -45,12 +45,12 @@ public class XmlDataSetProducer implements DataSetProducer {
         try {
             this.input = new FileInputStream(path.toFile());
         } catch (FileNotFoundException e) {
-            throw new JdbcDriverException("Failed to access json input file content", e);
+            throw new JdbcDriverException("Failed to access xml input file content", e);
         }
     }
 
-    public XmlDataSetProducer(String jsonInput) {
-        this.input = new ByteArrayInputStream(jsonInput.getBytes());
+    public XmlDataSetProducer(String xmlInput) {
+        this.input = new ByteArrayInputStream(xmlInput.getBytes());
     }
 
     public XmlDataSetProducer(InputStream inputStream) {

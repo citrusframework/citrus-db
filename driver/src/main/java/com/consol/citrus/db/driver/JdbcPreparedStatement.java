@@ -176,27 +176,27 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setCharacterStream(final int parameterIndex, final Reader reader, final int length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setCharacterStream'");
     }
 
     @Override
     public void setRef(final int parameterIndex, final Ref x) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setRef'");
     }
 
     @Override
     public void setBlob(final int parameterIndex, final Blob x) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setBlob'");
     }
 
     @Override
     public void setClob(final int parameterIndex, final Clob x) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setClob'");
     }
 
     @Override
     public void setArray(final int parameterIndex, final Array x) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setArray'");
     }
 
     @Override
@@ -246,32 +246,32 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setNCharacterStream(final int parameterIndex, final Reader value, final long length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setNCharacterStream'");
     }
 
     @Override
     public void setNClob(final int parameterIndex, final NClob value) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setNClob'");
     }
 
     @Override
     public void setClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setClob'");
     }
 
     @Override
     public void setBlob(final int parameterIndex, final InputStream inputStream, final long length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setBlob'");
     }
 
     @Override
     public void setNClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setNClob'");
     }
 
     @Override
     public void setSQLXML(final int parameterIndex, final SQLXML xmlObject) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setSQLXML'");
     }
 
     @Override
@@ -281,52 +281,52 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setAsciiStream(final int parameterIndex, final InputStream x, final long length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setAsciiStream'");
     }
 
     @Override
     public void setBinaryStream(final int parameterIndex, final InputStream x, final long length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setBinaryStream'");
     }
 
     @Override
     public void setCharacterStream(final int parameterIndex, final Reader reader, final long length) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setCharacterStream'");
     }
 
     @Override
     public void setAsciiStream(final int parameterIndex, final InputStream x) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setAsciiStream'");
     }
 
     @Override
     public void setBinaryStream(final int parameterIndex, final InputStream x) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setBinaryStream'");
     }
 
     @Override
     public void setCharacterStream(final int parameterIndex, final Reader reader) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setCharacterStream'");
     }
 
     @Override
     public void setNCharacterStream(final int parameterIndex, final Reader value) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setNCharacterStream'");
     }
 
     @Override
     public void setClob(final int parameterIndex, final Reader reader) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setClob'");
     }
 
     @Override
     public void setBlob(final int parameterIndex, final InputStream inputStream) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setBlob'");
     }
 
     @Override
     public void setNClob(final int parameterIndex, final Reader reader) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC prepared statement function 'setNClob'");
     }
 
     private String composeStatement() {

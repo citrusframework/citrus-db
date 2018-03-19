@@ -39,7 +39,7 @@ import java.util.Objects;
  */
 public class JdbcStatement implements Statement {
 
-    protected final HttpClient httpClient;
+    private final HttpClient httpClient;
     private final String serverUrl;
 
     protected DataSet dataSet = new DataSet();
@@ -142,57 +142,57 @@ public class JdbcStatement implements Statement {
 
     @Override
     public int getMaxFieldSize() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getMaxFieldSize'");
     }
 
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setMaxFieldSize'");
     }
 
     @Override
     public int getMaxRows() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getMaxRows'");
     }
 
     @Override
     public void setMaxRows(final int max) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setMaxRows'");
     }
 
     @Override
     public void setEscapeProcessing(final boolean enable) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setEscapeProcessing'");
     }
 
     @Override
     public int getQueryTimeout() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getQueryTimeout'");
     }
 
     @Override
     public void setQueryTimeout(final int seconds) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setQueryTimeout'");
     }
 
     @Override
     public void cancel() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'cancel'");
     }
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getWarnings'");
     }
 
     @Override
     public void clearWarnings() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'clearWarnings'");
     }
 
     @Override
     public void setCursorName(final String name) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setCursorName'");
     }
 
     @Override
@@ -202,182 +202,182 @@ public class JdbcStatement implements Statement {
 
     @Override
     public int getUpdateCount() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getUpdateCount'");
     }
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getMoreResults'");
     }
 
     @Override
     public void setFetchDirection(final int direction) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setFetchDirection'");
     }
 
     @Override
     public int getFetchDirection() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getFetchDirection'");
     }
 
     @Override
     public void setFetchSize(final int rows) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setFetchSize'");
     }
 
     @Override
     public int getFetchSize() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getFetchSize'");
     }
 
     @Override
     public int getResultSetConcurrency() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getResultSetConcurrency'");
     }
 
     @Override
     public int getResultSetType() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getResultSetType'");
     }
 
     @Override
     public void addBatch(final String sql) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'addBatch'");
     }
 
     @Override
     public void clearBatch() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'clearBatch'");
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeBatch'");
     }
 
     @Override
     public Connection getConnection() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getConnection'");
     }
 
     @Override
     public boolean getMoreResults(final int current) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getMoreResults'");
     }
 
     @Override
     public java.sql.ResultSet getGeneratedKeys() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getGeneratedKeys'");
     }
 
     @Override
     public int executeUpdate(final String sql, final int autoGeneratedKeys) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeUpdate'");
     }
 
     @Override
     public int executeUpdate(final String sql, final int[] columnIndexes) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeUpdate'");
     }
 
     @Override
     public int executeUpdate(final String sql, final String[] columnNames) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeUpdate'");
     }
 
     @Override
     public boolean execute(final String sql, final int autoGeneratedKeys) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'execute'");
     }
 
     @Override
     public boolean execute(final String sql, final int[] columnIndexes) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'execute'");
     }
 
     @Override
     public boolean execute(final String sql, final String[] columnNames) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'execute'");
     }
 
     @Override
     public int getResultSetHoldability() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getResultSetHoldability'");
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'isClosed'");
     }
 
     @Override
     public void setPoolable(final boolean poolable) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setPoolable'");
     }
 
     @Override
     public boolean isPoolable() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'isPoolable'");
     }
 
     @Override
     public void closeOnCompletion() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'closeOnCompletion'");
     }
 
     @Override
     public boolean isCloseOnCompletion() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'isCloseOnCompletion'");
     }
 
     @Override
     public long getLargeUpdateCount() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getLargeUpdateCount'");
     }
 
     @Override
     public void setLargeMaxRows(final long max) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'setLargeMaxRows'");
     }
 
     @Override
     public long getLargeMaxRows() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'getLargeMaxRows'");
     }
 
     @Override
     public long[] executeLargeBatch() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeLargeBatch'");
     }
 
     @Override
     public long executeLargeUpdate(final String sql) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeLargeUpdate'");
     }
 
     @Override
     public long executeLargeUpdate(final String sql, final int autoGeneratedKeys) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeLargeUpdate'");
     }
 
     @Override
     public long executeLargeUpdate(final String sql, final int[] columnIndexes) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeLargeUpdate'");
     }
 
     @Override
     public long executeLargeUpdate(final String sql, final String[] columnNames) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'executeLargeUpdate'");
     }
 
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'unwrap'");
     }
 
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC statement function 'isWrapperFor'");
     }
 
     @Override

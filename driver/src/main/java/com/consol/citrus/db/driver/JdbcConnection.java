@@ -102,7 +102,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public String nativeSQL(final String sql) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'nativeSQL'");
     }
 
     @Override
@@ -200,7 +200,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'isReadOnly'");
     }
 
     @Override
@@ -209,7 +209,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public String getCatalog() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getCatalog'");
     }
 
     @Override
@@ -218,12 +218,12 @@ public class JdbcConnection implements Connection {
 
     @Override
     public int getTransactionIsolation() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getTransactionIsolation'");
     }
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getWarnings'");
     }
 
     @Override
@@ -277,7 +277,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'prepareCall'");
     }
 
     @Override
@@ -291,7 +291,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public Map<String,Class<?>> getTypeMap() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getTypeMap'");
     }
 
     @Override
@@ -300,17 +300,17 @@ public class JdbcConnection implements Connection {
 
     @Override
     public int getHoldability() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getHoldability'");
     }
 
     @Override
     public Savepoint setSavepoint() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'setSavepoint'");
     }
 
     @Override
     public Savepoint setSavepoint(final String name) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'setSavepoint'");
     }
 
     @Override
@@ -333,7 +333,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public CallableStatement prepareCall(final String sql, final int resultSetType, final int resultSetConcurrency, final int resultSetHoldability) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'prepareCall'");
     }
 
     @Override
@@ -353,27 +353,27 @@ public class JdbcConnection implements Connection {
 
     @Override
     public Clob createClob() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'createClob'");
     }
 
     @Override
     public Blob createBlob() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'createBlob'");
     }
 
     @Override
     public NClob createNClob() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'createNClob'");
     }
 
     @Override
     public SQLXML createSQLXML() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'createSQLXML'");
     }
 
     @Override
     public boolean isValid(final int timeout) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'isValid'");
     }
 
     @Override
@@ -386,22 +386,22 @@ public class JdbcConnection implements Connection {
 
     @Override
     public String getClientInfo(final String name) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getClientInfo'");
     }
 
     @Override
     public Properties getClientInfo() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getClientInfo'");
     }
 
     @Override
     public Array createArrayOf(final String typeName, final Object[] elements) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'createArrayOf'");
     }
 
     @Override
     public Struct createStruct(final String typeName, final Object[] attributes) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'createStruct'");
     }
 
     @Override
@@ -410,7 +410,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public String getSchema() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getSchema'");
     }
 
     @Override
@@ -423,16 +423,16 @@ public class JdbcConnection implements Connection {
 
     @Override
     public int getNetworkTimeout() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'getNetworkTimeout'");
     }
 
     @Override
     public <T> T unwrap(final Class<T> iface) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'unwrap'");
     }
 
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC connection function 'isWrapperFor'");
     }
 }

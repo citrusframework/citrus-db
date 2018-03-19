@@ -163,7 +163,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public BigDecimal getBigDecimal(int columnIndex,int scale) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getBigDecimal'");
     }
 
     public byte[] getBytes(int columnIndex) throws SQLException {
@@ -288,7 +288,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public BigDecimal getBigDecimal(String columnName,int scale) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getBigDecimal'");
     }
 
     public byte[] getBytes(String columnName) throws SQLException {
@@ -368,7 +368,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getWarnings'");
     }
 
     public void clearWarnings() throws SQLException {
@@ -405,19 +405,19 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean isBeforeFirst() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'isBeforeFirst'");
     }
 
     public boolean isAfterLast() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'isAfterLast'");
     }
 
     public boolean isFirst() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'isFirst'");
     }
 
     public boolean isLast() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'isLast'");
     }
 
     public void beforeFirst() throws SQLException {
@@ -427,11 +427,11 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean first() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'first'");
     }
 
     public boolean last() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'last'");
     }
 
     public int getRow() throws SQLException {
@@ -439,37 +439,37 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean absolute(int row) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'absolute'");
     }
 
     public boolean relative(int rows) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'relative'");
     }
 
     public boolean previous() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'previous'");
     }
 
     public void setFetchDirection(int direction) throws SQLException {
     }
 
     public int getFetchDirection() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getFetchDirection'");
     }
 
     public void setFetchSize(int rows) throws SQLException {
     }
 
     public int getFetchSize() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getFetchSize'");
     }
 
     public int getType() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getType'");
     }
 
     public int getConcurrency() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getConcurrency'");
     }
 
     public boolean rowUpdated() throws SQLException {
@@ -614,42 +614,42 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Statement getStatement()  throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getStatement'");
     }
 
 
     public Date getDate(int columnIndex,Calendar cal) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getDate'");
     }
 
     public Date getDate(String columnName,Calendar cal) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getDate'");
     }
 
     public Time getTime(int columnIndex,Calendar cal) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getTime'");
     }
 
     public Time getTime(String columnName,Calendar cal) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getTime'");
     }
 
     public Timestamp getTimestamp(int columnIndex,Calendar cal) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getTimestamp'");
     }
 
     public Timestamp getTimestamp(String columnName,Calendar cal) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getTimestamp'");
     }
 
     @Override
     public URL getURL(int columnIndex) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getURL'");
     }
 
     @Override
     public URL getURL(String columnLabel) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getURL'");
     }
 
     @Override
@@ -686,12 +686,12 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public RowId getRowId(int columnIndex) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getRowId'");
     }
 
     @Override
     public RowId getRowId(String columnLabel) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getRowId'");
     }
 
     @Override
@@ -704,12 +704,12 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public int getHoldability() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getHoldability'");
     }
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'isClosed'");
     }
 
     @Override
@@ -730,22 +730,22 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public NClob getNClob(int columnIndex) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getNClob'");
     }
 
     @Override
     public NClob getNClob(String columnLabel) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getNClob'");
     }
 
     @Override
     public SQLXML getSQLXML(int columnIndex) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getSQLXML'");
     }
 
     @Override
     public SQLXML getSQLXML(String columnLabel) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getSQLXML'");
     }
 
     @Override
@@ -758,22 +758,22 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public String getNString(int columnIndex) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getNString'");
     }
 
     @Override
     public String getNString(String columnLabel) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getNString'");
     }
 
     @Override
     public Reader getNCharacterStream(int columnIndex) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getNCharacterStream'");
     }
 
     @Override
     public Reader getNCharacterStream(String columnLabel) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getNCharacterStream'");
     }
 
     @Override
@@ -890,16 +890,16 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getObject'");
     }
 
     @Override
     public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getObject'");
     }
 
     public boolean wasNull()throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'wasNull'");
     }
 
     public void updateBoolean(String columnName, boolean x) throws SQLException {
@@ -910,51 +910,51 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Object getObject(int i, Map map) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getObject'");
     }
 
     public Ref getRef(int i) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getRef'");
     }
 
     public Blob getBlob(int i) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getBlob'");
     }
 
     public Clob getClob(int i) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getClob'");
     }
 
     public Array getArray(int i) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getArray'");
     }
 
     public Object getObject(String colName, Map map) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getObject'");
     }
 
     public Ref getRef(String colName) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getRef'");
     }
 
     public Blob getBlob(String colName) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getBlob'");
     }
 
     public Clob getClob(String colName) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getClob'");
     }
     public Array getArray(String colName) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'getArray'");
     }
 
     @Override
     public <T> T unwrap(Class<T> iface) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'unwrap'");
     }
 
     @Override
     public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        throw new SQLException("Not Supported");
+        throw new SQLException("Not supported JDBC result set function 'isWrapperFor'");
     }
 }

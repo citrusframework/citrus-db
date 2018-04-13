@@ -39,8 +39,7 @@
       <groupId>com.consol.citrus</groupId>
       <artifactId>citrus-db-driver</artifactId>
       <version>${project.version}</version>
-      <scope>system</scope>
-      <systemPath>/Users/christoph/.m2/repository/com/consol/citrus/citrus-db-driver/${project.version}/citrus-db-driver-${project.version}-full.jar</systemPath>
+      <classifier>full</classifier>
     </dependency>
 
     <dependency>

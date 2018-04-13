@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.server.handler.statement;
 
+import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.server.controller.JdbcController;
 import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
 import spark.Request;
@@ -29,7 +30,7 @@ public class ExecuteXmlQueryHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response) {
+    public DataSet handle(final Request request, final Response response) {
         response.type("application/xml");
         return controller.executeQuery(request.body());
     }

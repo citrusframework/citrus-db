@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler.statement;
+package com.consol.citrus.demo.model;
 
-import com.consol.citrus.db.server.controller.JdbcController;
-import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
-import spark.Request;
-import spark.Response;
+/**
+ * @author Christoph Deppisch
+ */
+public class Customer {
+    private long id;
+    private String firstName, lastName;
 
-public class CloseStatementHandler extends AbstractJdbcRequestHandler {
-
-
-    public CloseStatementHandler(final JdbcController controller) {
-        super(controller);
+    public Customer(long id, String firstName, String lastName) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
     @Override
-    public String handle(final Request request, final Response response) {
-        controller.closeStatement();
-        return "";
+    public String toString() {
+        return String.format(
+                "Customer[id=%d, firstName='%s', lastName='%s']",
+                id, firstName, lastName);
     }
 }

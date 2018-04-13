@@ -29,7 +29,7 @@ public class CreatePreparedStatementHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response) {
+    public String handle(final Request request, final Response response) {
         controller.createPreparedStatement(request.body());
         return "";
     }

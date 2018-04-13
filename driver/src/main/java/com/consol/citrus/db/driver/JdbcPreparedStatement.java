@@ -50,8 +50,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     private final String preparedStatement;
     private List<Object> parameters = new ArrayList<>();
 
-    public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl) {
-        super(httpClient, serverUrl);
+    public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl, JdbcConnection connection) {
+        super(httpClient, serverUrl, connection);
         this.preparedStatement = preparedStatement;
     }
 

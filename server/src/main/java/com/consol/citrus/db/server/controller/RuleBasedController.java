@@ -18,18 +18,7 @@ package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.server.JdbcServerException;
-import com.consol.citrus.db.server.rules.CloseConnectionRule;
-import com.consol.citrus.db.server.rules.CloseStatementRule;
-import com.consol.citrus.db.server.rules.CommitTransactionRule;
-import com.consol.citrus.db.server.rules.CreateCallableStatementRule;
-import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
-import com.consol.citrus.db.server.rules.CreateStatementRule;
-import com.consol.citrus.db.server.rules.ExecuteQueryRule;
-import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
-import com.consol.citrus.db.server.rules.OpenConnectionRule;
-import com.consol.citrus.db.server.rules.RollbackTransactionRule;
-import com.consol.citrus.db.server.rules.Rule;
-import com.consol.citrus.db.server.rules.StartTransactionRule;
+import com.consol.citrus.db.server.rules.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +50,6 @@ public class RuleBasedController extends AbstractJdbcController{
     RuleBasedController(final AbstractJdbcController delegateJdbcController) {
         this.delegateJdbcController = delegateJdbcController;
     }
-
 
     @Override
     protected DataSet handleQuery(final String sql) throws JdbcServerException {

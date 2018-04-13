@@ -25,7 +25,6 @@ import java.nio.file.Paths;
 
 /**
  * @author Christoph Deppisch
- * @since 2.7
  */
 public class XmlDataSetWriterTest {
     

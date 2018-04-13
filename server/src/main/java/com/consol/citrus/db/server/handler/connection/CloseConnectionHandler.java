@@ -29,7 +29,7 @@ public class CloseConnectionHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response){
+    public String handle(final Request request, final Response response){
         controller.closeConnection();
         return "";
     }

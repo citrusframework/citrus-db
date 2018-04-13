@@ -29,7 +29,7 @@ public class RollbackTransactionStatementsHandler extends AbstractJdbcRequestHan
     }
 
     @Override
-    public Object handle(final Request request, final Response response) {
+    public String handle(final Request request, final Response response) {
         controller.rollbackStatements();
         return "";
     }

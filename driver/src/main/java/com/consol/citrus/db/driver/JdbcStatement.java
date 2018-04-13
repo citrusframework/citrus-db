@@ -41,6 +41,7 @@ public class JdbcStatement implements Statement {
 
     private final HttpClient httpClient;
     private final String serverUrl;
+    private final JdbcConnection connection;
 
     protected DataSet dataSet = new DataSet();
 
@@ -49,9 +50,10 @@ public class JdbcStatement implements Statement {
      * @param httpClient The http client to use for the db communication
      * @param serverUrl Thr url of the server
      */
-    JdbcStatement(final HttpClient httpClient, final String serverUrl) {
+    JdbcStatement(final HttpClient httpClient, final String serverUrl, JdbcConnection connection) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
+        this.connection = connection;
     }
 
     @Override
@@ -110,12 +112,7 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute statement: " + sql);
             }
 
-            if (response.getEntity().getContentType().getValue().equals("application/json")) {
-                dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
-                return true;
-            }
-
-            return false;
+            return true;
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -182,7 +179,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'getWarnings'");
+        return null;
     }
 
     @Override
@@ -257,7 +254,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public Connection getConnection() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'getConnection'");
+        return connection;
     }
 
     @Override

@@ -39,9 +39,8 @@ import java.util.Map;
 
 public class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
 
-
-    JdbcCallableStatement(final HttpClient httpClient, final String callableStatement, final String serverUrl) {
-        super(httpClient, callableStatement, serverUrl);
+    public JdbcCallableStatement(final HttpClient httpClient, final String callableStatement, final String serverUrl, JdbcConnection connection) {
+        super(httpClient, callableStatement, serverUrl, connection);
     }
 
     @Override

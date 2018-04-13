@@ -16,12 +16,10 @@
 
 package com.consol.citrus.db.driver;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHeader;
+import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -31,11 +29,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @SuppressWarnings("SqlNoDataSourceInspection")
@@ -43,7 +38,8 @@ public class JdbcStatementTest {
 
     private final HttpClient httpClient = mock(HttpClient.class);
     private final String serverUrl = "db.klingon-empire.kr";
-    private final JdbcStatement jdbcStatement = new JdbcStatement(httpClient, serverUrl);
+    private final JdbcConnection connection = Mockito.mock(JdbcConnection.class);
+    private final JdbcStatement jdbcStatement = new JdbcStatement(httpClient, serverUrl, connection);
 
     private final HttpResponse httpResponse = mock(HttpResponse.class);
     private final StatusLine statusLine = mock(StatusLine.class);
@@ -193,21 +189,6 @@ public class JdbcStatementTest {
 
         //THEN
         //Exception is thrown
-    }
-
-    @Test
-    public void testExecuteWithContentTypeOtherThanJson() throws Exception{
-
-        //GIVEN
-        when(statusLine.getStatusCode()).thenReturn(200);
-        when(httpEntity.getContentType())
-                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/unknown"));
-
-        //WHEN
-        final boolean isResultSet = jdbcStatement.execute("statement");
-
-        //THEN
-        assertFalse(isResultSet);
     }
 
     @Test(expectedExceptions = SQLException.class)

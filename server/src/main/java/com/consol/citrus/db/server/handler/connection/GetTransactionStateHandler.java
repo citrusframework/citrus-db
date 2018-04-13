@@ -29,7 +29,7 @@ public class GetTransactionStateHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response){
+    public Boolean handle(final Request request, final Response response){
         return controller.getTransactionState();
     }
 }

@@ -32,7 +32,7 @@ public class OpenConnectionHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response){
+    public String handle(final Request request, final Response response){
         final Map<String, String> parameters = new HashMap<>();
         request.queryParams().forEach(
                 (parameter) -> parameters.put(parameter, request.queryParams(parameter)));

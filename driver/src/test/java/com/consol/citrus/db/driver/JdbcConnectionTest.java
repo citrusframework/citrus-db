@@ -61,7 +61,7 @@ public class JdbcConnectionTest {
     public void testCreateStatement() throws Exception{
 
         //GIVEN
-        final JdbcStatement expectedStatement = new JdbcStatement(httpClient, serverUrl);
+        final JdbcStatement expectedStatement = new JdbcStatement(httpClient, serverUrl, jdbcConnection);
         when(statusLine.getStatusCode()).thenReturn(200);
 
         //WHEN
@@ -291,11 +291,11 @@ public class JdbcConnectionTest {
     }
 
     @Test
-    public void testPrepareStatement() throws Exception{
+    public void testPrepareStatement() throws Exception {
 
         //GIVEN
         final String sql = "SELECT something FROM somewhere";
-        final JdbcStatement expectedStatement = new JdbcPreparedStatement(httpClient,sql, serverUrl);
+        final JdbcStatement expectedStatement = new JdbcPreparedStatement(httpClient,sql, serverUrl, jdbcConnection);
         when(statusLine.getStatusCode()).thenReturn(200);
 
         //WHEN

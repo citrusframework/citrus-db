@@ -20,8 +20,6 @@ import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetWriter;
 import spark.ResponseTransformer;
 
-import java.sql.SQLException;
-
 public class JsonResponseTransformer implements ResponseTransformer {
 
     private JsonDataSetWriter jsonDataSetWriter = new JsonDataSetWriter();
@@ -34,7 +32,7 @@ public class JsonResponseTransformer implements ResponseTransformer {
     }
 
     @Override
-    public String render(final Object model) throws SQLException {
+    public String render(final Object model) {
         return jsonDataSetWriter.write((DataSet) model);
     }
 }

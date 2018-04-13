@@ -23,14 +23,13 @@ import spark.Response;
 
 public class ExecuteStatementHandler extends AbstractJdbcRequestHandler {
 
-
     public ExecuteStatementHandler(final JdbcController controller) {
         super(controller);
     }
 
     @Override
-    public Object handle(final Request request, final Response response) {
-        response.type("application/json");
-        return controller.executeStatement(request.body());
+    public String handle(final Request request, final Response response) {
+        controller.executeStatement(request.body());
+        return "";
     }
 }

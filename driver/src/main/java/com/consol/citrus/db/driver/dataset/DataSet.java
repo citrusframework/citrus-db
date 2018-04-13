@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class DataSet {
 
     /** Rows in this data set */
-    private List<Row> rows = new ArrayList<>();
+    private final List<Row> rows = new ArrayList<>();
 
     /** Indicates that this data set is closed */
     private boolean closed = false;

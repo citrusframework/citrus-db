@@ -31,7 +31,7 @@ public class CreateStatementHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response) throws IOException {
+    public String handle(final Request request, final Response response) throws IOException {
         controller.createStatement();
         return "";
     }

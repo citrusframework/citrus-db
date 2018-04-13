@@ -17,32 +17,16 @@
 package com.consol.citrus.db.server;
 
 import com.consol.citrus.db.server.builder.RuleBasedControllerBuilder;
-import com.consol.citrus.db.server.controller.JdbcController;
-import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.controller.SimpleJdbcController;
+import com.consol.citrus.db.server.controller.*;
 import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
-import com.consol.citrus.db.server.handler.connection.CloseConnectionHandler;
-import com.consol.citrus.db.server.handler.connection.CommitTransactionStatementsHandler;
-import com.consol.citrus.db.server.handler.connection.GetTransactionStateHandler;
-import com.consol.citrus.db.server.handler.connection.OpenConnectionHandler;
-import com.consol.citrus.db.server.handler.connection.RollbackTransactionStatementsHandler;
-import com.consol.citrus.db.server.handler.connection.SetTransactionStateHandler;
-import com.consol.citrus.db.server.handler.statement.CloseStatementHandler;
-import com.consol.citrus.db.server.handler.statement.CreateCallableStatementHandler;
-import com.consol.citrus.db.server.handler.statement.CreatePreparedStatementHandler;
-import com.consol.citrus.db.server.handler.statement.CreateStatementHandler;
-import com.consol.citrus.db.server.handler.statement.ExecuteQueryHandler;
-import com.consol.citrus.db.server.handler.statement.ExecuteStatementHandler;
-import com.consol.citrus.db.server.handler.statement.ExecuteUpdateHandler;
+import com.consol.citrus.db.server.handler.connection.*;
+import com.consol.citrus.db.server.handler.statement.*;
 import com.consol.citrus.db.server.transformer.JsonResponseTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Service;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * @author Christoph Deppisch
@@ -60,6 +44,9 @@ public class JdbcServer {
 
     /** The spark service */
     private Service service;
+
+    /** Transforms response data to JSON */
+    private JsonResponseTransformer responseTransformer = new JsonResponseTransformer();
 
     /**
      * Default constructor initializing controller and configuration.
@@ -141,29 +128,34 @@ public class JdbcServer {
      * Handles all operations concerning connection operations
      */
     private void registerConnectionEndpoint() {
-        service.get("/connection", new OpenConnectionHandler(controller));
-        service.delete("/connection", new CloseConnectionHandler(controller));
+        service.path("/connection", () -> {
+            service.get("", new OpenConnectionHandler(controller));
+            service.delete("", new CloseConnectionHandler(controller));
+        });
 
-        service.get("/connection/transaction", new GetTransactionStateHandler(controller));
-        service.post("/connection/transaction", new SetTransactionStateHandler(controller));
-        service.put("/connection/transaction", new CommitTransactionStatementsHandler(controller));
-        service.delete("/connection/transaction", new RollbackTransactionStatementsHandler(controller));
+        service.path("/connection/transaction", () -> {
+            service.get("", new GetTransactionStateHandler(controller));
+            service.post("", new SetTransactionStateHandler(controller));
+            service.put("", new CommitTransactionStatementsHandler(controller));
+            service.delete("", new RollbackTransactionStatementsHandler(controller));
+        });
     }
 
     /**
      * Handles all operations that are valid for all kinds of statements
      */
     private void registerStatementEndpoint() {
-        service.get("/statement", new CreateStatementHandler(controller));
-        service.delete("/statement", new CloseStatementHandler(controller));
+        service.path("/statement", () -> {
+            service.get("", new CreateStatementHandler(controller));
+            service.delete("", new CloseStatementHandler(controller));
+        });
 
         service.post("/query",
                 new ExecuteQueryHandler(controller),
-                new JsonResponseTransformer());
+                responseTransformer);
 
         service.post("/execute",
-                new ExecuteStatementHandler(controller),
-                new JsonResponseTransformer());
+                new ExecuteStatementHandler(controller));
 
         service.post("/update", new ExecuteUpdateHandler(controller));
     }

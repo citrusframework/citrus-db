@@ -29,7 +29,7 @@ public class ExecuteUpdateHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response) {
+    public Integer handle(final Request request, final Response response) {
         return controller.executeUpdate(request.body());
     }
 }

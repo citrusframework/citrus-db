@@ -75,7 +75,7 @@ public class JdbcConnection implements Connection {
                 throw new SQLException("Failed to create statement: " + EntityUtils.toString(response.getEntity()));
             }
 
-            return new JdbcStatement(httpClient, serverUrl);
+            return new JdbcStatement(httpClient, serverUrl, this);
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -242,7 +242,7 @@ public class JdbcConnection implements Connection {
                 throw new SQLException("Failed to create prepared statement: " + EntityUtils.toString(response.getEntity()));
             }
 
-            return new JdbcPreparedStatement(httpClient, sql, serverUrl);
+            return new JdbcPreparedStatement(httpClient, sql, serverUrl, this);
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -262,7 +262,7 @@ public class JdbcConnection implements Connection {
                 throw new SQLException("Failed to create prepare call: " + EntityUtils.toString(response.getEntity()));
             }
 
-            return new JdbcCallableStatement(httpClient, sql, serverUrl);
+            return new JdbcCallableStatement(httpClient, sql, serverUrl, this);
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {

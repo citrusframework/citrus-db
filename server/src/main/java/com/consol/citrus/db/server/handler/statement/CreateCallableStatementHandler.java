@@ -28,7 +28,7 @@ public class CreateCallableStatementHandler extends AbstractJdbcRequestHandler {
     }
 
     @Override
-    public Object handle(final Request request, final Response response) throws Exception {
+    public String handle(final Request request, final Response response) throws Exception {
         controller.createCallableStatement(request.body());
         return "";
     }

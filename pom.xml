@@ -53,6 +53,7 @@
 
   <modules>
     <module>driver</module>
+    <module>agent</module>
     <module>server</module>
     <module>demo</module>
     <module>docs</module>
@@ -128,6 +129,13 @@
         <groupId>com.sparkjava</groupId>
         <artifactId>spark-core</artifactId>
         <version>2.7.1</version>
+      </dependency>
+
+      <!-- Agent -->
+      <dependency>
+        <groupId>net.bytebuddy</groupId>
+        <artifactId>byte-buddy</artifactId>
+        <version>1.7.9</version>
       </dependency>
 
       <!-- Logging -->

@@ -28,7 +28,9 @@ import java.util.Objects;
 public class Row {
 
     /** Row values with column name as key */
-    private Map<String, String> values = new LinkedHashMap<>();
+    private Map<String, Object> values = new LinkedHashMap<>();
+
+    private Object lastValue;
 
     /**
      * Gets set of column names available in this row.
@@ -43,8 +45,9 @@ public class Row {
      * @param columnName
      * @return
      */
-    public String getValue(String columnName) {
-        return values.get(columnName);
+    public Object getValue(String columnName) {
+        lastValue = values.get(columnName);
+        return lastValue;
     }
 
     /**
@@ -52,8 +55,9 @@ public class Row {
      * @param columnIndex
      * @return
      */
-    public String getValue(int columnIndex) {
-        return values.values().toArray(new String[values.size()])[columnIndex];
+    public Object getValue(int columnIndex) {
+        lastValue = values.values().toArray()[columnIndex];
+        return lastValue;
     }
 
     /**
@@ -61,7 +65,7 @@ public class Row {
      *
      * @return
      */
-    public Map<String, String> getValues() {
+    public Map<String, Object> getValues() {
         return values;
     }
 
@@ -70,7 +74,7 @@ public class Row {
      *
      * @param values
      */
-    public void setValues(Map<String, String> values) {
+    public void setValues(Map<String, Object> values) {
         this.values = values;
     }
 
@@ -84,8 +88,15 @@ public class Row {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(values);
+    }
+
+    /**
+     * Gets the lastValue.
+     * @return
+     */
+    public Object getLastValue() {
+        return lastValue;
     }
 
     @Override

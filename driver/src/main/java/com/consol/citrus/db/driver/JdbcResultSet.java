@@ -62,31 +62,75 @@ public class JdbcResultSet implements java.sql.ResultSet {
         dataSet.close();
     }
 
-    public String getString(int columnIndex) throws SQLException {
-        Object columnData = row.getValue(columnIndex-1);
-
-        if (columnData == null) {
+    private <T> T convert(Object value, Class<T> type) throws SQLException {
+        if (value == null) {
             return null;
-        } else {
-            return (String)columnData;
         }
+
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+
+        if (String.class.isAssignableFrom(type)) {
+            return (T) value.toString();
+        }
+
+        if (Byte.class.isAssignableFrom(type)) {
+            return (T) Byte.valueOf(value.toString());
+        }
+
+        if (Boolean.class.isAssignableFrom(type)) {
+            return (T) Boolean.valueOf(value.toString());
+        }
+
+        if (Short.class.isAssignableFrom(type)) {
+            return (T) Short.valueOf(value.toString());
+        }
+
+        if (Integer.class.isAssignableFrom(type)) {
+            return (T) Integer.valueOf(value.toString());
+        }
+
+        if (Long.class.isAssignableFrom(type)) {
+            return (T) Long.valueOf(value.toString());
+        }
+
+        if (Double.class.isAssignableFrom(type)) {
+            return (T) Double.valueOf(value.toString());
+        }
+
+        if (Float.class.isAssignableFrom(type)) {
+            return (T) Float.valueOf(value.toString());
+        }
+
+        if (Timestamp.class.isAssignableFrom(type)) {
+            return (T) Timestamp.valueOf(value.toString());
+        }
+
+        if (Time.class.isAssignableFrom(type)) {
+            return (T) Time.valueOf(value.toString());
+        }
+
+        if (Date.class.isAssignableFrom(type)) {
+            return (T) Date.valueOf(value.toString());
+        }
+
+        throw new SQLException(String.format("Missing conversion strategy for type %s", type));
+    }
+
+    public String getString(int columnIndex) throws SQLException {
+        return convert(row.getValue(columnIndex-1), String.class);
     }
 
     public String getString(String columnName) throws SQLException {
-        Object columnData = row.getValue(columnName);
-        if (columnData == null) {
-            return null;
-        } else {
-            return (String)columnData;
-        }
+        return convert(row.getValue(columnName), String.class);
     }
 
     public float getFloat(int columnIndex) throws SQLException {
         if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String flotObj = row.getValue(columnIndex-1);
-            return Float.valueOf(flotObj);
+            return convert(row.getValue(columnIndex-1), Float.class);
         }
     }
 
@@ -94,8 +138,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String flotObj = row.getValue(columnName);
-            return Float.valueOf(flotObj);
+            return convert(row.getValue(columnName), Float.class);
         }
     }
 
@@ -103,8 +146,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String currentObj = row.getValue(columnIndex-1);
-            return Integer.valueOf(currentObj);
+            return convert(row.getValue(columnIndex-1), Integer.class);
         }
     }
 
@@ -112,8 +154,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String currentObj = row.getValue(columnName);
-            return Integer.valueOf(currentObj);
+            return convert(row.getValue(columnName), Integer.class);
         }
     }
 
@@ -121,8 +162,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnIndex-1) == null) {
             return false;
         } else {
-            String boolObj = row.getValue(columnIndex-1);
-            return Boolean.valueOf(boolObj);
+            return convert(row.getValue(columnIndex-1), Boolean.class);
         }
     }
 
@@ -130,8 +170,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String byeObj = row.getValue(columnIndex-1);
-            return Byte.valueOf(byeObj);
+            return convert(row.getValue(columnIndex-1), Byte.class);
         }
     }
 
@@ -139,8 +178,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String sortObj = row.getValue(columnIndex-1);
-            return Short.valueOf(sortObj);
+            return convert(row.getValue(columnIndex-1), Short.class);
         }
     }
 
@@ -148,8 +186,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String langObj = row.getValue(columnIndex-1);
-            return Long.valueOf(langObj);
+            return convert(row.getValue(columnIndex-1), Long.class);
         }
     }
 
@@ -157,8 +194,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnIndex-1)==null) {
             return 0;
         } else {
-            String dubObj = row.getValue(columnIndex-1);
-            return Double.valueOf(dubObj);
+            return convert(row.getValue(columnIndex-1), Double.class);
         }
     }
 
@@ -171,7 +207,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        return row.getValue(columnIndex-1).getBytes();
+        return convert(row.getValue(columnIndex-1), String.class).getBytes();
     }
 
     public Date getDate(int columnIndex) throws SQLException {
@@ -179,8 +215,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String datObj = row.getValue(columnIndex-1);
-        return Date.valueOf(datObj);
+        return convert(row.getValue(columnIndex-1), Date.class);
     }
 
     public Time getTime(int columnIndex) throws SQLException {
@@ -188,8 +223,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String timObj = row.getValue(columnIndex-1);
-        return Time.valueOf(timObj);
+        return convert(row.getValue(columnIndex-1), Time.class);
     }
 
     public Timestamp getTimestamp(int columnIndex) throws SQLException {
@@ -197,8 +231,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String timstmpObj = row.getValue(columnIndex-1);
-        return Timestamp.valueOf(timstmpObj);
+        return convert(row.getValue(columnIndex-1), Timestamp.class);
     }
 
     public InputStream getAsciiStream(int columnIndex) throws SQLException {
@@ -206,7 +239,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
+        byte[] byteArray = convert(row.getValue(columnIndex-1), String.class).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
@@ -215,7 +248,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
+        byte[] byteArray = convert(row.getValue(columnIndex-1), String.class).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
@@ -224,7 +257,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
+        byte[] byteArray = convert(row.getValue(columnIndex-1), String.class).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
@@ -237,8 +270,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String bigdStr = row.getValue(columnIndex-1);
-        Long bigdObj = Long.valueOf(bigdStr);
+        Long bigdObj = convert(row.getValue(columnIndex-1), Long.class);
         return BigDecimal.valueOf(bigdObj);
     }
 
@@ -246,8 +278,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return false;
         } else {
-            String currentObj = row.getValue(columnName);
-            return Boolean.valueOf(currentObj);
+            return convert(row.getValue(columnName), Boolean.class);
         }
     }
 
@@ -255,8 +286,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String byeObj = row.getValue(columnName);
-            return Byte.valueOf(byeObj);
+            return convert(row.getValue(columnName), Byte.class);
         }
     }
 
@@ -264,8 +294,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String sortObj = row.getValue(columnName);
-            return Short.valueOf(sortObj);
+            return convert(row.getValue(columnName), Short.class);
         }
     }
 
@@ -273,8 +302,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String langObj = row.getValue(columnName);
-            return Long.valueOf(langObj);
+            return convert(row.getValue(columnName), Long.class);
         }
     }
 
@@ -282,8 +310,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return 0;
         } else {
-            String dubObj = row.getValue(columnName);
-            return Double.valueOf(dubObj);
+            return convert(row.getValue(columnName), Double.class);
         }
     }
 
@@ -295,7 +322,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if (row.getValue(columnName)==null) {
             return null;
         } else {
-            return row.getValue(columnName).getBytes();
+            return convert(row.getValue(columnName), String.class).getBytes();
         }
     }
 
@@ -304,8 +331,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String dateObj = row.getValue(columnName);
-        return Date.valueOf(dateObj);
+        return convert(row.getValue(columnName), Date.class);
     }
 
     public Time getTime(String columnName) throws SQLException {
@@ -313,8 +339,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String timObj = row.getValue(columnName);
-        return Time.valueOf(timObj);
+        return convert(row.getValue(columnName), Time.class);
     }
 
     public Timestamp getTimestamp(String columnName) throws SQLException {
@@ -322,8 +347,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String timstmpObj = row.getValue(columnName);
-        return Timestamp.valueOf(timstmpObj);
+        return convert(row.getValue(columnName), Timestamp.class);
     }
 
     public Object getObject(String columnName) throws SQLException {
@@ -335,8 +359,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        String bigdStr = row.getValue(columnName);
-        Long bigdObj = Long.valueOf(bigdStr);
+        Long bigdObj = convert(row.getValue(columnName), Long.class);
         return BigDecimal.valueOf(bigdObj);
     }
 
@@ -345,7 +368,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnName).getBytes();
+        byte[] byteArray = convert(row.getValue(columnName), String.class).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
@@ -354,7 +377,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnName).getBytes();
+        byte[] byteArray = convert(row.getValue(columnName), String.class).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
@@ -363,7 +386,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnName).getBytes();
+        byte[] byteArray = convert(row.getValue(columnName), String.class).getBytes();
         return new ByteArrayInputStream(byteArray);
     }
 
@@ -391,7 +414,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnIndex-1).getBytes();
+        byte[] byteArray = convert(row.getValue(columnIndex-1), String.class).getBytes();
         return new InputStreamReader(new ByteArrayInputStream(byteArray));
     }
 
@@ -400,7 +423,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
             return null;
         }
 
-        byte[] byteArray = row.getValue(columnName).getBytes();
+        byte[] byteArray = convert(row.getValue(columnName), String.class).getBytes();
         return new InputStreamReader(new ByteArrayInputStream(byteArray));
     }
 
@@ -899,7 +922,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean wasNull()throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'wasNull'");
+        return row.getLastValue() == null;
     }
 
     public void updateBoolean(String columnName, boolean x) throws SQLException {

@@ -22,6 +22,7 @@ import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
 import com.consol.citrus.db.server.handler.connection.*;
 import com.consol.citrus.db.server.handler.statement.*;
 import com.consol.citrus.db.server.transformer.JsonResponseTransformer;
+import com.consol.citrus.db.server.util.DeamonThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Service;
@@ -110,6 +111,14 @@ public class JdbcServer {
      * Start server instance and listen for incoming requests.
      */
     public void start() {
+        if (configuration.isDeamon()) {
+            Executors.newSingleThreadExecutor(DeamonThread::new).submit(this::initService);
+        } else {
+            initService();
+        }
+    }
+
+    private void initService() {
         service = Service.ignite();
         service.port(configuration.getPort());
         service.before((request, response) -> log.info(request.requestMethod() + " " + request.url()));

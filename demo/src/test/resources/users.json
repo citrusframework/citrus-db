@@ -1,0 +1,6 @@
+[
+  { "id": 1, "name": "Leonard", "email": "leonard@bbtheory.org" },
+  { "id": 2, "name": "Penny", "email": "penny@bbtheory.org" },
+  { "id": 3, "name": "Rajesh", "email": "rajesh@bbtheory.org" },
+  { "id": 4, "name": "Howard", "email": "howard@bbtheory.org" }
+]

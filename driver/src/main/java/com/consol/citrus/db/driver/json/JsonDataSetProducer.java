@@ -24,8 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.*;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Christoph Deppisch
@@ -66,7 +65,7 @@ public class JsonDataSetProducer implements DataSetProducer {
         builder = new DataSetBuilder();
 
         try {
-            List<Map<String, String>> rawDataSet = new ObjectMapper().readValue(input, List.class);
+            List<Map<String, Object>> rawDataSet = new ObjectMapper().readValue(input, List.class);
 
             rawDataSet.forEach(rowData -> {
                 Row row = new Row();

@@ -30,13 +30,24 @@ public class JdbcServerOptions {
             }
         });
 
-        options.add(new CliOption("d", "duration", "Maximum time in milliseconds the server should be up and running - server will terminate automatically when time exceeds") {
+        options.add(new CliOption("t", "time", "Maximum time in milliseconds the server should be up and running - server will terminate automatically when time exceeds") {
             @Override
             protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs) throws JdbcServerException {
                 if (value != null && value.length() > 0) {
                     configuration.setTimeToLive(Long.valueOf(value));
                 } else {
-                    throw new JdbcServerException("Missing parameter value for -d/-duration option");
+                    throw new JdbcServerException("Missing parameter value for -t/-time option");
+                }
+            }
+        });
+
+        options.add(new CliOption("d", "deamon", "Flag to indicate that this server should be started as deamon thread") {
+            @Override
+            protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs) throws JdbcServerException {
+                if (value != null && value.length() > 0) {
+                    configuration.setDeamon(Boolean.valueOf(value));
+                } else {
+                    throw new JdbcServerException("Missing parameter value for -d/-deamon option");
                 }
             }
         });

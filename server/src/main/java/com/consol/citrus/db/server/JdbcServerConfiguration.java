@@ -34,6 +34,8 @@ public class JdbcServerConfiguration {
     /** Server time to live in milliseconds */
     private long timeToLive = -1;
 
+    private boolean deamon = false;
+
     public String getHost() {
         return host;
     }
@@ -102,5 +104,23 @@ public class JdbcServerConfiguration {
      */
     public void setTimeToLive(final long timeToLive) {
         this.timeToLive = timeToLive;
+    }
+
+    /**
+     * Gets the deamon.
+     *
+     * @return
+     */
+    public boolean isDeamon() {
+        return deamon;
+    }
+
+    /**
+     * Sets the deamon.
+     *
+     * @param deamon
+     */
+    public void setDeamon(boolean deamon) {
+        this.deamon = deamon;
     }
 }

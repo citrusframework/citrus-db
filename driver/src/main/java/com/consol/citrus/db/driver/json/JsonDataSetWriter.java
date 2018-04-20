@@ -34,7 +34,7 @@ public class JsonDataSetWriter implements DataSetWriter {
     @Override
     public String write(DataSet dataSet) {
         try {
-            List<Map<String, String>> rawDataSet = new ArrayList<>();
+            List<Map<String, Object>> rawDataSet = new ArrayList<>();
             dataSet.getRows().forEach(row -> rawDataSet.add(row.getValues()));
 
             ObjectMapper mapper = new ObjectMapper();

@@ -19,20 +19,56 @@ package com.consol.citrus.demo.model;
 /**
  * @author Christoph Deppisch
  */
-public class Customer {
-    private long id;
-    private String firstName, lastName;
+public class City {
 
-    public Customer(long id, String firstName, String lastName) {
+    private long id;
+    private String name;
+
+    public City(long id, String name) {
         this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return String.format(
-                "Customer[id=%d, firstName='%s', lastName='%s']",
-                id, firstName, lastName);
+                "City[id=%d, name='%s']",
+                id, name);
+    }
+
+    /**
+     * Gets the id.
+     *
+     * @return
+     */
+    public long getId() {
+        return id;
+    }
+
+    /**
+     * Sets the id.
+     *
+     * @param id
+     */
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets the name.
+     *
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name.
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 }

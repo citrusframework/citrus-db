@@ -51,6 +51,9 @@ public class JdbcDriver implements Driver {
     /** Default port for server connection */
     private int defaultPort = 4567;
 
+    private static final String DEFAULT_SERVER_URL_PROPERTY = "citrus.db.server.url";
+    private static final String DEFAULT_SERVER_URL_ENV = "CITRUS_DB_SERVER_URL";
+
     private static final String DEFAULT_PORT_PROPERTY = "citrus.db.server.port";
     private static final String DEFAULT_PORT_ENV = "CITRUS_DB_SERVER_PORT";
 
@@ -88,28 +91,34 @@ public class JdbcDriver implements Driver {
      * Constructor using http client.
      * @param httpClient
      */
-    public JdbcDriver(final HttpClient httpClient) {
+    public JdbcDriver(HttpClient httpClient) {
         this.httpClient = httpClient;
         this.defaultPort = Integer.valueOf(System.getProperty(DEFAULT_PORT_PROPERTY, (System.getenv(DEFAULT_PORT_ENV) != null ? System.getenv(DEFAULT_PORT_ENV) : String.valueOf(defaultPort))));
+        this.serverUrl = System.getProperty(DEFAULT_SERVER_URL_PROPERTY, (System.getenv(DEFAULT_SERVER_URL_ENV) != null ? System.getenv(DEFAULT_SERVER_URL_ENV) : serverUrl));
     }
 
     static {
         try {
             DriverManager.registerDriver(driverInstance);
-        } catch(final Exception e) {
+        } catch(Exception e) {
             Logger.getLogger(JdbcDriver.class.getName()).log(Level.WARNING, "Error registering jdbc driver: " + e.getMessage(), e);
         }
     }
 
     @Override
-    public Connection connect(final String url, final Properties info) throws SQLException {
+    public Connection connect(String url, Properties info) throws SQLException {
         JdbcConnection connection = null;
 
         if (acceptsURL(url)) {
             try {
-                connectRemote(url, info);
+                URI uri = new URI(getServerUri(url));
+                if (serverUrl == null || serverUrl.length() == 0) {
+                    serverUrl = "http://" + Optional.ofNullable(uri.getHost()).orElse("localhost") + (uri.getPort() > 0 ? ":" + uri.getPort() : ":" + defaultPort);
+                }
+
+                connectRemote(serverUrl, getDatabaseName(uri), info);
                 connection = new JdbcConnection(httpClient, serverUrl);
-            } catch(final Exception ex) {
+            } catch(Exception ex) {
                 throw(new SQLException(ex.getMessage(), ex));
             }
         }
@@ -119,17 +128,15 @@ public class JdbcDriver implements Driver {
 
     /**
      * This method makes the one time connection to the RMI server
-     * @param connectionString
+     * @param serverUrl
+     * @param databaseName
      * @param info
      */
-    private void connectRemote(final String connectionString, final Properties info) throws SQLException {
+    private void connectRemote(String serverUrl, String databaseName, Properties info) throws SQLException {
         HttpResponse response = null;
         try {
-            final URI uri = new URI(getServerUri(connectionString));
-            serverUrl = "http://" + Optional.ofNullable(uri.getHost()).orElse("localhost") + (uri.getPort() > 0 ? ":" + uri.getPort() : ":" + defaultPort);
-
-            final HttpUriRequest uriRequest = RequestBuilder.get(serverUrl + "/connection")
-                    .addParameter("database", getDatabaseName(uri))
+            HttpUriRequest uriRequest = RequestBuilder.get(serverUrl + "/connection")
+                    .addParameter("database", databaseName)
                     .addParameters(convertProperties(info))
                     .build();
 
@@ -138,7 +145,7 @@ public class JdbcDriver implements Driver {
             if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
                 throw new SQLException("Failed to connect to server: " + EntityUtils.toString(response.getEntity()));
             }
-        } catch(final Exception ex) {
+        } catch(Exception ex) {
             throw new SQLException(ex);
         } finally {
             HttpClientUtils.closeQuietly(response);
@@ -146,7 +153,7 @@ public class JdbcDriver implements Driver {
     }
 
     @Override
-    public boolean acceptsURL(final String url) throws SQLException {
+    public boolean acceptsURL(String url) throws SQLException {
         return Stream.of(URL_PREFIX_SET).anyMatch(url::startsWith);
     }
 
@@ -155,7 +162,7 @@ public class JdbcDriver implements Driver {
      * @param properties The properties to convert
      * @return A NameValuePair array containing the properties
      */
-    private NameValuePair[] convertProperties(final Properties properties) {
+    private NameValuePair[] convertProperties(Properties properties) {
         return properties.entrySet()
                 .stream()
                 .map(entry ->
@@ -172,7 +179,7 @@ public class JdbcDriver implements Driver {
      * @param uri
      * @return
      */
-    private String getDatabaseName(final URI uri) {
+    private String getDatabaseName(URI uri) {
         String resourcePath = uri.getSchemeSpecificPart();
 
         if (resourcePath.startsWith("//")) {
@@ -195,12 +202,12 @@ public class JdbcDriver implements Driver {
      * @param connectionString
      * @return
      */
-    private String getServerUri(final String connectionString) {
+    private String getServerUri(String connectionString) {
         String url = connectionString.substring(Stream.of(URL_PREFIX_SET).filter(connectionString::startsWith).findFirst().orElse("").length());
-        final String localhost = "localhost/";
+        String localhost = "localhost/";
 
         if (url.startsWith("@")) {
-            final String[] tokens = url.substring(1).split(":");
+            String[] tokens = url.substring(1).split(":");
 
             if (tokens.length > 2) {
                 url = tokens[0] + ":" + tokens[1] + "/" + tokens[2];
@@ -212,7 +219,7 @@ public class JdbcDriver implements Driver {
         }
 
         if (url.startsWith("mssqlserver4:")) {
-            final String[] tokens = url.substring("mssqlserver4:".length()).split("@");
+            String[] tokens = url.substring("mssqlserver4:".length()).split("@");
             url = tokens[1] + "/" + tokens[0];
         } else if (url.startsWith("odbc:")) {
             url = localhost + url.substring("odbc:".length());
@@ -248,7 +255,7 @@ public class JdbcDriver implements Driver {
     }
 
     @Override
-    public DriverPropertyInfo[] getPropertyInfo(final String url, final Properties loginProps) throws SQLException {
+    public DriverPropertyInfo[] getPropertyInfo(String url, Properties loginProps) throws SQLException {
         return new DriverPropertyInfo[] {};
     }
 
@@ -260,5 +267,23 @@ public class JdbcDriver implements Driver {
     @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         return Logger.getGlobal();
+    }
+
+    /**
+     * Gets the serverUrl.
+     *
+     * @return
+     */
+    public String getServerUrl() {
+        return serverUrl;
+    }
+
+    /**
+     * Sets the serverUrl.
+     *
+     * @param serverUrl
+     */
+    public void setServerUrl(String serverUrl) {
+        this.serverUrl = serverUrl;
     }
 }

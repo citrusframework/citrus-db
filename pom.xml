@@ -126,6 +126,11 @@
         <version>4.5.3</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpcore</artifactId>
+        <version>4.4.6</version>
+      </dependency>
+      <dependency>
         <groupId>com.sparkjava</groupId>
         <artifactId>spark-core</artifactId>
         <version>2.7.1</version>
@@ -174,15 +179,6 @@
 
   <!-- Global dependencies -->
   <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-    </dependency>
-    
     <!-- Test scoped dependencies -->
     <dependency>
       <groupId>org.testng</groupId>

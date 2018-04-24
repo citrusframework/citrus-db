@@ -16,9 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -27,18 +25,11 @@ import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.DriverPropertyInfo;
-import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
-import java.util.Comparator;
-import java.util.Optional;
-import java.util.Properties;
+import java.sql.*;
+import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,7 +67,7 @@ public class JdbcDriver implements Driver {
 
     public static final int MAJOR = 0;
     public static final int MINOR = 1;
-    public static final int PATCH = 0;
+    public static final int PATCH = 2;
 
     public static final JdbcDriver driverInstance = new JdbcDriver();
 
@@ -106,7 +97,7 @@ public class JdbcDriver implements Driver {
         try {
             DriverManager.registerDriver(driverInstance);
         } catch(final Exception e) {
-            LoggerFactory.getLogger(JdbcDriver.class).warn("Error registering jdbc driver", e);
+            Logger.getLogger(JdbcDriver.class.getName()).log(Level.WARNING, "Error registering jdbc driver: " + e.getMessage(), e);
         }
     }
 

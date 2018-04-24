@@ -32,7 +32,8 @@ import java.util.Map;
 public class JdbcResultSet implements java.sql.ResultSet {
 
     /** Remote ResultSet */
-    private DataSet dataSet;
+    private final DataSet dataSet;
+    private final JdbcStatement statement;
 
     //The current ResultSet data row
     private Row row;
@@ -40,8 +41,9 @@ public class JdbcResultSet implements java.sql.ResultSet {
     /**
      * Constructor using remote result set.
      */
-    public JdbcResultSet(DataSet dataSet) throws SQLException {
+    public JdbcResultSet(DataSet dataSet, JdbcStatement statement) throws SQLException {
         this.dataSet = dataSet;
+        this.statement = statement;
     }
 
     @Override
@@ -637,7 +639,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Statement getStatement()  throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getStatement'");
+        return statement;
     }
 
 

@@ -85,7 +85,7 @@ public class JdbcDatabaseMetaData implements DatabaseMetaData {
 
     @Override
     public String getDriverVersion() throws SQLException {
-        return JdbcDriver.MAJOR + "." + JdbcDriver.MINOR + JdbcDriver.PATCH;
+        return JdbcDriver.MAJOR + "." + JdbcDriver.MINOR + "." + JdbcDriver.PATCH;
     }
 
     @Override

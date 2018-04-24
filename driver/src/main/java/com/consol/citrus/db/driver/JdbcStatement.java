@@ -71,7 +71,7 @@ public class JdbcStatement implements Statement {
 
             dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
 
-            return new JdbcResultSet(dataSet);
+            return new JdbcResultSet(dataSet, this);
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -144,7 +144,6 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setMaxFieldSize'");
     }
 
     @Override
@@ -154,12 +153,10 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setMaxRows(final int max) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setMaxRows'");
     }
 
     @Override
     public void setEscapeProcessing(final boolean enable) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setEscapeProcessing'");
     }
 
     @Override
@@ -169,7 +166,6 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setQueryTimeout(final int seconds) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setQueryTimeout'");
     }
 
     @Override
@@ -189,12 +185,11 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setCursorName(final String name) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setCursorName'");
     }
 
     @Override
     public java.sql.ResultSet getResultSet() throws SQLException {
-        return new JdbcResultSet(dataSet);
+        return new JdbcResultSet(dataSet, this);
     }
 
     @Override
@@ -209,7 +204,6 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setFetchDirection(final int direction) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setFetchDirection'");
     }
 
     @Override
@@ -219,7 +213,6 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setFetchSize(final int rows) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setFetchSize'");
     }
 
     @Override
@@ -309,7 +302,6 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setPoolable(final boolean poolable) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setPoolable'");
     }
 
     @Override
@@ -334,7 +326,6 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setLargeMaxRows(final long max) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'setLargeMaxRows'");
     }
 
     @Override

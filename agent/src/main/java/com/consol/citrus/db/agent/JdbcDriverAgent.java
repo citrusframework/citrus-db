@@ -18,14 +18,11 @@ package com.consol.citrus.db.agent;
 
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.implementation.MethodDelegation;
-import net.bytebuddy.matcher.ElementMatchers;
 
 import java.lang.instrument.Instrumentation;
 import java.sql.Driver;
 
-import static net.bytebuddy.matcher.ElementMatchers.isAbstract;
-import static net.bytebuddy.matcher.ElementMatchers.named;
-import static net.bytebuddy.matcher.ElementMatchers.not;
+import static net.bytebuddy.matcher.ElementMatchers.*;
 
 /**
  * @author Christoph Deppisch
@@ -36,9 +33,9 @@ public class JdbcDriverAgent {
         AgentBuilder agent = new AgentBuilder.Default()
                 .with(AgentBuilder.RedefinitionStrategy.REDEFINITION)
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
-                .type(ElementMatchers.hasSuperType(named(Driver.class.getName())))
+                .type(isSubTypeOf(Driver.class))
                 .transform((builder, type, classLoader, module) ->
-                        builder.method(ElementMatchers.any().and(not(isAbstract())))
+                        builder.method(named("connect"))
                                 .intercept(MethodDelegation.to(JdbcDriverInterceptor.class))
                 );
 

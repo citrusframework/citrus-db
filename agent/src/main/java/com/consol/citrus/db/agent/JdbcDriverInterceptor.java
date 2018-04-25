@@ -19,7 +19,6 @@ package com.consol.citrus.db.agent;
 import net.bytebuddy.implementation.bind.annotation.*;
 
 import java.lang.reflect.Method;
-import java.sql.Connection;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
@@ -31,8 +30,8 @@ public class JdbcDriverInterceptor {
 
     @RuntimeType
     public static Object intercept(@Origin Method method,
-                                   @AllArguments Object[] args,
-                                   @SuperCall Callable<Connection> callable) throws Exception {
+                                       @AllArguments Object[] args,
+                                       @SuperCall Callable<?> callable) throws Exception {
         try {
             // The JdbcDriver class will not be available in the context of the instrumented method,
             // so we must use our agent class loader to load the driver class and do the call via reflection.

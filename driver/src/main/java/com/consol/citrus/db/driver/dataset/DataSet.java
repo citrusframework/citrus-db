@@ -92,6 +92,14 @@ public class DataSet {
         }
     }
 
+    /**
+     * Returns <code>true</code> if the data set is already closed, otherwise <code>false</code>.
+     * @return
+     */
+    public boolean isClosed() {
+        return closed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

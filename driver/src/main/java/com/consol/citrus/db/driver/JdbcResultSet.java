@@ -639,6 +639,9 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Statement getStatement()  throws SQLException {
+        if (isClosed()) {
+            throw new SQLException("ResultSet has already been closed.");
+        }
         return statement;
     }
 
@@ -734,7 +737,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'isClosed'");
+        return dataSet.isClosed();
     }
 
     @Override

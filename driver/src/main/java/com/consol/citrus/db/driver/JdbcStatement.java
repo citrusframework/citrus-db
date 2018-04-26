@@ -112,6 +112,10 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute statement: " + sql);
             }
 
+            if (response.getEntity().getContentType().getValue().equals("application/json")) {
+                dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+            }
+
             return true;
         } catch (final IOException e) {
             throw new SQLException(e);

@@ -31,7 +31,7 @@ public class JdbcPreparedStatementTest {
         //GIVEN
 
         //WHEN
-        jdbcPreparedStatement.setParameter(0, 2);
+        jdbcPreparedStatement.setParameter(1, 2);
 
         //THEN
         Assert.assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
@@ -43,8 +43,8 @@ public class JdbcPreparedStatementTest {
         //GIVEN
 
         //WHEN
-        jdbcPreparedStatement.setParameter(0, 2);
-        jdbcPreparedStatement.setParameter(1, 42);
+        jdbcPreparedStatement.setParameter(1, 2);
+        jdbcPreparedStatement.setParameter(2, 42);
 
         //THEN
         Assert.assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
@@ -58,8 +58,8 @@ public class JdbcPreparedStatementTest {
         //GIVEN
 
         //WHEN
-        jdbcPreparedStatement.setParameter(0, 2);
-        jdbcPreparedStatement.setParameter(0, 42);
+        jdbcPreparedStatement.setParameter(1, 2);
+        jdbcPreparedStatement.setParameter(1, 42);
 
         //THEN
         Assert.assertEquals(jdbcPreparedStatement.getParameters().size(), 1);

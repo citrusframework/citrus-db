@@ -330,10 +330,10 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     void setParameter(final int parameterIndex, final Object value){
-        if (parameters.size() > parameterIndex) {
-            parameters.set(parameterIndex,value);
+        if (parameters.size() > parameterIndex - 1) {
+            parameters.set(parameterIndex - 1,value);
         }else {
-            parameters.add(parameterIndex, value);
+            parameters.add(parameterIndex - 1, value);
         }
     }
 

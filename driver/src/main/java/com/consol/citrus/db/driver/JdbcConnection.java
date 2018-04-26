@@ -54,6 +54,9 @@ public class JdbcConnection implements Connection {
     private final HttpClient httpClient;
     private final String serverUrl;
 
+    /** Indicates that this data set is closed */
+    private boolean closed = false;
+
     /**
      * Default constructor using remote connection reference.
      * @param httpClient The http client to use for the db communication
@@ -96,6 +99,7 @@ public class JdbcConnection implements Connection {
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
+            closed = true;
             HttpClientUtils.closeQuietly(response);
         }
     }
@@ -186,7 +190,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public boolean isClosed() throws SQLException {
-        return false;
+        return closed;
     }
 
     @Override
@@ -200,7 +204,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public boolean isReadOnly() throws SQLException {
-        throw new SQLException("Not supported JDBC connection function 'isReadOnly'");
+        return false;
     }
 
     @Override
@@ -223,7 +227,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public SQLWarning getWarnings() throws SQLException {
-        throw new SQLException("Not supported JDBC connection function 'getWarnings'");
+        return null;
     }
 
     @Override
@@ -373,7 +377,7 @@ public class JdbcConnection implements Connection {
 
     @Override
     public boolean isValid(final int timeout) throws SQLException {
-        throw new SQLException("Not supported JDBC connection function 'isValid'");
+        return true;
     }
 
     @Override
@@ -433,6 +437,6 @@ public class JdbcConnection implements Connection {
 
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
-        throw new SQLException("Not supported JDBC connection function 'isWrapperFor'");
+        return false;
     }
 }

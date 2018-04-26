@@ -332,4 +332,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     private String composeStatement() {
         return preparedStatement + " - (" + parameters.stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
     }
+
+    List<Object> getParameters() {
+        return parameters;
+    }
 }

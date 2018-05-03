@@ -60,10 +60,6 @@ public class JdbcStatement implements Statement {
     public java.sql.ResultSet executeQuery(final String sqlQuery) throws SQLException {
         HttpResponse response = null;
         try {
-        	//Tibco Ping-Queries abfangen
-        	if (sqlQuery.equals("SELECT USER from DUAL")){
-        		return new JdbcResultSet(null, this);
-        	}
             response = httpClient.execute(RequestBuilder.post(serverUrl + "/query")
                     .setEntity(new StringEntity(sqlQuery, ContentType.create("text/plain", "UTF-8")))
                     .build());

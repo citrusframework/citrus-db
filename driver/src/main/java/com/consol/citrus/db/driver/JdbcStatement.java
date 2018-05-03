@@ -202,12 +202,12 @@ public class JdbcStatement implements Statement {
 
     @Override
     public int getUpdateCount() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'getUpdateCount'");
+        return -1;
     }
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        return false;
+    	return false;
     }
 
     @Override

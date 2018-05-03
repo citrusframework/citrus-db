@@ -198,11 +198,16 @@ public class JdbcStatement implements Statement {
 
     @Override
     public int getUpdateCount() throws SQLException {
+        //Because currently there are only ResultSet responses implemented,
+        //the hardcoded return value -1 matches the JDBC interface specification
         return -1;
     }
 
     @Override
     public boolean getMoreResults() throws SQLException {
+        //Multiple results in one statement like
+        //select * from foo; select * from bar;
+        //are currently not supported
     	return false;
     }
 

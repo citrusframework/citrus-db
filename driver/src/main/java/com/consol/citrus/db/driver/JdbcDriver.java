@@ -31,6 +31,7 @@ import java.sql.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,11 +52,17 @@ public class JdbcDriver implements Driver {
     /** Default port for server connection */
     private int defaultPort = 4567;
 
-    private static final String DEFAULT_SERVER_URL_PROPERTY = "citrus.db.server.url";
-    private static final String DEFAULT_SERVER_URL_ENV = "CITRUS_DB_SERVER_URL";
+    /** Array of url patterns to accept and to handle with this driver */
+    private String[] acceptUrlPatterns = new String[] { "jdbc:citrus:.*" };
 
-    private static final String DEFAULT_PORT_PROPERTY = "citrus.db.server.port";
-    private static final String DEFAULT_PORT_ENV = "CITRUS_DB_SERVER_PORT";
+    public static final String SERVER_URL_PROPERTY = "citrus.db.server.url";
+    private static final String SERVER_URL_ENV = "CITRUS_DB_SERVER_URL";
+
+    public static final String ACCEPT_URL_PATTERNS_PROPERTY = "citrus.db.server.accept.url.pattern";
+    private static final String ACCEPT_URL_PATTERNS_ENV = "CITRUS_DB_SERVER_ACCEPT_URL_PATTERN";
+
+    public static final String PORT_PROPERTY = "citrus.db.server.port";
+    private static final String PORT_ENV = "CITRUS_DB_SERVER_PORT";
 
     /** Driver URL prefix */
     private static final String[] URL_PREFIX_SET = { "jdbc:citrus:",
@@ -70,7 +77,7 @@ public class JdbcDriver implements Driver {
 
     public static final int MAJOR = 0;
     public static final int MINOR = 1;
-    public static final int PATCH = 2;
+    public static final int PATCH = 3;
 
     public static final JdbcDriver driverInstance = new JdbcDriver();
 
@@ -93,8 +100,16 @@ public class JdbcDriver implements Driver {
      */
     public JdbcDriver(HttpClient httpClient) {
         this.httpClient = httpClient;
-        this.defaultPort = Integer.valueOf(System.getProperty(DEFAULT_PORT_PROPERTY, (System.getenv(DEFAULT_PORT_ENV) != null ? System.getenv(DEFAULT_PORT_ENV) : String.valueOf(defaultPort))));
-        this.serverUrl = System.getProperty(DEFAULT_SERVER_URL_PROPERTY, (System.getenv(DEFAULT_SERVER_URL_ENV) != null ? System.getenv(DEFAULT_SERVER_URL_ENV) : serverUrl));
+        this.defaultPort = Integer.valueOf(System.getProperty(PORT_PROPERTY, (System.getenv(PORT_ENV) != null ? System.getenv(PORT_ENV) : String.valueOf(defaultPort))));
+        this.serverUrl = System.getProperty(SERVER_URL_PROPERTY, (System.getenv(SERVER_URL_ENV) != null ? System.getenv(SERVER_URL_ENV) : serverUrl));
+        String acceptUrlPatternString = System.getProperty(ACCEPT_URL_PATTERNS_PROPERTY, (System.getenv(ACCEPT_URL_PATTERNS_ENV) != null ? System.getenv(ACCEPT_URL_PATTERNS_ENV) : "jdbc:citrus:.*"));
+
+        if (acceptUrlPatternString.contains(",")) {
+            this.acceptUrlPatterns = acceptUrlPatternString.split(",");
+        } else {
+            this.acceptUrlPatterns = new String[] { acceptUrlPatternString };
+        }
+
     }
 
     static {
@@ -154,7 +169,7 @@ public class JdbcDriver implements Driver {
 
     @Override
     public boolean acceptsURL(String url) throws SQLException {
-        return Stream.of(URL_PREFIX_SET).anyMatch(url::startsWith);
+        return Stream.of(acceptUrlPatterns).map(Pattern::compile).anyMatch(pattern -> pattern.matcher(url).matches());
     }
 
     /**

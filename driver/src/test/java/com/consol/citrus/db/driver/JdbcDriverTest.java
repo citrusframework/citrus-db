@@ -82,6 +82,18 @@ public class JdbcDriverTest {
         driver.connect("jdbc:mysql://database:1234/mysqldb", credentials);
     }
 
+    @Test
+    public void acceptUrl() throws SQLException {
+        Assert.assertTrue(driver.acceptsURL("jdbc:citrus:http://localhost:3306/testdb"));
+        Assert.assertFalse(driver.acceptsURL("jdbc:foo:http://localhost:3306/testdb"));
+
+        System.setProperty(JdbcDriver.ACCEPT_URL_PATTERNS_PROPERTY, "jdbc:citrus:.*,jdbc:foo:.*");
+
+        JdbcDriver fooDriver = new JdbcDriver(httpClient);
+        Assert.assertTrue(fooDriver.acceptsURL("jdbc:citrus:http://localhost:3306/testdb"));
+        Assert.assertTrue(fooDriver.acceptsURL("jdbc:foo:http://localhost:3306/testdb"));
+    }
+
     @Test(dataProvider = "urlProvider")
     public void connect(String url, String host, int port, String dbName) throws SQLException, IOException {
         when(httpClient.execute(any(HttpUriRequest.class))).thenAnswer((Answer<HttpResponse>) invocation -> {

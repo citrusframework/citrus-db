@@ -83,9 +83,9 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git@github.com:christophd/citrus-db.git</connection>
-    <developerConnection>scm:git:git@github.com/christophd/citrus-db.git</developerConnection>
-    <url>http://github.com/christophd/citrus-db.git</url>
+    <connection>scm:git:git@github.com:citrusframework/citrus-db.git</connection>
+    <developerConnection>scm:git:git@github.com/citrusframework/citrus-db.git</developerConnection>
+    <url>http://github.com/citrusframework/citrus-db.git</url>
   </scm>
 
   <organization>

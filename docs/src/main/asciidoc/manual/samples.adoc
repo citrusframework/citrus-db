@@ -5,11 +5,11 @@ Documentation can only provide theoretical insights of what the application is c
 help both beginners and experts to reach complete understanding of how the db server works in different environments.
 
 Following from that we try to provide sample project that demonstrate the database server usage in real world examples. Please see the following
-sample projects with complete code available on link:https://github.com/christophd/citrus-db/tree/master/samples[github].
+sample projects with complete code available on link:https://github.com/citrusframework/citrus-db/tree/master/samples[github].
 
 [[samples-json]]
 == Json dataset sample
 
 .Sample repositories
-Json dataset:: https://github.com/christophd/citrus-db/tree/master/samples/sample-json
-Auto generated from swagger:: https://github.com/christophd/citrus-db/tree/master/samples/sample-swagger
+Json dataset:: https://github.com/citrusframework/citrus-db/tree/master/samples/sample-json
+Auto generated from swagger:: https://github.com/citrusframework/citrus-db/tree/master/samples/sample-swagger

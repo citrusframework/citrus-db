@@ -41,7 +41,7 @@ Bugs
 ---------
 
 Please report any bugs and/or feature requests to dev@citrusframework.org
-or directly to http://github.com/christophd/citrus-db/issues
+or directly to http://github.com/citrusframework/citrus-db/issues
   
 Team
 ---------

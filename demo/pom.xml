@@ -5,7 +5,7 @@
 
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-db-demo</artifactId>
-  <version>0.1.4</version>
+  <version>0.1.5-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>citrus-db-demo</name>
@@ -17,7 +17,6 @@
     <spring.boot.version>1.5.12.RELEASE</spring.boot.version>
     <citrus.version>2.7.4</citrus.version>
     <failIfNoTests>false</failIfNoTests>
-    <demo.mode>driver</demo.mode>
     <demo.skip>false</demo.skip>
   </properties>
 
@@ -187,7 +186,7 @@
 
   <profiles>
     <profile>
-      <id>mysql</id>
+      <id>agent</id>
       <activation>
         <property>
           <name>demo.mode</name>
@@ -214,11 +213,11 @@
     </profile>
 
     <profile>
-      <id>citrus</id>
+      <id>driver</id>
       <activation>
         <property>
           <name>demo.mode</name>
-          <value>driver</value>
+          <value>!agent</value>
         </property>
       </activation>
       <dependencies>

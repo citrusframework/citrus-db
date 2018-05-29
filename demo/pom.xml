@@ -17,6 +17,8 @@
     <spring.boot.version>1.5.12.RELEASE</spring.boot.version>
     <citrus.version>2.7.4</citrus.version>
     <failIfNoTests>false</failIfNoTests>
+    <demo.mode>driver</demo.mode>
+    <demo.skip>false</demo.skip>
   </properties>
 
   <dependencyManagement>
@@ -123,6 +125,14 @@
       </plugin>
 
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <configuration>
+          <skip>${demo.skip}</skip>
+        </configuration>
+      </plugin>
+
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>1.6.0</version>
@@ -136,7 +146,7 @@
           </execution>
         </executions>
         <configuration>
-          <skip>true</skip>
+          <skip>${demo.skip}</skip>
           <mainClass>com.consol.citrus.demo.DemoJdbcServer</mainClass>
           <arguments>
             <argument>-deamon</argument>
@@ -152,7 +162,7 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring.boot.version}</version>
         <configuration>
-          <skip>true</skip>
+          <skip>${demo.skip}</skip>
           <fork>true</fork>
         </configuration>
         <executions>
@@ -177,29 +187,40 @@
 
   <profiles>
     <profile>
-      <id>native-demo</id>
+      <id>mysql</id>
+      <activation>
+        <property>
+          <name>demo.mode</name>
+          <value>agent</value>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+      </dependencies>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <configuration>
-              <skip>false</skip>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <configuration>
-              <skip>false</skip>
+              <jvmArguments>-javaagent:${settings.localRepository}/com/consol/citrus/citrus-db-agent/${project.version}/citrus-db-agent-${project.version}.jar</jvmArguments>
             </configuration>
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <profile>
+      <id>citrus</id>
+      <activation>
+        <property>
+          <name>demo.mode</name>
+          <value>driver</value>
+        </property>
+      </activation>
       <dependencies>
         <dependency>
           <groupId>com.consol.citrus</groupId>
@@ -208,39 +229,17 @@
           <classifier>full</classifier>
         </dependency>
       </dependencies>
-    </profile>
-    
-    <profile>
-      <id>agent-demo</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>exec-maven-plugin</artifactId>
-            <configuration>
-              <skip>false</skip>
-            </configuration>
-          </plugin>
           <plugin>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
             <configuration>
-              <skip>false</skip>
-              <jvmArguments>-javaagent:${settings.localRepository}/com/consol/citrus/citrus-db-agent/${project.version}/citrus-db-agent-${project.version}.jar</jvmArguments>
+              <jvmArguments>-Dspring.datasource.url=jdbc:citrus:http://localhost:4567/testdb</jvmArguments>
             </configuration>
           </plugin>
         </plugins>
       </build>
-      <dependencies>
-        <dependency>
-          <groupId>mysql</groupId>
-          <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-      </dependencies>
     </profile>
   </profiles>
 

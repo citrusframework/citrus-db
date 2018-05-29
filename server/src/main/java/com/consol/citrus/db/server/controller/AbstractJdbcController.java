@@ -47,6 +47,13 @@ public abstract class AbstractJdbcController implements JdbcController {
     protected abstract DataSet handleQuery(String sql) throws JdbcServerException;
 
     /**
+     * Subclasses must provide proper data set for SQL statement.
+     * @param sql The sql statement to map to a DataSet
+     * @return The data set mapped to the given query
+     */
+    protected abstract DataSet handleExecute(String sql) throws JdbcServerException;
+
+    /**
      * Subclasses must provide number of row updated by SQL statement.
      * @param sql The sql statement to map to a DataSet
      * @return The amount of rows affected by the sql
@@ -94,10 +101,21 @@ public abstract class AbstractJdbcController implements JdbcController {
     }
 
     @Override
-    public void executeStatement(final String sql) throws JdbcServerException {
+    public DataSet executeStatement(final String sql) throws JdbcServerException {
         log.info("EXECUTE STATEMENT: " + sql);
-        handleUpdate(sql);
+        final DataSet dataSet = handleExecute(sql);
+
+        try {
+            if(log.isDebugEnabled()){
+                log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
+            }
+        } catch (final SQLException e) {
+            throw new JdbcServerException("Failed to access dataSet", e);
+        }
+
         log.info("STATEMENT EXECUTION SUCCESSFUL");
+
+        return dataSet;
     }
 
     @Override

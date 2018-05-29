@@ -36,8 +36,11 @@ public class AbstractJdbcControllerTest {
     private AbstractJdbcController jdbcController;
 
     //return values for stubbed spy methods
-    private final int expectedAffectedRows = new Random().nextInt();
-    private final DataSet expectedDataSet = mock(DataSet.class);
+    private final int affectedRows = new Random().nextInt();
+    private final DataSet dataSet = mock(DataSet.class);
+
+    //GIVEN
+    private String sql = "statement";
 
     @BeforeMethod
     private void setUp(){
@@ -48,52 +51,48 @@ public class AbstractJdbcControllerTest {
             }
 
             @Override
+            protected DataSet handleExecute(final String sql) throws JdbcServerException {
+                return null;
+            }
+
+            @Override
             protected int handleUpdate(final String sql) throws JdbcServerException {
                 return 0;
             }
         });
-        doReturn(expectedDataSet).when(jdbcController).handleQuery(anyString());
-        doReturn(expectedAffectedRows).when(jdbcController).handleUpdate(anyString());
+
+        doReturn(dataSet).when(jdbcController).handleQuery(anyString());
+        doReturn(dataSet).when(jdbcController).handleExecute(anyString());
+        doReturn(affectedRows).when(jdbcController).handleUpdate(anyString());
     }
 
     @Test
     public void testExecuteQueryDelegatesToHandleQuery(){
-
-        //GIVEN
-        final String sql = "statement";
-
         //WHEN
-        final DataSet dataSet = jdbcController.executeQuery(sql);
+        DataSet dataSet = jdbcController.executeQuery(sql);
 
         //THEN
         verify(jdbcController).handleQuery(sql);
-        Assert.assertEquals(dataSet, expectedDataSet);
+        Assert.assertEquals(dataSet, this.dataSet);
     }
 
     @Test
-    public void testExecuteDelegatesToHandleUpdate(){
-
-        //GIVEN
-        final String sql = "statement";
-
+    public void testExecuteDelegatesToHandleExecute(){
         //WHEN
-        jdbcController.executeStatement(sql);
+        DataSet dataSet = jdbcController.executeStatement(sql);
 
         //THEN
-        verify(jdbcController).handleUpdate(sql);
+        verify(jdbcController).handleExecute(sql);
+        Assert.assertEquals(dataSet, this.dataSet);
     }
 
     @Test
     public void testExecuteUpdateDelegatesToHandleUpdate(){
-
-        //GIVEN
-        final String sql = "statement";
-
         //WHEN
         final int affectedRows = jdbcController.executeUpdate(sql);
 
         //THEN
         verify(jdbcController).handleUpdate(sql);
-        Assert.assertEquals(affectedRows, expectedAffectedRows);
+        Assert.assertEquals(affectedRows, this.affectedRows);
     }
 }

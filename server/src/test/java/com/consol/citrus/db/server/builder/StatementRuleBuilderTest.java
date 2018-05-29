@@ -120,6 +120,36 @@ public class StatementRuleBuilderTest {
     }
 
     @Test
+    public void testExecuteWithString(){
+
+        //GIVEN
+        final String sql = "some Statement";
+
+
+        //WHEN
+        final ExecuteRuleBuilder executeRuleBuilder = statementRuleBuilder.execute(sql);
+
+        //THEN
+        assertEquals(executeRuleBuilder.getController(), ruleBasedControllerMock);
+        assertTrue(executeRuleBuilder.getPrecondition().match(sql));
+    }
+
+    @Test
+    public void testExecuteWithPattern(){
+
+        //GIVEN
+        final Pattern sql = Pattern.compile("some .* pattern");
+
+
+        //WHEN
+        final ExecuteRuleBuilder executeRuleBuilder = statementRuleBuilder.execute(sql);
+
+        //THEN
+        assertEquals(executeRuleBuilder.getController(), ruleBasedControllerMock);
+        assertTrue(executeRuleBuilder.getPrecondition().match("some cool pattern"));
+    }
+
+    @Test
     public void testExecuteUpdateWithString(){
 
         //GIVEN

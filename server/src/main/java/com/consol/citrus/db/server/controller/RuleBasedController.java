@@ -37,6 +37,7 @@ public class RuleBasedController extends AbstractJdbcController{
     private List<CreatePreparedStatementRule> createPreparedStatementRules = new ArrayList<>();
     private List<CloseStatementRule> closeStatementRules = new ArrayList<>();
     private List<ExecuteQueryRule> executeQueryRules = new ArrayList<>();
+    private List<ExecuteRule> executeRules = new ArrayList<>();
     private List<ExecuteUpdateRule> executeUpdateRules = new ArrayList<>();
     private List<StartTransactionRule> startTransactionRule = new ArrayList<>();
     private List<CommitTransactionRule> commitTransactionRule = new ArrayList<>();
@@ -57,6 +58,15 @@ public class RuleBasedController extends AbstractJdbcController{
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
                 .orElse(new ExecuteQueryRule(delegateJdbcController::handleQuery))
+                .applyOn(sql);
+    }
+
+    @Override
+    protected DataSet handleExecute(final String sql) throws JdbcServerException {
+        return executeRules.stream()
+                .filter(rule -> rule.matches(sql))
+                .findFirst()
+                .orElse(new ExecuteRule(delegateJdbcController::handleExecute))
                 .applyOn(sql);
     }
 
@@ -183,6 +193,8 @@ public class RuleBasedController extends AbstractJdbcController{
             add((CloseStatementRule) rule);
         } else if (rule instanceof ExecuteQueryRule) {
             add((ExecuteQueryRule) rule);
+        } else if (rule instanceof ExecuteRule) {
+            add((ExecuteRule) rule);
         } else if (rule instanceof ExecuteUpdateRule) {
             add((ExecuteUpdateRule) rule);
         } else if (rule instanceof StartTransactionRule) {
@@ -220,6 +232,10 @@ public class RuleBasedController extends AbstractJdbcController{
 
     private void add(final ExecuteQueryRule rule) {
         this.executeQueryRules.add(rule);
+    }
+
+    private void add(final ExecuteRule rule) {
+        this.executeRules.add(rule);
     }
 
     private void add(final ExecuteUpdateRule rule) {

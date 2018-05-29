@@ -53,6 +53,14 @@ public class StatementRuleBuilder {
         return new ExecuteQueryRuleBuilder((stmt) -> sql.matcher(stmt).matches(), controller);
     }
 
+    public ExecuteRuleBuilder execute(final String sql) {
+        return new ExecuteRuleBuilder((stmt) -> stmt.equals(sql), controller);
+    }
+
+    public ExecuteRuleBuilder execute(final Pattern sql) {
+        return new ExecuteRuleBuilder((stmt) -> sql.matcher(stmt).matches(), controller);
+    }
+
     public ExecuteUpdateRuleBuilder executeUpdate(final String sql) {
         return new ExecuteUpdateRuleBuilder((stmt) -> stmt.equals(sql), controller);
     }

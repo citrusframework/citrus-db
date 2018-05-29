@@ -14,23 +14,24 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.server.handler.statement;
+package com.consol.citrus.db.server.rules;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.server.controller.JdbcController;
-import com.consol.citrus.db.server.handler.AbstractJdbcRequestHandler;
-import spark.Request;
-import spark.Response;
 
-public class ExecuteStatementHandler extends AbstractJdbcRequestHandler {
+/**
+ * @author Christoph Deppisch
+ */
+public class ExecuteRule extends Rule<String, DataSet, ExecuteRule> {
 
-    public ExecuteStatementHandler(final JdbcController controller) {
-        super(controller);
+    public ExecuteRule() {
+        super();
     }
 
-    @Override
-    public DataSet handle(final Request request, final Response response) {
-        response.type("application/json");
-        return controller.executeStatement(request.body());
+    public ExecuteRule(final Mapping<String, DataSet> mapping) {
+        super(mapping);
+    }
+
+    public ExecuteRule(final Precondition<String> precondition, final Mapping<String, DataSet> mapping) {
+        super(precondition, mapping);
     }
 }

@@ -28,10 +28,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.SQLWarning;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Objects;
 
 /**
@@ -109,7 +106,7 @@ public class JdbcStatement implements Statement {
                     .build());
 
             if (HttpStatus.SC_OK != response.getStatusLine().getStatusCode()) {
-                throw new SQLException("Failed to execute statement: " + sql);
+                throw new SQLException(String.format("Failed to execute statement '%s' due to server error: %s %s", sql, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase()));
             }
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {

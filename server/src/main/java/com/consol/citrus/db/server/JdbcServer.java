@@ -164,7 +164,8 @@ public class JdbcServer {
                 responseTransformer);
 
         service.post("/execute",
-                new ExecuteStatementHandler(controller));
+                new ExecuteStatementHandler(controller),
+                responseTransformer);
 
         service.post("/update", new ExecuteUpdateHandler(controller));
     }

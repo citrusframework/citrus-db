@@ -7,7 +7,7 @@
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-db</artifactId>
   <name>${project.artifactId}</name>
-  <version>0.1.4-SNAPSHOT</version>
+  <version>0.1.4</version>
   <packaging>pom</packaging>
   <description>Citrus JDBC database simulator</description>
   <url>http://www.citrusframework.org</url>

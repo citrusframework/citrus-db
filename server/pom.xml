@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.consol.citrus</groupId>
     <artifactId>citrus-db</artifactId>
-    <version>0.1.4-SNAPSHOT</version>
+    <version>0.1.4</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 

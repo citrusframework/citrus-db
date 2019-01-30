@@ -1,5 +1,6 @@
 Citrus DB - JDBC server simulation ![Logo][1]
 ==============
+[![Build Status](https://travis-ci.com/citrusframework/citrus-db.svg?branch=master)](https://travis-ci.com/citrusframework/citrus-db) [![<Sonarcloud quality gate>](https://sonarcloud.io/api/project_badges/measure?project=citrus-db&metric=alert_status)](https://sonarcloud.io/dashboard?id=citrus-db)
 
 This library is used to simulate JDBC client-server communication. Usually the system under test (SUT) uses a JDBC driver in order to connect to a relational database such as MySQL, Oracle, DB2, or something else. The Citrus JDBC server is able to simulate the database server.
 

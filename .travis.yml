@@ -1,0 +1,24 @@
+language: java
+jdk:
+  - openjdk8
+
+dist: trusty
+
+# infinite depth for better sonar metrics
+git:
+  depth: false
+
+# Skip installation step
+install: true
+
+script: bash scripts/build.sh
+
+cache:
+  directories:
+  - '$HOME/.sonar/cache'
+
+addons:
+  sonarcloud:
+    organization: "citrusframework"
+    token:
+      secure: "i/3YzSukkVvIimEVwr7LSQIXeDDg28L05lyJBebI9hf5kmGL5nitJbdc1Mon2oPJn04ItoR4qV2Zw5hEyBRFBJqNz8cTc8pTu/Kqqsmr8RIQbd0mJQNZy26CTXgd+MOXIjvMC+6jLlpJmhY/Kx3rxo+VjwpQt6oXaLUFOFzE4Cit8Ve2I++j9uYxjLFKLmrrVa/wzc2cctC2PzQwoNvnQVvV86zi3Z94PDvyAIc3LJRzMiDb8tjGGTGV56Xu4gmb4crn0eR5TMVNpZcKTaS8MVt923RsZG79DVl1RyW6FSb3ThHU4jV2akITBBW/qsyo5oPvMtayTAdp391KmrZ/0VwDKkaVWR0UI3KQgAYDHIr4xhloVo3HLZidapsxlefIaNg9oXFcdXQn8VhdOppTsTGCfoa9e9LCtgbqndauyckGiMNv5+sGldKcYzroTm36e6YG31HIniMEu867PCpYnI7HKWBSpyr6ystMTbG9x6yZCkRyWc2zXKgSQMlrgAQ3hlLUYJ+6zAeoVqKtD3G1hqfQ6WDSBxrpNx1TrUKUAT2fNcIczYKv61x45eAzhd02H1bqh/1/yjn/VWteQZ7kLcA/3m7ouxiApvjbHyhmBHv6jipAHbEF8eFTptD3ImCPcNQnM+jOIWWvPnsdLHPolvF7XHF6PGF9iiQPa3seR3Q="

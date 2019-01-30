@@ -13,16 +13,10 @@
   <artifactId>citrus-db-docs</artifactId>
   <name>citrus-db-docs</name>
   <packaging>pom</packaging>
-
-  <properties>
-    <asciidoctor.version>1.5.6</asciidoctor.version>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.asciidoctor</groupId>
       <artifactId>asciidoctorj</artifactId>
-      <version>${asciidoctor.version}</version>
     </dependency>
   </dependencies>
 
@@ -39,7 +33,6 @@
       <plugin>
         <groupId>org.asciidoctor</groupId>
         <artifactId>asciidoctor-maven-plugin</artifactId>
-        <version>${asciidoctor.version}</version>
         <configuration>
           <sourceDirectory>src/main/asciidoc</sourceDirectory>
           <sourceDocumentName>index.adoc</sourceDocumentName>
@@ -136,7 +129,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-scm-plugin</artifactId>
-            <version>1.9.5</version>
             <configuration>
               <connectionUrl>scm:git:git@github.com:citrusframework/citrus-db.git</connectionUrl>
               <developerConnectionUrl>scm:git:git@github.com:citrusframework/citrus-db.git</developerConnectionUrl>

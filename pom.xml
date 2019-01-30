@@ -14,17 +14,42 @@
   <inceptionYear>2017</inceptionYear>
 
   <properties>
+    <!-- maven config -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
 
+    <!-- dependencies -->
     <slf4j.version>1.7.25</slf4j.version>
     <logback.classic.version>1.2.3</logback.classic.version>
+    <jackson.version>2.9.1</jackson.version>
+    <apache.http.client.version>4.5.7</apache.http.client.version>
+    <apache.http.core.version>4.4.11</apache.http.core.version>
+    <spark.version>2.7.1</spark.version>
+    <bytebuddy.version>1.7.9</bytebuddy.version>
     <testng.version>6.14.3</testng.version>
+    <mockito.version>2.8.47</mockito.version>
 
+    <!-- maven plugins -->
+    <maven.scm.plugin.version>1.11.1</maven.scm.plugin.version>
+    <maven.resource.plugin.version>3.0.2</maven.resource.plugin.version>
+    <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
+    <maven.javadoc.plugin.version>2.10.4</maven.javadoc.plugin.version>
+    <maven.shade.plugin.version>3.1.1</maven.shade.plugin.version>
+    <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+    <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
+    <apache.rat.plugin.version>0.12</apache.rat.plugin.version>
+
+    <!-- maven extensions -->
+    <wagon.ssh.extension.version>2.7</wagon.ssh.extension.version>
+
+    <!-- documentation -->
+    <asciidoctor.version>1.5.6</asciidoctor.version>
     <javadoc.options>-Xdoclint:none</javadoc.options>
 
+    <!-- build configuration -->
     <skip.gpg>false</skip.gpg>
-
     <skip.unit.tests>false</skip.unit.tests>
     <skip.integration.tests>false</skip.integration.tests>
   </properties>
@@ -71,8 +96,28 @@
       </roles>
     </developer>
     <developer>
-      <id>fmaouroboros</id>
+      <id>svettwer</id>
       <name>Sven Hettwer</name>
+      <email>citrus-dev-l@consol.de</email>
+      <organization>ConSol Software GmbH</organization>
+      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>s1hofmann</id>
+      <name>Simon Hofmann</name>
+      <email>citrus-dev-l@consol.de</email>
+      <organization>ConSol Software GmbH</organization>
+      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <id>tnobody</id>
+      <name>Tim Keiner</name>
       <email>citrus-dev-l@consol.de</email>
       <organization>ConSol Software GmbH</organization>
       <organizationUrl>http://www.consol.de/</organizationUrl>
@@ -117,30 +162,30 @@
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
-        <version>2.9.1</version>
+        <version>${jackson.version}</version>
       </dependency>
 
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpclient</artifactId>
-        <version>4.5.3</version>
+        <version>${apache.http.client.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore</artifactId>
-        <version>4.4.6</version>
+        <version>${apache.http.core.version}</version>
       </dependency>
       <dependency>
         <groupId>com.sparkjava</groupId>
         <artifactId>spark-core</artifactId>
-        <version>2.7.1</version>
+        <version>${spark.version}</version>
       </dependency>
 
       <!-- Agent -->
       <dependency>
         <groupId>net.bytebuddy</groupId>
         <artifactId>byte-buddy</artifactId>
-        <version>1.7.9</version>
+        <version>${bytebuddy.version}</version>
       </dependency>
 
       <!-- Logging -->
@@ -155,6 +200,13 @@
         <version>${slf4j.version}</version>
       </dependency>
 
+      <!-- Documentation -->
+      <dependency>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctorj</artifactId>
+        <version>${asciidoctor.version}</version>
+      </dependency>
+
       <!-- Test scoped -->
       <dependency>
         <groupId>org.testng</groupId>
@@ -165,7 +217,7 @@
       <dependency>
         <groupId>org.mockito</groupId>
         <artifactId>mockito-core</artifactId>
-        <version>2.8.47</version>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -200,24 +252,14 @@
   <build>
     <pluginManagement>
       <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.7.0</version>
-          <configuration>
-            <encoding>${project.build.sourceEncoding}</encoding>
-            <source>1.8</source>
-            <target>1.8</target>
-          </configuration>
-        </plugin>
+        <!-- Required for citrus-db-docs because of pom packaging -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
+          <version>${maven.resource.plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
           <configuration>
             <archive>
               <addMavenDescriptor>true</addMavenDescriptor>
@@ -226,29 +268,14 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.0.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-scm-plugin</artifactId>
-          <version>1.9.5</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
+          <version>${maven.scm.plugin.version}</version>
         </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.0.1</version>
+          <version>${maven.source.plugin.version}</version>
           <executions>
             <execution>
               <id>attach-sources</id>
@@ -262,7 +289,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>2.10.4</version>
+          <version>${maven.javadoc.plugin.version}</version>
           <configuration>
             <additionalparam>${javadoc.options}</additionalparam>
           </configuration>
@@ -277,14 +304,20 @@
         </plugin>
 
         <plugin>
+          <groupId>org.asciidoctor</groupId>
+          <artifactId>asciidoctor-maven-plugin</artifactId>
+          <version>${asciidoctor.version}</version>
+        </plugin>
+
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>${maven.shade.plugin.version}</version>
         </plugin>
 
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.20.1</version>
+          <version>${maven.surefire.plugin.version}</version>
           <configuration>
             <forkMode>once</forkMode>
             <failIfNoTests>false</failIfNoTests>
@@ -299,7 +332,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>2.20.1</version>
+          <version>${maven.surefire.plugin.version}</version>
           <executions>
             <execution>
               <id>integration-tests</id>
@@ -318,7 +351,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-gpg-plugin</artifactId>
-          <version>1.6</version>
+          <version>${maven.gpg.plugin.version}</version>
           <executions>
             <execution>
               <id>sign-artifacts</id>
@@ -341,7 +374,7 @@
         <plugin>
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
-          <version>0.12</version>
+          <version>${apache.rat.plugin.version}</version>
           <configuration>
             <includes>
               <include>**/*.java</include>
@@ -374,7 +407,7 @@
       <extension>
         <groupId>org.apache.maven.wagon</groupId>
         <artifactId>wagon-ssh-external</artifactId>
-        <version>2.7</version>
+        <version>${wagon.ssh.extension.version}</version>
       </extension>
     </extensions>
   </build>

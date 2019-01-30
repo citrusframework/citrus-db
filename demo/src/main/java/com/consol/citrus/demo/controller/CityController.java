@@ -4,12 +4,18 @@ import com.consol.citrus.demo.model.City;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.CallableStatement;
+import java.sql.JDBCType;
+import java.sql.Types;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,16 +29,22 @@ public class CityController {
     /** Logger */
     private static Logger log = LoggerFactory.getLogger(CityController.class);
 
+    private final JdbcTemplate jdbcTemplate;
+
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    public CityController(final JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @GetMapping(path="/add")
     public @ResponseBody
-    String addNewProjects (@RequestParam String names) {
-        List<Object> splitUpNames = Arrays.asList(StringUtils.commaDelimitedListToStringArray(names));
+    String addNewProjects (@RequestParam final String names) {
+        final List<Object> splitUpNames = Arrays.asList(StringUtils.commaDelimitedListToStringArray(names));
 
-        for(Object name : splitUpNames) {
-            log.info(String.format("Inserting city %s", name));
+        for(final Object name : splitUpNames) {
+            if(log.isDebugEnabled()){
+                log.debug(String.format("Inserting city %s", name));
+            }
         }
 
         if (splitUpNames.size() > 1) {
@@ -46,7 +58,7 @@ public class CityController {
     }
 
     @GetMapping(path="/all")
-    public @ResponseBody Iterable<City> getAllProjects(@RequestParam(required = false, defaultValue = "") String name) {
+    public @ResponseBody Iterable<City> getAllProjects(@RequestParam(required = false, defaultValue = "") final String name) {
         if (StringUtils.hasText(name)) {
             return jdbcTemplate.query(
                     "SELECT id, name FROM cities WHERE name = ?", new Object[]{ name },
@@ -58,5 +70,31 @@ public class CityController {
                     (rs, rowNum) -> new City(rs.getLong("id"), rs.getString("name"))
             );
         }
+    }
+
+    @GetMapping(path="/findId")
+    public @ResponseBody Iterable<City> findCityByName(@RequestParam(defaultValue = "") final String name) {
+        if (StringUtils.hasText(name)) {
+            return jdbcTemplate.call(createCallableStatement(name), createParameters())
+                    .values()
+                    .stream()
+                    .map(o -> (City) o )
+                    .collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
+    }
+
+    private List<SqlParameter> createParameters() {
+        return Collections.singletonList(new SqlParameter("name", Types.VARCHAR));
+    }
+
+    private CallableStatementCreator createCallableStatement(final String name) {
+        return con ->{
+                    final CallableStatement callableStatement = con.prepareCall("CALL findCityByName(?,?)");
+                    callableStatement.registerOutParameter(2, JDBCType.INTEGER);
+                    callableStatement.setString("name", name);
+                    return callableStatement;
+                };
     }
 }

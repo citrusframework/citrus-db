@@ -80,4 +80,18 @@ public class DemoApplicationIT extends TestNGCitrusTestRunner {
                 .response(HttpStatus.OK)
                 .payload(new ClassPathResource("cities.json")));
     }
+
+    @Test
+    @CitrusTest
+    public void testGetIdByCityName() {
+        http(action -> action.client(httpClient)
+                .send()
+                .get("/city/findId")
+                .queryParam("name", "Munich"));
+
+        http(action -> action.client(httpClient)
+                .receive()
+                .response(HttpStatus.OK)
+                .payload("{ \"name\": \"Munich\", \"id\": 1 }"));
+    }
 }

@@ -17,10 +17,11 @@
 package com.consol.citrus.db.driver.data;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author Christoph Deppisch
@@ -28,7 +29,7 @@ import java.util.Objects;
 public class Row {
 
     /** Row values with column name as key */
-    private Map<String, Object> values = new LinkedHashMap<>();
+    private SortedMap<String, Object> values = new TreeMap<>();
 
     private Object lastValue;
 
@@ -45,7 +46,7 @@ public class Row {
      * @param columnName
      * @return
      */
-    public Object getValue(String columnName) {
+    public Object getValue(final String columnName) {
         lastValue = values.get(columnName);
         return lastValue;
     }
@@ -55,7 +56,7 @@ public class Row {
      * @param columnIndex
      * @return
      */
-    public Object getValue(int columnIndex) {
+    public Object getValue(final int columnIndex) {
         lastValue = values.values().toArray()[columnIndex];
         return lastValue;
     }
@@ -74,15 +75,15 @@ public class Row {
      *
      * @param values
      */
-    public void setValues(Map<String, Object> values) {
+    public void setValues(final SortedMap<String, Object> values) {
         this.values = values;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Row row = (Row) o;
+        final Row row = (Row) o;
         return Objects.equals(values, row.values);
     }
 

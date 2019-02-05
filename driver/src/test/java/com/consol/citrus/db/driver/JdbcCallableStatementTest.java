@@ -1,9 +1,13 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.Row;
+import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.dataset.DataSetBuilder;
 import org.apache.http.client.HttpClient;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Date;
@@ -12,21 +16,27 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static org.mockito.Mockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class JdbcCallableStatementTest {
 
     private HttpClient httpClient = mock(HttpClient.class);
     private String serverUrl = "localhost";
     private JdbcConnection jdbcConnection = mock(JdbcConnection.class);
+    private final int TEST_VALUE_INDEX = 2;
+    private final String TEST_VALUE_NAME = "col2";
+
+    private final JdbcCallableStatement callableStatement = generateCallableStatement();
 
     @Test
     public void testRegisterOutParameter() throws SQLException {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
         final int index = 2;
 
         //WHEN
@@ -40,7 +50,6 @@ public class JdbcCallableStatementTest {
     public void testRegisterOutParameterWithScale() throws SQLException {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
         final int index = 2;
 
         //WHEN
@@ -54,7 +63,6 @@ public class JdbcCallableStatementTest {
     public void testRegisterOutParameterWithTypeName() throws SQLException {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
         final int index = 2;
 
         //WHEN
@@ -110,7 +118,6 @@ public class JdbcCallableStatementTest {
     public void testRegisterOutParameterWithSqlType() {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
 
         //WHEN
         callableStatement.registerOutParameter(1, JDBCType.INTEGER);
@@ -123,7 +130,6 @@ public class JdbcCallableStatementTest {
     public void testRegisterOutParameterWithSqlTypeAndScale() {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
 
         //WHEN
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, 2);
@@ -136,8 +142,6 @@ public class JdbcCallableStatementTest {
     public void testRegisterOutParameterWithSqlTypeAndTypeName() {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
-
         //WHEN
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, "STRUCT");
 
@@ -409,13 +413,322 @@ public class JdbcCallableStatementTest {
         assertEquals(callableStatement.getParameters().get(parameterName), myTimeStamp);
     }
 
+    @Test
+    void testGetTwoValuesByIndex() throws SQLException {
+
+        //GIVEN
+        final JdbcCallableStatement callableStatement = generateCallableStatement("bar");
+
+        //WHEN
+        final String firstOutParameter = callableStatement.getString(1);
+        final String secondOutParameter = callableStatement.getString(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(firstOutParameter, "dummyValue");
+        assertEquals(secondOutParameter, "bar");
+    }
+
+    @Test
+    void testGetStringByIndex() throws SQLException {
+
+        //GIVEN
+        final String expectedString = "bar";
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedString);
+
+        //WHEN
+        final String string = callableStatement.getString(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(string, expectedString);
+    }
+
+    @Test
+    void testGetBooleanByIndex() throws SQLException {
+
+        //GIVEN
+        final JdbcCallableStatement callableStatement = generateCallableStatement(true);
+
+        //WHEN
+        final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_INDEX);
+
+        //THEN
+        assertTrue(aBoolean);
+    }
+
+    @Test
+    void testGetByteByIndex() throws SQLException {
+
+        //GIVEN
+        final byte expectedByte = 42;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedByte);
+
+        //WHEN
+        final byte aByte = callableStatement.getByte(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aByte, expectedByte);
+    }
+
+    @Test
+    void testGetShortByIndex() throws SQLException {
+
+        //GIVEN
+        final short expectedShort = 42;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedShort);
+
+        //WHEN
+        final short aShort = callableStatement.getShort(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aShort, expectedShort);
+    }
+
+    @Test
+    void testGetIntByIndex() throws SQLException {
+
+        //GIVEN
+        final int expectedInt = 42;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedInt);
+
+        //WHEN
+        final int anInt = callableStatement.getInt(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(anInt, expectedInt);
+    }
+
+    @Test
+    void testGetLongByIndex() throws SQLException {
+
+        //GIVEN
+        final long expectedLong = 42L;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedLong);
+
+        //WHEN
+        final long aLong = callableStatement.getLong(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aLong, expectedLong);
+    }
+
+    @Test
+    void testGetFloatByIndex() throws SQLException {
+
+        //GIVEN
+        final float expectedFloat = 4.2F;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedFloat);
+
+        //WHEN
+        final float aFloat = callableStatement.getFloat(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aFloat, expectedFloat);
+    }
+
+    @Test
+    void testGetDoubleByIndex() throws SQLException {
+
+        //GIVEN
+        final double expectedDouble = 4.2;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDouble);
+
+        //WHEN
+        final double aDouble = callableStatement.getDouble(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aDouble, expectedDouble);
+    }
+
+    @Test
+    void testGetBigDecimalByIndexWithScale() throws SQLException {
+
+        //GIVEN
+        final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
+
+        //WHEN
+        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_INDEX, 2);
+
+        //THEN
+        assertEquals(aBigDecimal, expectedBigDecimal.setScale(2, RoundingMode.HALF_UP));
+    }
+
+    @Test
+    void testGetStringByName() throws SQLException {
+
+        //GIVEN
+        final String expectedString = "bar";
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedString);
+
+        //WHEN
+        final String string = callableStatement.getString(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(string, expectedString);
+    }
+
+    @Test
+    void testGetBooleanByName() throws SQLException {
+
+        //GIVEN
+        final JdbcCallableStatement callableStatement = generateCallableStatement(true);
+
+        //WHEN
+        final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_NAME);
+
+        //THEN
+        assertTrue(aBoolean);
+    }
+
+    @Test
+    void testGetByteByName() throws SQLException {
+
+        //GIVEN
+        final byte expectedByte = 42;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedByte);
+
+        //WHEN
+        final byte aByte = callableStatement.getByte(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aByte, expectedByte);
+    }
+
+    @Test
+    void testGetShortByName() throws SQLException {
+
+        //GIVEN
+        final short expectedShort = 42;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedShort);
+
+        //WHEN
+        final short aShort = callableStatement.getShort(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aShort, expectedShort);
+    }
+
+    @Test
+    void testGetIntByName() throws SQLException {
+
+        //GIVEN
+        final int expectedInt = 42;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedInt);
+
+        //WHEN
+        final int anInt = callableStatement.getInt(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(anInt, expectedInt);
+    }
+
+    @Test
+    void testGetLongByName() throws SQLException {
+
+        //GIVEN
+        final long expectedLong = 42L;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedLong);
+
+        //WHEN
+        final long aLong = callableStatement.getLong(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aLong, expectedLong);
+    }
+
+    @Test
+    void testGetFloatByName() throws SQLException {
+
+        //GIVEN
+        final float expectedFloat = 4.2F;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedFloat);
+
+        //WHEN
+        final float aFloat = callableStatement.getFloat(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aFloat, expectedFloat);
+    }
+
+    @Test
+    void testGetDoubleByName() throws SQLException {
+
+        //GIVEN
+        final double expectedDouble = 4.2;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDouble);
+
+        //WHEN
+        final double aFloat = callableStatement.getDouble(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aFloat, expectedDouble);
+    }
+
+    @Test
+    void testGetBytesByName() throws SQLException {
+
+        //GIVEN
+        final byte[] expectedBytes = "Foobar".getBytes();
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBytes);
+
+        //WHEN
+        final byte[] bytes = callableStatement.getBytes(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(bytes, expectedBytes);
+    }
+
+    @Test
+    void testGetObjectByName() throws SQLException {
+
+        //GIVEN
+        final Object expectedObject = "Foobar".getBytes();
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedObject);
+
+        //WHEN
+        final Object object = callableStatement.getObject(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(object, expectedObject);
+    }
+
+    @Test
+    void testGetBigDecimalByName() throws SQLException {
+
+        //GIVEN
+        final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
+
+        //WHEN
+        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_NAME );
+
+        //THEN
+        assertEquals(aBigDecimal, expectedBigDecimal);
+    }
+
     private JdbcCallableStatement generateCallableStatement() {
         final String statement = "CALL myFunction(?,?)";
         return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection);
     }
 
+    private JdbcCallableStatement generateCallableStatement(final Object testValue) throws SQLException {
+        final JdbcCallableStatement callableStatement = generateCallableStatement();
+        callableStatement.dataSet = generateTestDataSet(testValue);
+        return callableStatement;
+    }
+
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName) {
         final String statement = "CALL myFunction("+parameterName+",?)";
         return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection);
+    }
+
+    private DataSet generateTestDataSet(final Object testValue) throws SQLException {
+        final SortedMap<String, Object> testData = new TreeMap<>();
+        testData.put("col1", "dummyValue");
+        testData.put("col2", testValue);
+
+        final Row row = new Row();
+        row.setValues(testData);
+        return new DataSetBuilder().add(row).build();
     }
 }

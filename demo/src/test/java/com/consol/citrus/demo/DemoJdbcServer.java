@@ -43,7 +43,7 @@ public class DemoJdbcServer {
 
         dbServer.when()
                 .statement()
-                .execute(Pattern.compile("CALL findCityByName \\(Munich, .*"))
+                .execute(Pattern.compile("CALL findCityByName\\(\\?,\\?\\) - \\(\\?,Munich\\)"))
                 .thenReturn(new JsonDataSetProducer("[{ \"name\": \"Munich\", \"id\": 1 }]").produce());
 
 

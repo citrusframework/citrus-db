@@ -92,6 +92,6 @@ public class DemoApplicationIT extends TestNGCitrusTestRunner {
         http(action -> action.client(httpClient)
                 .receive()
                 .response(HttpStatus.OK)
-                .payload("{ \"name\": \"Munich\", \"id\": 1 }"));
+                .payload("[{ \"name\": \"Munich\", \"id\": 1 }]"));
     }
 }

@@ -8,15 +8,18 @@ import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.CallableStatement;
 import java.sql.JDBCType;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -75,11 +78,11 @@ public class CityController {
     @GetMapping(path="/findId")
     public @ResponseBody Iterable<City> findCityByName(@RequestParam(defaultValue = "") final String name) {
         if (StringUtils.hasText(name)) {
-            return jdbcTemplate.call(createCallableStatement(name), createParameters())
-                    .values()
-                    .stream()
-                    .map(o -> (City) o )
-                    .collect(Collectors.toList());
+            final Map<String, Object> call = jdbcTemplate.call(createCallableStatement(name), createParameters());
+            final ArrayList<LinkedCaseInsensitiveMap> resultSet = (ArrayList<LinkedCaseInsensitiveMap>) call.get("#result-set-1");
+            return resultSet.stream().map(linkedCaseInsensitiveMap ->
+                new City(Long.valueOf((Integer) linkedCaseInsensitiveMap.get("id")), (String) linkedCaseInsensitiveMap.get("name"))
+            ).collect(Collectors.toList());
         }
 
         return Collections.emptyList();

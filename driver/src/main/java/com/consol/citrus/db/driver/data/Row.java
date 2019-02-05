@@ -17,11 +17,11 @@
 package com.consol.citrus.db.driver.data;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
-import java.util.TreeMap;
 
 /**
  * @author Christoph Deppisch
@@ -29,7 +29,7 @@ import java.util.TreeMap;
 public class Row {
 
     /** Row values with column name as key */
-    private SortedMap<String, Object> values = new TreeMap<>();
+    private Map<String, Object> values = new LinkedHashMap<>();
 
     private Object lastValue;
 

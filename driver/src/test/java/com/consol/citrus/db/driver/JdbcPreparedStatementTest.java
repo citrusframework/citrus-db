@@ -26,7 +26,7 @@ public class JdbcPreparedStatementTest {
 
 
     @Test
-    public void testSetParameter() throws Exception {
+    public void testSetParameter() {
 
         //GIVEN
 
@@ -34,11 +34,11 @@ public class JdbcPreparedStatementTest {
         jdbcPreparedStatement.setParameter(1, 2);
 
         //THEN
-        Assert.assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
+        Assert.assertEquals(jdbcPreparedStatement.getParameters().get("0"), 2);
     }
 
     @Test
-    public void testSetParameterAddAnotherValue() throws Exception {
+    public void testSetParameterAddAnotherValue(){
 
         //GIVEN
 
@@ -48,12 +48,12 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         Assert.assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
-        Assert.assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
-        Assert.assertEquals(jdbcPreparedStatement.getParameters().get(1), 42);
+        Assert.assertEquals(jdbcPreparedStatement.getParameters().get("0"), 2);
+        Assert.assertEquals(jdbcPreparedStatement.getParameters().get("1"), 42);
     }
 
     @Test
-    public void testSetParameterOverwritesValue() throws Exception {
+    public void testSetParameterOverwritesValue() {
 
         //GIVEN
 
@@ -63,6 +63,6 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         Assert.assertEquals(jdbcPreparedStatement.getParameters().size(), 1);
-        Assert.assertEquals(jdbcPreparedStatement.getParameters().get(0), 42);
+        Assert.assertEquals(jdbcPreparedStatement.getParameters().get("0"), 42);
     }
 }

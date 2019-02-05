@@ -31,6 +31,7 @@ import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -39,18 +40,18 @@ import java.util.Map;
 
 public class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
 
-    public JdbcCallableStatement(final HttpClient httpClient, final String callableStatement, final String serverUrl, JdbcConnection connection) {
+    public JdbcCallableStatement(final HttpClient httpClient, final String callableStatement, final String serverUrl, final JdbcConnection connection) {
         super(httpClient, callableStatement, serverUrl, connection);
     }
 
     @Override
     public void registerOutParameter(final int parameterIndex, final int sqlType) throws SQLException {
-
+        setOutParameter(parameterIndex);
     }
 
     @Override
     public void registerOutParameter(final int parameterIndex, final int sqlType, final int scale) throws SQLException {
-
+        registerOutParameter(parameterIndex, sqlType);
     }
 
     @Override
@@ -175,22 +176,22 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public void registerOutParameter(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
-
+        registerOutParameter(parameterIndex, sqlType);
     }
 
     @Override
     public void registerOutParameter(final String parameterName, final int sqlType) throws SQLException {
-
+        setOutParameter(parameterName);
     }
 
     @Override
     public void registerOutParameter(final String parameterName, final int sqlType, final int scale) throws SQLException {
-
+        registerOutParameter(parameterName, sqlType);
     }
 
     @Override
     public void registerOutParameter(final String parameterName, final int sqlType, final String typeName) throws SQLException {
-
+        registerOutParameter(parameterName, sqlType);
     }
 
     @Override
@@ -200,77 +201,77 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public void setURL(final String parameterName, final URL val) throws SQLException {
-
+        setParameter(parameterName, val);
     }
 
     @Override
     public void setNull(final String parameterName, final int sqlType) throws SQLException {
-
+        setParameter(parameterName, "null");
     }
 
     @Override
     public void setBoolean(final String parameterName, final boolean x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setByte(final String parameterName, final byte x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setShort(final String parameterName, final short x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setInt(final String parameterName, final int x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setLong(final String parameterName, final long x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setFloat(final String parameterName, final float x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setDouble(final String parameterName, final double x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setBigDecimal(final String parameterName, final BigDecimal x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setString(final String parameterName, final String x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setBytes(final String parameterName, final byte[] x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setDate(final String parameterName, final Date x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setTime(final String parameterName, final Time x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setTimestamp(final String parameterName, final Timestamp x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
@@ -606,5 +607,43 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
     @Override
     public <T> T getObject(final String parameterName, final Class<T> type) throws SQLException {
         return null;
+    }
+
+    @Override
+    public void registerOutParameter(final int parameterIndex, final SQLType sqlType){
+        setOutParameter(parameterIndex);
+    }
+
+    @Override
+    public void registerOutParameter(final int parameterIndex, final SQLType sqlType, final int scale){
+        registerOutParameter(parameterIndex, sqlType);
+    }
+
+    @Override
+    public void registerOutParameter(final int parameterIndex, final SQLType sqlType, final String typeName){
+        registerOutParameter(parameterIndex, sqlType);
+    }
+
+    @Override
+    public void registerOutParameter(final String parameterName, final SQLType sqlType){
+        setOutParameter(parameterName);
+    }
+
+    @Override
+    public void registerOutParameter(final String parameterName, final SQLType sqlType, final int scale){
+        registerOutParameter(parameterName, sqlType);
+    }
+
+    @Override
+    public void registerOutParameter(final String parameterName, final SQLType sqlType, final String typeName){
+        registerOutParameter(parameterName, sqlType);
+    }
+
+    private void setOutParameter(final int parameterIndex) {
+        setParameter(parameterIndex, "?");
+    }
+
+    private void setOutParameter(final String parameterName) {
+        setParameter(parameterName, "?");
     }
 }

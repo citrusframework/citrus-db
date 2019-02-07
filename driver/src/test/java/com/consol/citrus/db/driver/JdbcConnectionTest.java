@@ -16,6 +16,8 @@
 
 package com.consol.citrus.db.driver;
 
+import com.jparams.verifier.tostring.ToStringVerifier;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -329,5 +331,15 @@ public class JdbcConnectionTest {
 
         //THEN
         //Exception is thrown
+    }
+
+    @Test
+    public void testToString(){
+        ToStringVerifier.forClass(JdbcStatement.class);
+    }
+
+    @Test
+    public void equalsContract(){
+        EqualsVerifier.forClass(JdbcStatement.class);
     }
 }

@@ -28,12 +28,12 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
 import java.util.Objects;
 
-/**
- * @author Christoph Deppisch
- */
 public class JdbcStatement implements Statement {
 
     private final HttpClient httpClient;
@@ -377,10 +377,26 @@ public class JdbcStatement implements Statement {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof JdbcStatement)) return false;
         final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&
                 Objects.equals(serverUrl, that.serverUrl) &&
+                Objects.equals(connection, that.connection) &&
                 Objects.equals(dataSet, that.dataSet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(httpClient, serverUrl, connection, dataSet);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcStatement{" +
+                "httpClient=" + httpClient +
+                ", serverUrl='" + serverUrl + '\'' +
+                ", connection=" + connection +
+                ", dataSet=" + dataSet +
+                '}';
     }
 }

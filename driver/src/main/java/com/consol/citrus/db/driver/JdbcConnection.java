@@ -42,6 +42,7 @@ import java.sql.Savepoint;
 import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
@@ -438,5 +439,29 @@ public class JdbcConnection implements Connection {
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         return false;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JdbcConnection)) return false;
+        final JdbcConnection that = (JdbcConnection) o;
+        return closed == that.closed &&
+                Objects.equals(httpClient, that.httpClient) &&
+                Objects.equals(serverUrl, that.serverUrl);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(httpClient, serverUrl, closed);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcConnection{" +
+                "httpClient=" + httpClient +
+                ", serverUrl='" + serverUrl + '\'' +
+                ", closed=" + closed +
+                '}';
     }
 }

@@ -110,8 +110,7 @@ public class DataSet {
         if (!(o instanceof DataSet)) return false;
         final DataSet dataSet = (DataSet) o;
         return closed == dataSet.closed &&
-                Objects.equals(rows, dataSet.rows) &&
-                Objects.equals(cursor, dataSet.cursor);
+                Objects.equals(rows, dataSet.rows);
     }
 
     @Override

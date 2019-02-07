@@ -1,5 +1,7 @@
 package com.consol.citrus.db.driver;
 
+import com.jparams.verifier.tostring.ToStringVerifier;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.http.client.HttpClient;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
@@ -64,5 +66,15 @@ public class JdbcPreparedStatementTest {
         //THEN
         Assert.assertEquals(jdbcPreparedStatement.getParameters().size(), 1);
         Assert.assertEquals(jdbcPreparedStatement.getParameters().get("0"), 42);
+    }
+
+    @Test
+    public void testToString(){
+        ToStringVerifier.forClass(JdbcPreparedStatement.class);
+    }
+
+    @Test
+    public void equalsContract(){
+        EqualsVerifier.forClass(JdbcPreparedStatement.class);
     }
 }

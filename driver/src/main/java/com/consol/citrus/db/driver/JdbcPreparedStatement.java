@@ -39,6 +39,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
@@ -343,6 +344,30 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     Map<String, Object> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JdbcPreparedStatement)) return false;
+        if (!super.equals(o)) return false;
+        final JdbcPreparedStatement that = (JdbcPreparedStatement) o;
+        return Objects.equals(preparedStatement, that.preparedStatement) &&
+                Objects.equals(parameters, that.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(preparedStatement, parameters);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcPreparedStatement{" +
+                "preparedStatement='" + preparedStatement + '\'' +
+                ", parameters=" + parameters +
+                ", dataSet=" + dataSet +
+                '}';
     }
 }
 

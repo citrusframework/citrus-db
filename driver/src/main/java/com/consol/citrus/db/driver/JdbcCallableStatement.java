@@ -115,27 +115,27 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public byte[] getBytes(final int parameterIndex) throws SQLException {
-        return new byte[0];
+        return (byte[]) getData(parameterIndex, byte[].class);
     }
 
     @Override
     public Date getDate(final int parameterIndex) throws SQLException {
-        return null;
+        return (Date) getData(parameterIndex, Date.class);
     }
 
     @Override
     public Time getTime(final int parameterIndex) throws SQLException {
-        return null;
+        return (Time) getData(parameterIndex, Time.class);
     }
 
     @Override
     public Timestamp getTimestamp(final int parameterIndex) throws SQLException {
-        return null;
+        return (Timestamp) getData(parameterIndex, Timestamp.class);
     }
 
     @Override
     public Object getObject(final int parameterIndex) throws SQLException {
-        return null;
+        return getData(parameterIndex, Object.class);
     }
 
     @Override
@@ -380,17 +380,17 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public Date getDate(final String parameterName) throws SQLException {
-        return null;
+        return (Date) getData(parameterName, Date.class);
     }
 
     @Override
     public Time getTime(final String parameterName) throws SQLException {
-        return null;
+        return (Time) getData(parameterName, Time.class);
     }
 
     @Override
     public Timestamp getTimestamp(final String parameterName) throws SQLException {
-        return null;
+        return (Timestamp) getData(parameterName, Timestamp.class);
     }
 
     @Override

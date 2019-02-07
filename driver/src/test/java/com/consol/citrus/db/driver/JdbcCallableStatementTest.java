@@ -490,6 +490,21 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
     }
 
     @Test
+    void testGetBytesByIndex() throws SQLException {
+
+        //GIVEN
+        final byte[] expectedBytes = "nuqneh".getBytes();
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBytes);
+
+        //WHEN
+        final byte[] aByte = callableStatement.getBytes(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aByte, expectedBytes);
+        verifyConversion(expectedBytes, byte[].class);
+    }
+
+    @Test
     void testGetShortByIndex() throws SQLException {
 
         //GIVEN
@@ -782,6 +797,111 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertTrue(callableStatement.wasNull());
+    }
+
+    @Test
+    void testGetDateByIndex() throws SQLException {
+
+        //GIVEN
+        final Date expectedDate = new Date(619912800000L);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDate);
+
+        //WHEN
+        final Date aDate = callableStatement.getDate(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aDate, expectedDate);
+        verifyConversion(expectedDate, Date.class);
+    }
+
+    @Test
+    void testGetTimeByIndex() throws SQLException {
+
+        //GIVEN
+        final Time expectedTime = new Time(619912812345L);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTime);
+
+        //WHEN
+        final Time aTime = callableStatement.getTime(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aTime, expectedTime);
+        verifyConversion(expectedTime, Time.class);
+    }
+
+    @Test
+    void testGetTimestampByIndex() throws SQLException {
+
+        //GIVEN
+        final Timestamp expectedTimestamp = new Timestamp(619912812345L);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTimestamp);
+
+        //WHEN
+        final Timestamp aTimestamp = callableStatement.getTimestamp(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(aTimestamp, expectedTimestamp);
+        verifyConversion(expectedTimestamp, Timestamp.class);
+    }
+
+    @Test
+    void testGetObjectStampByIndex() throws SQLException {
+
+        //GIVEN
+        final Object expectedObject = new Timestamp(619912812345L);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedObject);
+
+        //WHEN
+        final Object anObject = callableStatement.getObject(TEST_VALUE_INDEX);
+
+        //THEN
+        assertEquals(anObject, expectedObject);
+        verifyConversion(expectedObject, Object.class);
+    }
+
+    @Test
+    void testGetDateByName() throws SQLException {
+
+        //GIVEN
+        final Date expectedDate = new Date(619912800000L);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDate);
+
+        //WHEN
+        final Date aDate = callableStatement.getDate(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aDate, expectedDate);
+        verifyConversion(expectedDate, Date.class);
+    }
+
+    @Test
+    void testGetTimeByName() throws SQLException {
+
+        //GIVEN
+        final Time expectedTime = new Time(619912812345L);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTime);
+
+        //WHEN
+        final Time aTime = callableStatement.getTime(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aTime, expectedTime);
+        verifyConversion(expectedTime, Time.class);
+    }
+
+    @Test
+    void testGetTimestampByName() throws SQLException {
+
+        //GIVEN
+        final Timestamp expectedTimestamp = new Timestamp(619912812345L);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTimestamp);
+
+        //WHEN
+        final Timestamp aTimestamp = callableStatement.getTimestamp(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(aTimestamp, expectedTimestamp);
+        verifyConversion(expectedTimestamp, Timestamp.class);
     }
 
     @Test

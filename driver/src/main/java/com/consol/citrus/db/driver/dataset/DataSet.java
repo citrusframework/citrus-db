@@ -46,7 +46,11 @@ public class DataSet {
      */
     public Row getNextRow() throws SQLException {
         checkNotClosed();
-        return rows.get(cursor.getAndIncrement());
+        try{
+            return rows.get(cursor.getAndIncrement());
+        }catch (IndexOutOfBoundsException e){
+            throw new SQLException("No further row in dataset", e);
+        }
     }
 
     /**

@@ -17,6 +17,7 @@
 package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.Row;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.http.client.HttpClient;
 
 import java.io.InputStream;
@@ -45,7 +46,10 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     private Row resultRow;
 
-    public JdbcCallableStatement(final HttpClient httpClient, final String callableStatement, final String serverUrl, final JdbcConnection connection) {
+    public JdbcCallableStatement(final HttpClient httpClient,
+                                 final String callableStatement,
+                                 final String serverUrl,
+                                 final JdbcConnection connection) {
         super(httpClient, callableStatement, serverUrl, connection);
     }
 
@@ -61,47 +65,47 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public boolean wasNull() throws SQLException {
-        return false;
+        return Objects.isNull(getDataRow().getLastValue());
     }
 
     @Override
     public String getString(final int parameterIndex) throws SQLException {
-        return (String) getData(parameterIndex);
+        return (String) getData(parameterIndex, String.class);
     }
 
     @Override
     public boolean getBoolean(final int parameterIndex) throws SQLException {
-        return (Boolean) getData(parameterIndex);
+        return (boolean) getData(parameterIndex, boolean.class);
     }
 
     @Override
     public byte getByte(final int parameterIndex) throws SQLException {
-        return (byte) getData(parameterIndex);
+        return (byte) getData(parameterIndex, byte.class);
     }
 
     @Override
     public short getShort(final int parameterIndex) throws SQLException {
-        return (short) getData(parameterIndex);
+        return (short) getData(parameterIndex, short.class);
     }
 
     @Override
     public int getInt(final int parameterIndex) throws SQLException {
-        return (int) getData(parameterIndex);
+        return (int) getData(parameterIndex, int.class);
     }
 
     @Override
     public long getLong(final int parameterIndex) throws SQLException {
-        return (long) getData(parameterIndex);
+        return (long) getData(parameterIndex, long.class);
     }
 
     @Override
     public float getFloat(final int parameterIndex) throws SQLException {
-        return (float) getData(parameterIndex);
+        return (float) getData(parameterIndex, float.class);
     }
 
     @Override
     public double getDouble(final int parameterIndex) throws SQLException {
-        return (double) getData(parameterIndex);
+        return (double) getData(parameterIndex, double.class);
     }
 
     @Override
@@ -136,7 +140,7 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public BigDecimal getBigDecimal(final int parameterIndex) throws SQLException {
-        return (BigDecimal) getData(parameterIndex);
+        return (BigDecimal) getData(parameterIndex, BigDecimal.class);
     }
 
     @Override
@@ -331,47 +335,47 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public String getString(final String parameterName) throws SQLException {
-        return (String) getData(parameterName);
+        return (String) getData(parameterName, String.class);
     }
 
     @Override
     public boolean getBoolean(final String parameterName) throws SQLException {
-        return (boolean) getData(parameterName);
+        return (boolean) getData(parameterName, boolean.class);
     }
 
     @Override
     public byte getByte(final String parameterName) throws SQLException {
-        return (byte) getData(parameterName);
+        return (byte) getData(parameterName, byte.class);
     }
 
     @Override
     public short getShort(final String parameterName) throws SQLException {
-        return (short) getData(parameterName);
+        return (short) getData(parameterName, short.class);
     }
 
     @Override
     public int getInt(final String parameterName) throws SQLException {
-        return (int) getData(parameterName);
+        return (int) getData(parameterName, int.class);
     }
 
     @Override
     public long getLong(final String parameterName) throws SQLException {
-        return (long) getData(parameterName);
+        return (long) getData(parameterName, long.class);
     }
 
     @Override
     public float getFloat(final String parameterName) throws SQLException {
-        return (float) getData(parameterName);
+        return (float) getData(parameterName, float.class);
     }
 
     @Override
     public double getDouble(final String parameterName) throws SQLException {
-        return (double) getData(parameterName);
+        return (double) getData(parameterName, double.class);
     }
 
     @Override
     public byte[] getBytes(final String parameterName) throws SQLException {
-        return (byte[]) getData(parameterName);
+        return (byte[]) getData(parameterName, byte[].class);
     }
 
     @Override
@@ -391,12 +395,12 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public Object getObject(final String parameterName) throws SQLException {
-        return getData(parameterName);
+        return getData(parameterName, Object.class);
     }
 
     @Override
     public BigDecimal getBigDecimal(final String parameterName) throws SQLException {
-        return (BigDecimal) getData(parameterName);
+        return (BigDecimal) getData(parameterName, BigDecimal.class);
     }
 
     @Override
@@ -652,12 +656,18 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
         setParameter(parameterName, "?");
     }
 
-    private Object getData(final int parameterIndex) throws SQLException {
-        return getDataRow().getValue(parameterIndex - 1);
+    private <T> Object getData(final int parameterIndex, final Class<T> clazz) throws SQLException {
+        final Object value = getDataRow().getValue(parameterIndex - 1);
+        return convertData(value, clazz);
     }
 
-    private Object getData(final String parameterName) throws SQLException {
-        return getDataRow().getValues().get(parameterName);
+    private <T> Object getData(final String parameterName, final Class<T> clazz) throws SQLException {
+        final Object value = getDataRow().getValue(parameterName);
+        return convertData(value, clazz);
+    }
+
+    private <T> Object convertData(final Object value, final Class<T> clazz) {
+        return Objects.isNull(value) ? null : ConvertUtils.convert(value, clazz);
     }
 
     private Row getDataRow() throws SQLException {
@@ -665,5 +675,27 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
             resultRow = dataSet.getNextRow();
         }
         return resultRow;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JdbcCallableStatement)) return false;
+        if (!super.equals(o)) return false;
+        final JdbcCallableStatement that = (JdbcCallableStatement) o;
+        return Objects.equals(resultRow, that.resultRow);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(resultRow);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcCallableStatement{" +
+                "resultRow=" + resultRow +
+                ", dataSet=" + dataSet +
+                '}';
     }
 }

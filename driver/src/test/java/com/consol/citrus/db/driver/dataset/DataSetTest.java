@@ -1,5 +1,7 @@
 package com.consol.citrus.db.driver.dataset;
 
+import com.jparams.verifier.tostring.ToStringVerifier;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
@@ -18,4 +20,13 @@ public class DataSetTest {
         //exception
     }
 
+    @Test
+    public void testToString(){
+        ToStringVerifier.forClass(DataSet.class);
+    }
+
+    @Test
+    public void equalsContract(){
+        EqualsVerifier.forClass(DataSet.class);
+    }
 }

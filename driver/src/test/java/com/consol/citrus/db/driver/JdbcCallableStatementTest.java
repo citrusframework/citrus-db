@@ -3,7 +3,14 @@ package com.consol.citrus.db.driver;
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetBuilder;
+import com.jparams.verifier.tostring.ToStringVerifier;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.http.client.HttpClient;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.testng.PowerMockTestCase;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
@@ -19,19 +26,28 @@ import java.sql.Types;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-public class JdbcCallableStatementTest {
+@PrepareForTest(ConvertUtils.class)
+public class JdbcCallableStatementTest extends PowerMockTestCase {
 
-    private HttpClient httpClient = mock(HttpClient.class);
+    private HttpClient httpClient;
     private String serverUrl = "localhost";
-    private JdbcConnection jdbcConnection = mock(JdbcConnection.class);
+    private JdbcConnection jdbcConnection;
     private final int TEST_VALUE_INDEX = 2;
     private final String TEST_VALUE_NAME = "col2";
-
     private final JdbcCallableStatement callableStatement = generateCallableStatement();
+
+    @BeforeMethod
+    public void setup(){
+        httpClient = mock(HttpClient.class);
+        jdbcConnection = mock(JdbcConnection.class);
+        PowerMockito.spy(ConvertUtils.class);
+    }
 
     @Test
     public void testRegisterOutParameter() throws SQLException {
@@ -440,19 +456,22 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(string, expectedString);
+        verifyConversion(expectedString, String.class);
     }
 
     @Test
     void testGetBooleanByIndex() throws SQLException {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement(true);
+        final boolean expectedBoolean = true;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBoolean);
 
         //WHEN
         final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_INDEX);
 
         //THEN
         assertTrue(aBoolean);
+        verifyConversion(expectedBoolean, boolean.class);
     }
 
     @Test
@@ -467,6 +486,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aByte, expectedByte);
+        verifyConversion(expectedByte, byte.class);
     }
 
     @Test
@@ -481,6 +501,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aShort, expectedShort);
+        verifyConversion(expectedShort, short.class);
     }
 
     @Test
@@ -495,6 +516,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(anInt, expectedInt);
+        verifyConversion(expectedInt, int.class);
     }
 
     @Test
@@ -509,6 +531,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aLong, expectedLong);
+        verifyConversion(expectedLong, long.class);
     }
 
     @Test
@@ -523,6 +546,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aFloat, expectedFloat);
+        verifyConversion(expectedFloat, float.class);
     }
 
     @Test
@@ -537,6 +561,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aDouble, expectedDouble);
+        verifyConversion(expectedDouble, double.class);
     }
 
     @Test
@@ -551,6 +576,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aBigDecimal, expectedBigDecimal.setScale(2, RoundingMode.HALF_UP));
+        verifyConversion(expectedBigDecimal, BigDecimal.class);
     }
 
     @Test
@@ -565,19 +591,22 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(string, expectedString);
+        verifyConversion(expectedString, String.class);
     }
 
     @Test
     void testGetBooleanByName() throws SQLException {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement(true);
+        final boolean expectedBoolean = true;
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBoolean);
 
         //WHEN
         final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_NAME);
 
         //THEN
         assertTrue(aBoolean);
+        verifyConversion(expectedBoolean, boolean.class);
     }
 
     @Test
@@ -592,6 +621,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aByte, expectedByte);
+        verifyConversion(expectedByte, byte.class);
     }
 
     @Test
@@ -606,6 +636,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aShort, expectedShort);
+        verifyConversion(expectedShort, short.class);
     }
 
     @Test
@@ -620,6 +651,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(anInt, expectedInt);
+        verifyConversion(expectedInt, int.class);
     }
 
     @Test
@@ -634,6 +666,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aLong, expectedLong);
+        verifyConversion(expectedLong, long.class);
     }
 
     @Test
@@ -648,6 +681,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aFloat, expectedFloat);
+        verifyConversion(expectedFloat, float.class);
     }
 
     @Test
@@ -662,6 +696,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aFloat, expectedDouble);
+        verifyConversion(expectedDouble, double.class);
     }
 
     @Test
@@ -676,6 +711,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(bytes, expectedBytes);
+        verifyConversion(expectedBytes, byte[].class);
     }
 
     @Test
@@ -690,6 +726,7 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(object, expectedObject);
+        verifyConversion(expectedObject, Object.class);
     }
 
     @Test
@@ -704,6 +741,57 @@ public class JdbcCallableStatementTest {
 
         //THEN
         assertEquals(aBigDecimal, expectedBigDecimal);
+        verifyConversion(aBigDecimal, BigDecimal.class);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testWasNullThrowsException() throws SQLException {
+
+        //GIVEN
+        final JdbcCallableStatement callableStatement = generateCallableStatement();
+
+        //WHEN
+        callableStatement.wasNull();
+
+        //THEN
+        //exception
+    }
+
+    @Test
+    void testWasNullIsFalse() throws SQLException {
+
+        //GIVEN
+        final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
+        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
+
+        //WHEN
+        callableStatement.getBigDecimal(TEST_VALUE_NAME);
+
+        //THEN
+        assertFalse(callableStatement.wasNull());
+    }
+
+    @Test
+    void testWasNullIsTrue() throws SQLException {
+
+        //GIVEN
+        final JdbcCallableStatement callableStatement = generateCallableStatement(null);
+
+        //WHEN
+        callableStatement.getBigDecimal(TEST_VALUE_NAME);
+
+        //THEN
+        assertTrue(callableStatement.wasNull());
+    }
+
+    @Test
+    public void testToString(){
+        ToStringVerifier.forClass(JdbcCallableStatement.class);
+    }
+
+    @Test
+    public void equalsContract(){
+        EqualsVerifier.forClass(JdbcCallableStatement.class);
     }
 
     private JdbcCallableStatement generateCallableStatement() {
@@ -730,5 +818,10 @@ public class JdbcCallableStatementTest {
         final Row row = new Row();
         row.setValues(testData);
         return new DataSetBuilder().add(row).build();
+    }
+
+    private void verifyConversion(final Object expectedValue, final Class clazz) {
+        PowerMockito.verifyStatic(ConvertUtils.class);
+        ConvertUtils.convert(eq(expectedValue), eq(clazz));
     }
 }

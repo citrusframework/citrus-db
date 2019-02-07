@@ -41,21 +41,21 @@ public class DataSet {
 
     /**
      * Gets next row in this result set based on cursor position.
-     * @return
-     * @throws SQLException
+     * @return The next row of the dataset
+     * @throws SQLException In case the DataSet has been closed or no further rows are availabe
      */
     public Row getNextRow() throws SQLException {
         checkNotClosed();
         try{
             return rows.get(cursor.getAndIncrement());
-        }catch (IndexOutOfBoundsException e){
-            throw new SQLException("No further row in dataset", e);
+        }catch (final IndexOutOfBoundsException cause){
+            throw new SQLException("No further row in dataset", cause);
         }
     }
 
     /**
      * Gets list of columns in this dataset.
-     * @return
+     * @return The list of columns of the dataset
      */
     public List<String> getColumns() {
         return rows.stream().flatMap(row -> row.getColumns().stream()).distinct().collect(Collectors.toList());
@@ -63,8 +63,8 @@ public class DataSet {
 
     /**
      * Gets all rows in this dataset.
-     * @return
-     * @throws SQLException
+     * @return The rows of the Dataset
+     * @throws SQLException in case the DataSet has been closed
      */
     public List<Row> getRows() throws SQLException {
         checkNotClosed();
@@ -73,7 +73,7 @@ public class DataSet {
 
     /**
      * Gets current row index.
-     * @return
+     * @return The current curser of the DataSet
      */
     public int getCursor() {
         return cursor.get();
@@ -88,7 +88,7 @@ public class DataSet {
 
     /**
      * If closed throws new SQLException.
-     * @throws SQLException
+     * @throws SQLException In case the DataSet has been closed
      */
     private void checkNotClosed() throws SQLException {
         if (closed) {
@@ -98,19 +98,33 @@ public class DataSet {
 
     /**
      * Returns <code>true</code> if the data set is already closed, otherwise <code>false</code>.
-     * @return
+     * @return Whether the DataSet has been closed
      */
     public boolean isClosed() {
         return closed;
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DataSet dataSet = (DataSet) o;
+        if (!(o instanceof DataSet)) return false;
+        final DataSet dataSet = (DataSet) o;
         return closed == dataSet.closed &&
                 Objects.equals(rows, dataSet.rows) &&
-                Objects.equals(cursor.get(), dataSet.cursor.get());
+                Objects.equals(cursor, dataSet.cursor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rows, closed, cursor);
+    }
+
+    @Override
+    public String toString() {
+        return "DataSet{" +
+                "rows=" + rows +
+                ", closed=" + closed +
+                ", cursor=" + cursor +
+                '}';
     }
 }

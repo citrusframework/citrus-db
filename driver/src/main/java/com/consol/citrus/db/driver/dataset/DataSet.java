@@ -42,15 +42,17 @@ public class DataSet {
     /**
      * Gets next row in this result set based on cursor position.
      * @return The next row of the dataset
-     * @throws SQLException In case the DataSet has been closed or no further rows are availabe
+     * @throws SQLException In case the DataSet has been closed or no further rows are available
      */
     public Row getNextRow() throws SQLException {
         checkNotClosed();
-        try{
-            return rows.get(cursor.getAndIncrement());
-        }catch (final IndexOutOfBoundsException cause){
-            throw new SQLException("No further row in dataset", cause);
+
+        final int index = cursor.getAndIncrement();
+        if(rows.size() <= index){
+            return null;
         }
+
+        return rows.get(index);
     }
 
     /**

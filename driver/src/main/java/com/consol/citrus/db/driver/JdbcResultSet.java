@@ -16,13 +16,29 @@
 
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.data.Row;
+import com.consol.citrus.db.driver.dataset.DataSet;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.NClob;
+import java.sql.Ref;
+import java.sql.ResultSetMetaData;
+import java.sql.RowId;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.SQLXML;
+import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -48,14 +64,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public boolean next() throws SQLException {
-        try {
-            row = dataSet.getNextRow();
-        } catch(SQLException ex) {
-            throw ex;
-        } catch(Exception ex) {
-            return false;
-        }
-
+        row = dataSet.getNextRow();
         return row != null;
     }
 

@@ -759,17 +759,17 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         verifyConversion(aBigDecimal, BigDecimal.class);
     }
 
-    @Test(expectedExceptions = SQLException.class)
-    void testWasNullThrowsException() throws SQLException {
+    @Test
+    void testWasNullReturnsFalseAsDefault() throws SQLException {
 
         //GIVEN
         final JdbcCallableStatement callableStatement = generateCallableStatement();
 
         //WHEN
-        callableStatement.wasNull();
+        final boolean wasNull = callableStatement.wasNull();
 
         //THEN
-        //exception
+        assertFalse(wasNull);
     }
 
     @Test

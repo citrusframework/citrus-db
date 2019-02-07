@@ -1,23 +1,26 @@
 package com.consol.citrus.db.driver.dataset;
 
+import com.consol.citrus.db.driver.data.Row;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
 
+import static org.testng.Assert.assertNull;
+
 public class DataSetTest {
 
     private DataSet dataSet = new DataSet();
 
-    @Test(expectedExceptions = SQLException.class)
-    public void emptyDataSetThrowsExceptionOnGetNextRow() throws SQLException {
+    @Test
+    public void emptyDataSetReturnsNullOnGetNextRow() throws SQLException {
 
         //WHEN
-        dataSet.getNextRow();
+        final Row nextRow = dataSet.getNextRow();
 
         //THEN
-        //exception
+        assertNull(nextRow);
     }
 
     @Test

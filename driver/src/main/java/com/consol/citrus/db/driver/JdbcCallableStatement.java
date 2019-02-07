@@ -65,7 +65,11 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public boolean wasNull() throws SQLException {
-        return Objects.isNull(getDataRow().getLastValue());
+        final Row dataRow = getDataRow();
+        if(dataRow == null){
+            return false;
+        }
+        return Objects.isNull(dataRow.getLastValue());
     }
 
     @Override

@@ -32,6 +32,8 @@
     <mockito.version>2.24.0</mockito.version>
     <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
     <apache.commons.beanutils.version>1.9.3</apache.commons.beanutils.version>
+    <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+    <apache.commons.io.version>2.6</apache.commons.io.version>
     <!-- https://mvnrepository.com/artifact/com.jparams/to-string-verifier -->
     <to.string.verifier.version>1.4.5</to.string.verifier.version>
     <!-- https://mvnrepository.com/artifact/nl.jqno.equalsverifier/equalsverifier -->
@@ -275,6 +277,12 @@
         <version>${powermock.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${apache.commons.io.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -314,6 +322,11 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

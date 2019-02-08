@@ -740,7 +740,6 @@ public class JdbcCallableStatementTest{
 
         //THEN
         assertEquals(object, expectedObject);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, Object.class);
     }
 
     @Test
@@ -844,7 +843,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetObjectStampByIndex() throws SQLException {
+    void testGetObjectByIndex() throws SQLException {
 
         //GIVEN
         final Object expectedObject = new Timestamp(619912812345L);
@@ -855,7 +854,6 @@ public class JdbcCallableStatementTest{
 
         //THEN
         assertEquals(anObject, expectedObject);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Object.class);
     }
 
     @Test

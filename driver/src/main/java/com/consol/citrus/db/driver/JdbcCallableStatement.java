@@ -138,7 +138,7 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public Object getObject(final int parameterIndex) throws SQLException {
-        return getDataRow().getValue(parameterIndex-1, Object.class);
+        return getDataRow().getValue(parameterIndex-1);
     }
 
     @Override
@@ -398,7 +398,7 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public Object getObject(final String parameterName) throws SQLException {
-        return getDataRow().getValue(parameterName, Object.class);
+        return getDataRow().getValue(parameterName);
     }
 
     @Override

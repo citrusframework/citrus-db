@@ -5,11 +5,7 @@ import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetBuilder;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.http.client.HttpClient;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -26,27 +22,30 @@ import java.sql.Types;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-@PrepareForTest(ConvertUtils.class)
-public class JdbcCallableStatementTest extends PowerMockTestCase {
+public class JdbcCallableStatementTest{
 
     private HttpClient httpClient;
     private String serverUrl = "localhost";
     private JdbcConnection jdbcConnection;
-    private final int TEST_VALUE_INDEX = 2;
+    private final int TEST_VALUE_INDEX_JDBC = 2;
+    //Because in JDBC, arrays start at 1
+    private final int TEST_VALUE_INDEX_INTERNAL = TEST_VALUE_INDEX_JDBC -1;
     private final String TEST_VALUE_NAME = "col2";
     private final JdbcCallableStatement callableStatement = generateCallableStatement();
+
+    private Row rowSpy;
 
     @BeforeMethod
     public void setup(){
         httpClient = mock(HttpClient.class);
         jdbcConnection = mock(JdbcConnection.class);
-        PowerMockito.spy(ConvertUtils.class);
     }
 
     @Test
@@ -437,7 +436,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //WHEN
         final String firstOutParameter = callableStatement.getString(1);
-        final String secondOutParameter = callableStatement.getString(TEST_VALUE_INDEX);
+        final String secondOutParameter = callableStatement.getString(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(firstOutParameter, "dummyValue");
@@ -452,11 +451,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedString);
 
         //WHEN
-        final String string = callableStatement.getString(TEST_VALUE_INDEX);
+        final String string = callableStatement.getString(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(string, expectedString);
-        verifyConversion(expectedString, String.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, String.class);
     }
 
     @Test
@@ -467,11 +466,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBoolean);
 
         //WHEN
-        final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_INDEX);
+        final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertTrue(aBoolean);
-        verifyConversion(expectedBoolean, boolean.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, boolean.class);
     }
 
     @Test
@@ -482,11 +481,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedByte);
 
         //WHEN
-        final byte aByte = callableStatement.getByte(TEST_VALUE_INDEX);
+        final byte aByte = callableStatement.getByte(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aByte, expectedByte);
-        verifyConversion(expectedByte, byte.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, byte.class);
     }
 
     @Test
@@ -497,11 +496,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBytes);
 
         //WHEN
-        final byte[] aByte = callableStatement.getBytes(TEST_VALUE_INDEX);
+        final byte[] aByte = callableStatement.getBytes(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aByte, expectedBytes);
-        verifyConversion(expectedBytes, byte[].class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, byte[].class);
     }
 
     @Test
@@ -512,11 +511,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedShort);
 
         //WHEN
-        final short aShort = callableStatement.getShort(TEST_VALUE_INDEX);
+        final short aShort = callableStatement.getShort(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aShort, expectedShort);
-        verifyConversion(expectedShort, short.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, short.class);
     }
 
     @Test
@@ -527,11 +526,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedInt);
 
         //WHEN
-        final int anInt = callableStatement.getInt(TEST_VALUE_INDEX);
+        final int anInt = callableStatement.getInt(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(anInt, expectedInt);
-        verifyConversion(expectedInt, int.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, int.class);
     }
 
     @Test
@@ -542,11 +541,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedLong);
 
         //WHEN
-        final long aLong = callableStatement.getLong(TEST_VALUE_INDEX);
+        final long aLong = callableStatement.getLong(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aLong, expectedLong);
-        verifyConversion(expectedLong, long.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, long.class);
     }
 
     @Test
@@ -557,11 +556,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedFloat);
 
         //WHEN
-        final float aFloat = callableStatement.getFloat(TEST_VALUE_INDEX);
+        final float aFloat = callableStatement.getFloat(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aFloat, expectedFloat);
-        verifyConversion(expectedFloat, float.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, float.class);
     }
 
     @Test
@@ -572,11 +571,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDouble);
 
         //WHEN
-        final double aDouble = callableStatement.getDouble(TEST_VALUE_INDEX);
+        final double aDouble = callableStatement.getDouble(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aDouble, expectedDouble);
-        verifyConversion(expectedDouble, double.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, double.class);
     }
 
     @Test
@@ -587,11 +586,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
 
         //WHEN
-        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_INDEX, 2);
+        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_INDEX_JDBC, 2);
 
         //THEN
         assertEquals(aBigDecimal, expectedBigDecimal.setScale(2, RoundingMode.HALF_UP));
-        verifyConversion(expectedBigDecimal, BigDecimal.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, BigDecimal.class);
     }
 
     @Test
@@ -606,7 +605,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(string, expectedString);
-        verifyConversion(expectedString, String.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, String.class);
     }
 
     @Test
@@ -621,7 +620,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertTrue(aBoolean);
-        verifyConversion(expectedBoolean, boolean.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, boolean.class);
     }
 
     @Test
@@ -636,7 +635,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aByte, expectedByte);
-        verifyConversion(expectedByte, byte.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, byte.class);
     }
 
     @Test
@@ -651,7 +650,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aShort, expectedShort);
-        verifyConversion(expectedShort, short.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, short.class);
     }
 
     @Test
@@ -666,7 +665,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(anInt, expectedInt);
-        verifyConversion(expectedInt, int.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, int.class);
     }
 
     @Test
@@ -681,7 +680,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aLong, expectedLong);
-        verifyConversion(expectedLong, long.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, long.class);
     }
 
     @Test
@@ -696,7 +695,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aFloat, expectedFloat);
-        verifyConversion(expectedFloat, float.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, float.class);
     }
 
     @Test
@@ -711,7 +710,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aFloat, expectedDouble);
-        verifyConversion(expectedDouble, double.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, double.class);
     }
 
     @Test
@@ -726,7 +725,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(bytes, expectedBytes);
-        verifyConversion(expectedBytes, byte[].class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, byte[].class);
     }
 
     @Test
@@ -741,7 +740,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(object, expectedObject);
-        verifyConversion(expectedObject, Object.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, Object.class);
     }
 
     @Test
@@ -752,11 +751,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
 
         //WHEN
-        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_NAME );
+        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_NAME);
 
         //THEN
         assertEquals(aBigDecimal, expectedBigDecimal);
-        verifyConversion(aBigDecimal, BigDecimal.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, BigDecimal.class);
     }
 
     @Test
@@ -807,11 +806,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDate);
 
         //WHEN
-        final Date aDate = callableStatement.getDate(TEST_VALUE_INDEX);
+        final Date aDate = callableStatement.getDate(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aDate, expectedDate);
-        verifyConversion(expectedDate, Date.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Date.class);
     }
 
     @Test
@@ -822,11 +821,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTime);
 
         //WHEN
-        final Time aTime = callableStatement.getTime(TEST_VALUE_INDEX);
+        final Time aTime = callableStatement.getTime(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aTime, expectedTime);
-        verifyConversion(expectedTime, Time.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Time.class);
     }
 
     @Test
@@ -837,11 +836,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTimestamp);
 
         //WHEN
-        final Timestamp aTimestamp = callableStatement.getTimestamp(TEST_VALUE_INDEX);
+        final Timestamp aTimestamp = callableStatement.getTimestamp(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(aTimestamp, expectedTimestamp);
-        verifyConversion(expectedTimestamp, Timestamp.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Timestamp.class);
     }
 
     @Test
@@ -852,11 +851,11 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         final JdbcCallableStatement callableStatement = generateCallableStatement(expectedObject);
 
         //WHEN
-        final Object anObject = callableStatement.getObject(TEST_VALUE_INDEX);
+        final Object anObject = callableStatement.getObject(TEST_VALUE_INDEX_JDBC);
 
         //THEN
         assertEquals(anObject, expectedObject);
-        verifyConversion(expectedObject, Object.class);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Object.class);
     }
 
     @Test
@@ -871,7 +870,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aDate, expectedDate);
-        verifyConversion(expectedDate, Date.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, Date.class);
     }
 
     @Test
@@ -886,7 +885,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aTime, expectedTime);
-        verifyConversion(expectedTime, Time.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, Time.class);
     }
 
     @Test
@@ -901,7 +900,7 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
 
         //THEN
         assertEquals(aTimestamp, expectedTimestamp);
-        verifyConversion(expectedTimestamp, Timestamp.class);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, Timestamp.class);
     }
 
     @Test
@@ -935,13 +934,8 @@ public class JdbcCallableStatementTest extends PowerMockTestCase {
         testData.put("col1", "dummyValue");
         testData.put("col2", testValue);
 
-        final Row row = new Row();
-        row.setValues(testData);
-        return new DataSetBuilder().add(row).build();
-    }
-
-    private void verifyConversion(final Object expectedValue, final Class clazz) {
-        PowerMockito.verifyStatic(ConvertUtils.class);
-        ConvertUtils.convert(eq(expectedValue), eq(clazz));
+        rowSpy = spy(new Row());
+        rowSpy.setValues(testData);
+        return new DataSetBuilder().add(rowSpy).build();
     }
 }

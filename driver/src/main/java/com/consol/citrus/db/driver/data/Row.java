@@ -16,6 +16,8 @@
 
 package com.consol.citrus.db.driver.data;
 
+import org.apache.commons.beanutils.ConvertUtils;
+
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,9 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.SortedMap;
 
-/**
- * @author Christoph Deppisch
- */
 public class Row {
 
     /** Row values with column name as key */
@@ -35,16 +34,16 @@ public class Row {
 
     /**
      * Gets set of column names available in this row.
-     * @return
+     * @return A list of column values
      */
     public List<String> getColumns() {
-        return Arrays.asList(values.keySet().toArray(new String[values.size()]));
+        return Arrays.asList(values.keySet().toArray(new String[0]));
     }
 
     /**
      * Gets the row value identified by its column name.
-     * @param columnName
-     * @return
+     * @param columnName The name to get the value for
+     * @return The value of that column
      */
     public Object getValue(final String columnName) {
         lastValue = values.get(columnName);
@@ -52,9 +51,21 @@ public class Row {
     }
 
     /**
+     * Gets the row value identified by its column name converted into the given type
+     * @param parameterName The name to get the value for
+     * @param clazz The class to convert the value to
+     * @param <T> Generic parameter to ensure correct conversion
+     * @return The converted object
+     */
+    public <T> Object getValue(final String parameterName, final Class<T> clazz) {
+        final Object value = getValue(parameterName);
+        return convertData(value, clazz);
+    }
+
+    /**
      * Gets the row value identified by its column index.
-     * @param columnIndex
-     * @return
+     * @param columnIndex The column index to get the value from
+     * @return The object of that index
      */
     public Object getValue(final int columnIndex) {
         lastValue = values.values().toArray()[columnIndex];
@@ -62,9 +73,21 @@ public class Row {
     }
 
     /**
+     * Gets the row value identified by its column index converted into the given type
+     * @param columnIndex The index to get the value from
+     * @param clazz The class to convert the value to
+     * @param <T> Generic parameter to ensure correct conversion
+     * @return The converted object
+     */
+    public  <T> Object getValue(final int columnIndex, final Class<T> clazz){
+        final Object value = getValue(columnIndex);
+        return convertData(value, clazz);
+    }
+
+    /**
      * Gets the values.
      *
-     * @return
+     * @return The values of the row identified by column manes
      */
     public Map<String, Object> getValues() {
         return values;
@@ -73,10 +96,14 @@ public class Row {
     /**
      * Sets the values.
      *
-     * @param values
+     * @param values The values to set in the Row
      */
     public void setValues(final SortedMap<String, Object> values) {
         this.values = values;
+    }
+
+    private <T> Object convertData(final Object value, final Class<T> clazz) {
+        return Objects.isNull(value) ? null : ConvertUtils.convert(value, clazz);
     }
 
     @Override
@@ -94,7 +121,7 @@ public class Row {
 
     /**
      * Gets the lastValue.
-     * @return
+     * @return The last value as object
      */
     public Object getLastValue() {
         return lastValue;

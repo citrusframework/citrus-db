@@ -16,7 +16,6 @@
 
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.data.Row;
 import org.apache.http.client.HttpClient;
 
 import java.io.InputStream;
@@ -39,11 +38,8 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.Objects;
 
 public class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
-
-    private Row resultRow;
 
     public JdbcCallableStatement(final HttpClient httpClient,
                                  final String callableStatement,
@@ -64,51 +60,56 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public boolean wasNull() throws SQLException {
-        final Row dataRow = getDataRow();
-        if(dataRow == null){
-            return false;
-        }
-        return Objects.isNull(dataRow.getLastValue());
+        getRow();
+        return resultSet.wasNull();
     }
 
     @Override
     public String getString(final int parameterIndex) throws SQLException {
-        return (String) getDataRow().getValue(parameterIndex-1, String.class);
+        getRow();
+        return resultSet.getString(parameterIndex);
     }
 
     @Override
     public boolean getBoolean(final int parameterIndex) throws SQLException {
-        return (boolean) getDataRow().getValue(parameterIndex-1, boolean.class);
+        getRow();
+        return resultSet.getBoolean(parameterIndex);
     }
 
     @Override
     public byte getByte(final int parameterIndex) throws SQLException {
-        return (byte) getDataRow().getValue(parameterIndex-1, byte.class);
+        getRow();
+        return resultSet.getByte(parameterIndex);
     }
 
     @Override
     public short getShort(final int parameterIndex) throws SQLException {
-        return (short) getDataRow().getValue(parameterIndex-1, short.class);
+        getRow();
+        return resultSet.getShort(parameterIndex);
     }
 
     @Override
     public int getInt(final int parameterIndex) throws SQLException {
-        return (int) getDataRow().getValue(parameterIndex-1, int.class);
+        getRow();
+        return resultSet.getInt(parameterIndex);
     }
 
     @Override
     public long getLong(final int parameterIndex) throws SQLException {
-        return (long) getDataRow().getValue(parameterIndex-1, long.class);
+        getRow();
+        return resultSet.getLong(parameterIndex);
     }
 
     @Override
     public float getFloat(final int parameterIndex) throws SQLException {
-        return (float) getDataRow().getValue(parameterIndex-1, float.class);
+        getRow();
+        return resultSet.getFloat(parameterIndex);
     }
 
     @Override
     public double getDouble(final int parameterIndex) throws SQLException {
-        return (double) getDataRow().getValue(parameterIndex-1, double.class);
+        getRow();
+        return resultSet.getDouble(parameterIndex);
     }
 
     @Override
@@ -118,32 +119,38 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public byte[] getBytes(final int parameterIndex) throws SQLException {
-        return (byte[]) getDataRow().getValue(parameterIndex-1, byte[].class);
+        getRow();
+        return resultSet.getBytes(parameterIndex);
     }
 
     @Override
     public Date getDate(final int parameterIndex) throws SQLException {
-        return (Date) getDataRow().getValue(parameterIndex-1, Date.class);
+        getRow();
+        return resultSet.getDate(parameterIndex);
     }
 
     @Override
     public Time getTime(final int parameterIndex) throws SQLException {
-        return (Time) getDataRow().getValue(parameterIndex-1, Time.class);
+        getRow();
+        return resultSet.getTime(parameterIndex);
     }
 
     @Override
     public Timestamp getTimestamp(final int parameterIndex) throws SQLException {
-        return (Timestamp) getDataRow().getValue(parameterIndex-1, Timestamp.class);
+        getRow();
+        return resultSet.getTimestamp(parameterIndex);
     }
 
     @Override
     public Object getObject(final int parameterIndex) throws SQLException {
-        return getDataRow().getValue(parameterIndex-1);
+        getRow();
+        return resultSet.getObject(parameterIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(final int parameterIndex) throws SQLException {
-        return (BigDecimal) getDataRow().getValue(parameterIndex-1, BigDecimal.class);
+        getRow();
+        return resultSet.getBigDecimal(parameterIndex);
     }
 
     @Override
@@ -338,72 +345,86 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public String getString(final String parameterName) throws SQLException {
-        return (String) getDataRow().getValue(parameterName, String.class);
+        getRow();
+        return resultSet.getString(parameterName);
     }
 
     @Override
     public boolean getBoolean(final String parameterName) throws SQLException {
-        return (boolean) getDataRow().getValue(parameterName, boolean.class);
+        getRow();
+        return resultSet.getBoolean(parameterName);
     }
 
     @Override
     public byte getByte(final String parameterName) throws SQLException {
-        return (byte) getDataRow().getValue(parameterName, byte.class);
+        getRow();
+        return resultSet.getByte(parameterName);
     }
 
     @Override
     public short getShort(final String parameterName) throws SQLException {
-        return (short) getDataRow().getValue(parameterName, short.class);
+        getRow();
+        return resultSet.getShort(parameterName);
     }
 
     @Override
     public int getInt(final String parameterName) throws SQLException {
-        return (int) getDataRow().getValue(parameterName, int.class);
+        getRow();
+        return resultSet.getInt(parameterName);
     }
 
     @Override
     public long getLong(final String parameterName) throws SQLException {
-        return (long) getDataRow().getValue(parameterName, long.class);
+        getRow();
+        return resultSet.getLong(parameterName);
     }
 
     @Override
     public float getFloat(final String parameterName) throws SQLException {
-        return (float) getDataRow().getValue(parameterName, float.class);
+        getRow();
+        return resultSet.getFloat(parameterName);
     }
 
     @Override
     public double getDouble(final String parameterName) throws SQLException {
-        return (double) getDataRow().getValue(parameterName, double.class);
+        getRow();
+        return resultSet.getDouble(parameterName);
     }
 
     @Override
     public byte[] getBytes(final String parameterName) throws SQLException {
-        return (byte[]) getDataRow().getValue(parameterName, byte[].class);
+        getRow();
+        return resultSet.getBytes(parameterName);
     }
 
     @Override
     public Date getDate(final String parameterName) throws SQLException {
-        return (Date) getDataRow().getValue(parameterName, Date.class);
+        getRow();
+        return resultSet.getDate(parameterName);
     }
 
     @Override
     public Time getTime(final String parameterName) throws SQLException {
-        return (Time) getDataRow().getValue(parameterName, Time.class);
+        getRow();
+        return resultSet.getTime(parameterName);
     }
 
     @Override
     public Timestamp getTimestamp(final String parameterName) throws SQLException {
-        return (Timestamp) getDataRow().getValue(parameterName, Timestamp.class);
+        getRow();
+        return resultSet.getTimestamp(parameterName);
     }
 
     @Override
     public Object getObject(final String parameterName) throws SQLException {
-        return getDataRow().getValue(parameterName);
+        getRow();
+        return resultSet.getObject(parameterName);
     }
 
     @Override
     public BigDecimal getBigDecimal(final String parameterName) throws SQLException {
-        return (BigDecimal) getDataRow().getValue(parameterName, BigDecimal.class);
+        getRow();
+        return resultSet.getBigDecimal(parameterName);
     }
 
     @Override
@@ -659,32 +680,9 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
         setParameter(parameterName, "?");
     }
 
-    private Row getDataRow() throws SQLException {
-        if(Objects.isNull(resultRow)){
-            resultRow = dataSet.getNextRow();
+    private void getRow() throws SQLException {
+        if(resultSet.getRow() == 0){
+            resultSet.next();
         }
-        return resultRow;
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (!(o instanceof JdbcCallableStatement)) return false;
-        if (!super.equals(o)) return false;
-        final JdbcCallableStatement that = (JdbcCallableStatement) o;
-        return Objects.equals(resultRow, that.resultRow);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(resultRow);
-    }
-
-    @Override
-    public String toString() {
-        return "JdbcCallableStatement{" +
-                "resultRow=" + resultRow +
-                ", dataSet=" + dataSet +
-                '}';
     }
 }

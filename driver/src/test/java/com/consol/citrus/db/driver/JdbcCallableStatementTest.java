@@ -758,16 +758,16 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testWasNullReturnsFalseAsDefault() throws SQLException {
+    void testWasNullReturnsTrueAsDefault() throws SQLException {
 
         //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
+        final JdbcCallableStatement callableStatement = generateCallableStatement(null);
 
         //WHEN
         final boolean wasNull = callableStatement.wasNull();
 
         //THEN
-        assertFalse(wasNull);
+        assertTrue(wasNull);
     }
 
     @Test
@@ -918,7 +918,7 @@ public class JdbcCallableStatementTest{
 
     private JdbcCallableStatement generateCallableStatement(final Object testValue) throws SQLException {
         final JdbcCallableStatement callableStatement = generateCallableStatement();
-        callableStatement.dataSet = generateTestDataSet(testValue);
+        callableStatement.resultSet = new JdbcResultSet(generateTestDataSet(testValue), null);
         return callableStatement;
     }
 

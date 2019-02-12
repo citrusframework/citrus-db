@@ -278,7 +278,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public int getRow() throws SQLException {
-        return dataSet.getCursor() + 1;
+        return dataSet.getCursor();
     }
 
     public boolean absolute(final int row) throws SQLException {

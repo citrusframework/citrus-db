@@ -60,55 +60,55 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public boolean wasNull() throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.wasNull();
     }
 
     @Override
     public String getString(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getString(parameterIndex);
     }
 
     @Override
     public boolean getBoolean(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getBoolean(parameterIndex);
     }
 
     @Override
     public byte getByte(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getByte(parameterIndex);
     }
 
     @Override
     public short getShort(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getShort(parameterIndex);
     }
 
     @Override
     public int getInt(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getInt(parameterIndex);
     }
 
     @Override
     public long getLong(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getLong(parameterIndex);
     }
 
     @Override
     public float getFloat(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getFloat(parameterIndex);
     }
 
     @Override
     public double getDouble(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getDouble(parameterIndex);
     }
 
@@ -119,37 +119,37 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public byte[] getBytes(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getBytes(parameterIndex);
     }
 
     @Override
     public Date getDate(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getDate(parameterIndex);
     }
 
     @Override
     public Time getTime(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getTime(parameterIndex);
     }
 
     @Override
     public Timestamp getTimestamp(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getTimestamp(parameterIndex);
     }
 
     @Override
     public Object getObject(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getObject(parameterIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(final int parameterIndex) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getBigDecimal(parameterIndex);
     }
 
@@ -345,85 +345,85 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public String getString(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getString(parameterName);
     }
 
     @Override
     public boolean getBoolean(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getBoolean(parameterName);
     }
 
     @Override
     public byte getByte(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getByte(parameterName);
     }
 
     @Override
     public short getShort(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getShort(parameterName);
     }
 
     @Override
     public int getInt(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getInt(parameterName);
     }
 
     @Override
     public long getLong(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getLong(parameterName);
     }
 
     @Override
     public float getFloat(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getFloat(parameterName);
     }
 
     @Override
     public double getDouble(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getDouble(parameterName);
     }
 
     @Override
     public byte[] getBytes(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getBytes(parameterName);
     }
 
     @Override
     public Date getDate(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getDate(parameterName);
     }
 
     @Override
     public Time getTime(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getTime(parameterName);
     }
 
     @Override
     public Timestamp getTimestamp(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getTimestamp(parameterName);
     }
 
     @Override
     public Object getObject(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getObject(parameterName);
     }
 
     @Override
     public BigDecimal getBigDecimal(final String parameterName) throws SQLException {
-        getRow();
+        prepareResultSet();
         return resultSet.getBigDecimal(parameterName);
     }
 
@@ -680,7 +680,7 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
         setParameter(parameterName, "?");
     }
 
-    private void getRow() throws SQLException {
+    private void prepareResultSet() throws SQLException {
         if(resultSet.getRow() == 0){
             resultSet.next();
         }

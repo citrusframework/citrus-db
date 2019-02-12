@@ -1,8 +1,5 @@
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.data.Row;
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.dataset.DataSetBuilder;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.http.client.HttpClient;
@@ -19,33 +16,32 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 public class JdbcCallableStatementTest{
 
     private HttpClient httpClient;
     private String serverUrl = "localhost";
     private JdbcConnection jdbcConnection;
-    private final int TEST_VALUE_INDEX_JDBC = 2;
-    //Because in JDBC, arrays start at 1
-    private final int TEST_VALUE_INDEX_INTERNAL = TEST_VALUE_INDEX_JDBC -1;
+    private final int TEST_VALUE_INDEX = 2;
     private final String TEST_VALUE_NAME = "col2";
-    private final JdbcCallableStatement callableStatement = generateCallableStatement();
+    private JdbcCallableStatement callableStatement;
 
-    private Row rowSpy;
+    private JdbcResultSet resultSetSpy;
 
     @BeforeMethod
     public void setup(){
         httpClient = mock(HttpClient.class);
         jdbcConnection = mock(JdbcConnection.class);
+
+        callableStatement = generateCallableStatement();
+        resultSetSpy = mock(JdbcResultSet.class);
+        callableStatement.resultSet = resultSetSpy;
     }
 
     @Test
@@ -429,476 +425,315 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetTwoValuesByIndex() throws SQLException {
-
-        //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement("bar");
-
-        //WHEN
-        final String firstOutParameter = callableStatement.getString(1);
-        final String secondOutParameter = callableStatement.getString(TEST_VALUE_INDEX_JDBC);
-
-        //THEN
-        assertEquals(firstOutParameter, "dummyValue");
-        assertEquals(secondOutParameter, "bar");
-    }
-
-    @Test
     void testGetStringByIndex() throws SQLException {
 
-        //GIVEN
-        final String expectedString = "bar";
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedString);
-
         //WHEN
-        final String string = callableStatement.getString(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getString(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(string, expectedString);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, String.class);
+        verify(resultSetSpy).getString(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetBooleanByIndex() throws SQLException {
 
-        //GIVEN
-        final boolean expectedBoolean = true;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBoolean);
-
         //WHEN
-        final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getBoolean(TEST_VALUE_INDEX);
 
         //THEN
-        assertTrue(aBoolean);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, boolean.class);
+        verify(resultSetSpy).getBoolean(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetByteByIndex() throws SQLException {
 
-        //GIVEN
-        final byte expectedByte = 42;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedByte);
-
         //WHEN
-        final byte aByte = callableStatement.getByte(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getByte(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aByte, expectedByte);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, byte.class);
+        verify(resultSetSpy).getByte(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetBytesByIndex() throws SQLException {
 
-        //GIVEN
-        final byte[] expectedBytes = "nuqneh".getBytes();
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBytes);
-
         //WHEN
-        final byte[] aByte = callableStatement.getBytes(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getBytes(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aByte, expectedBytes);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, byte[].class);
+        verify(resultSetSpy).getBytes(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetShortByIndex() throws SQLException {
 
-        //GIVEN
-        final short expectedShort = 42;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedShort);
-
         //WHEN
-        final short aShort = callableStatement.getShort(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getShort(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aShort, expectedShort);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, short.class);
+        verify(resultSetSpy).getShort(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetIntByIndex() throws SQLException {
 
-        //GIVEN
-        final int expectedInt = 42;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedInt);
-
         //WHEN
-        final int anInt = callableStatement.getInt(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getInt(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(anInt, expectedInt);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, int.class);
+        verify(resultSetSpy).getInt(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetLongByIndex() throws SQLException {
 
-        //GIVEN
-        final long expectedLong = 42L;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedLong);
-
         //WHEN
-        final long aLong = callableStatement.getLong(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getLong(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aLong, expectedLong);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, long.class);
+        verify(resultSetSpy).getLong(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetFloatByIndex() throws SQLException {
 
-        //GIVEN
-        final float expectedFloat = 4.2F;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedFloat);
-
         //WHEN
-        final float aFloat = callableStatement.getFloat(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getFloat(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aFloat, expectedFloat);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, float.class);
+        verify(resultSetSpy).getFloat(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetDoubleByIndex() throws SQLException {
 
-        //GIVEN
-        final double expectedDouble = 4.2;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDouble);
-
         //WHEN
-        final double aDouble = callableStatement.getDouble(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getDouble(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aDouble, expectedDouble);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, double.class);
+        verify(resultSetSpy).getDouble(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetBigDecimalByIndexWithScale() throws SQLException {
+    void testGetBigDecimalByIndexWithScale() throws Exception {
 
         //GIVEN
-        final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
+        final BigDecimal bigDecimalMock = mock(BigDecimal.class);
+        when(resultSetSpy.getBigDecimal(TEST_VALUE_INDEX)).thenReturn(bigDecimalMock);
 
         //WHEN
-        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_INDEX_JDBC, 2);
+        callableStatement.getBigDecimal(TEST_VALUE_INDEX, 2);
 
         //THEN
-        assertEquals(aBigDecimal, expectedBigDecimal.setScale(2, RoundingMode.HALF_UP));
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, BigDecimal.class);
+        //noinspection ResultOfMethodCallIgnored
+        verify(bigDecimalMock).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Test
     void testGetStringByName() throws SQLException {
 
-        //GIVEN
-        final String expectedString = "bar";
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedString);
-
         //WHEN
-        final String string = callableStatement.getString(TEST_VALUE_NAME);
+        callableStatement.getString(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(string, expectedString);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, String.class);
+        verify(resultSetSpy).getString(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetBooleanByName() throws SQLException {
 
-        //GIVEN
-        final boolean expectedBoolean = true;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBoolean);
-
         //WHEN
-        final boolean aBoolean = callableStatement.getBoolean(TEST_VALUE_NAME);
+        callableStatement.getBoolean(TEST_VALUE_NAME);
 
         //THEN
-        assertTrue(aBoolean);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, boolean.class);
+        verify(resultSetSpy).getBoolean(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetByteByName() throws SQLException {
 
-        //GIVEN
-        final byte expectedByte = 42;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedByte);
-
         //WHEN
-        final byte aByte = callableStatement.getByte(TEST_VALUE_NAME);
+        callableStatement.getByte(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aByte, expectedByte);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, byte.class);
+        verify(resultSetSpy).getByte(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetShortByName() throws SQLException {
 
-        //GIVEN
-        final short expectedShort = 42;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedShort);
-
         //WHEN
-        final short aShort = callableStatement.getShort(TEST_VALUE_NAME);
+        callableStatement.getShort(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aShort, expectedShort);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, short.class);
+        verify(resultSetSpy).getShort(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetIntByName() throws SQLException {
 
-        //GIVEN
-        final int expectedInt = 42;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedInt);
-
         //WHEN
-        final int anInt = callableStatement.getInt(TEST_VALUE_NAME);
+        callableStatement.getInt(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(anInt, expectedInt);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, int.class);
+        verify(resultSetSpy).getInt(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetLongByName() throws SQLException {
 
-        //GIVEN
-        final long expectedLong = 42L;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedLong);
-
         //WHEN
-        final long aLong = callableStatement.getLong(TEST_VALUE_NAME);
+        callableStatement.getLong(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aLong, expectedLong);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, long.class);
+        verify(resultSetSpy).getLong(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetFloatByName() throws SQLException {
 
-        //GIVEN
-        final float expectedFloat = 4.2F;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedFloat);
-
         //WHEN
-        final float aFloat = callableStatement.getFloat(TEST_VALUE_NAME);
+        callableStatement.getFloat(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aFloat, expectedFloat);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, float.class);
+        verify(resultSetSpy).getFloat(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetDoubleByName() throws SQLException {
 
-        //GIVEN
-        final double expectedDouble = 4.2;
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDouble);
-
         //WHEN
-        final double aFloat = callableStatement.getDouble(TEST_VALUE_NAME);
+        callableStatement.getDouble(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aFloat, expectedDouble);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, double.class);
+        verify(resultSetSpy).getDouble(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetBytesByName() throws SQLException {
 
-        //GIVEN
-        final byte[] expectedBytes = "Foobar".getBytes();
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBytes);
-
         //WHEN
-        final byte[] bytes = callableStatement.getBytes(TEST_VALUE_NAME);
+        callableStatement.getBytes(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(bytes, expectedBytes);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, byte[].class);
+        verify(resultSetSpy).getBytes(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetObjectByName() throws SQLException {
 
-        //GIVEN
-        final Object expectedObject = "Foobar".getBytes();
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedObject);
-
         //WHEN
-        final Object object = callableStatement.getObject(TEST_VALUE_NAME);
+        callableStatement.getObject(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(object, expectedObject);
+        verify(resultSetSpy).getObject(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetBigDecimalByName() throws SQLException {
 
-        //GIVEN
-        final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
-
-        //WHEN
-        final BigDecimal aBigDecimal = callableStatement.getBigDecimal(TEST_VALUE_NAME);
-
-        //THEN
-        assertEquals(aBigDecimal, expectedBigDecimal);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, BigDecimal.class);
-    }
-
-    @Test
-    void testWasNullReturnsTrueAsDefault() throws SQLException {
-
-        //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement(null);
-
-        //WHEN
-        final boolean wasNull = callableStatement.wasNull();
-
-        //THEN
-        assertTrue(wasNull);
-    }
-
-    @Test
-    void testWasNullIsFalse() throws SQLException {
-
-        //GIVEN
-        final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedBigDecimal);
-
         //WHEN
         callableStatement.getBigDecimal(TEST_VALUE_NAME);
 
         //THEN
-        assertFalse(callableStatement.wasNull());
+        verify(resultSetSpy).getBigDecimal(TEST_VALUE_NAME);
     }
 
     @Test
-    void testWasNullIsTrue() throws SQLException {
+    void testDelegateWasNull() throws SQLException {
 
-        //GIVEN
-        final JdbcCallableStatement callableStatement = generateCallableStatement(null);
 
         //WHEN
-        callableStatement.getBigDecimal(TEST_VALUE_NAME);
+        callableStatement.wasNull();
 
         //THEN
-        assertTrue(callableStatement.wasNull());
+        verify(resultSetSpy).wasNull();
     }
 
     @Test
     void testGetDateByIndex() throws SQLException {
 
-        //GIVEN
-        final Date expectedDate = new Date(619912800000L);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDate);
-
         //WHEN
-        final Date aDate = callableStatement.getDate(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getDate(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aDate, expectedDate);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Date.class);
+        verify(resultSetSpy).getDate(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetTimeByIndex() throws SQLException {
 
-        //GIVEN
-        final Time expectedTime = new Time(619912812345L);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTime);
-
         //WHEN
-        final Time aTime = callableStatement.getTime(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getTime(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aTime, expectedTime);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Time.class);
+        verify(resultSetSpy).getTime(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetTimestampByIndex() throws SQLException {
 
-        //GIVEN
-        final Timestamp expectedTimestamp = new Timestamp(619912812345L);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTimestamp);
-
         //WHEN
-        final Timestamp aTimestamp = callableStatement.getTimestamp(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getTimestamp(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(aTimestamp, expectedTimestamp);
-        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, Timestamp.class);
+        verify(resultSetSpy).getTimestamp(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetObjectByIndex() throws SQLException {
 
-        //GIVEN
-        final Object expectedObject = new Timestamp(619912812345L);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedObject);
-
         //WHEN
-        final Object anObject = callableStatement.getObject(TEST_VALUE_INDEX_JDBC);
+        callableStatement.getObject(TEST_VALUE_INDEX);
 
         //THEN
-        assertEquals(anObject, expectedObject);
+        verify(resultSetSpy).getObject(TEST_VALUE_INDEX);
     }
 
     @Test
     void testGetDateByName() throws SQLException {
 
-        //GIVEN
-        final Date expectedDate = new Date(619912800000L);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedDate);
-
         //WHEN
-        final Date aDate = callableStatement.getDate(TEST_VALUE_NAME);
+        callableStatement.getDate(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aDate, expectedDate);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, Date.class);
+        verify(resultSetSpy).getDate(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetTimeByName() throws SQLException {
 
-        //GIVEN
-        final Time expectedTime = new Time(619912812345L);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTime);
-
         //WHEN
-        final Time aTime = callableStatement.getTime(TEST_VALUE_NAME);
+        callableStatement.getTime(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aTime, expectedTime);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, Time.class);
+        verify(resultSetSpy).getTime(TEST_VALUE_NAME);
     }
 
     @Test
     void testGetTimestampByName() throws SQLException {
 
-        //GIVEN
-        final Timestamp expectedTimestamp = new Timestamp(619912812345L);
-        final JdbcCallableStatement callableStatement = generateCallableStatement(expectedTimestamp);
-
         //WHEN
-        final Timestamp aTimestamp = callableStatement.getTimestamp(TEST_VALUE_NAME);
+        callableStatement.getTimestamp(TEST_VALUE_NAME);
 
         //THEN
-        assertEquals(aTimestamp, expectedTimestamp);
-        verify(rowSpy).getValue(TEST_VALUE_NAME, Timestamp.class);
+        verify(resultSetSpy).getTimestamp(TEST_VALUE_NAME);
+    }
+
+    @Test
+    void verifyResultSetHandling() throws SQLException {
+
+        //GIVEN
+        when(resultSetSpy.getRow()).thenReturn(0).thenReturn(1);
+
+        //WHEN
+        callableStatement.getTimestamp(1);
+        callableStatement.getString(2);
+
+
+        //THEN
+        verify(resultSetSpy, times(2)).getRow();
+        verify(resultSetSpy, times(1)).next();
     }
 
     @Test
@@ -915,25 +750,9 @@ public class JdbcCallableStatementTest{
         final String statement = "CALL myFunction(?,?)";
         return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection);
     }
-
-    private JdbcCallableStatement generateCallableStatement(final Object testValue) throws SQLException {
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
-        callableStatement.resultSet = new JdbcResultSet(generateTestDataSet(testValue), null);
-        return callableStatement;
-    }
-
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName) {
         final String statement = "CALL myFunction("+parameterName+",?)";
         return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection);
     }
 
-    private DataSet generateTestDataSet(final Object testValue) throws SQLException {
-        final SortedMap<String, Object> testData = new TreeMap<>();
-        testData.put("col1", "dummyValue");
-        testData.put("col2", testValue);
-
-        rowSpy = spy(new Row());
-        rowSpy.setValues(testData);
-        return new DataSetBuilder().add(rowSpy).build();
-    }
 }

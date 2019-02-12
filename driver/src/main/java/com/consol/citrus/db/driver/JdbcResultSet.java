@@ -54,6 +54,9 @@ public class JdbcResultSet implements java.sql.ResultSet {
     //The current ResultSet data row
     private Row row;
 
+    /** Indicates that this data set is closed */
+    private boolean closed = false;
+
     /**
      * Constructor using remote result set.
      */
@@ -64,56 +67,68 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public boolean next() throws SQLException {
+        ensureNotClosed();
         row = dataSet.getNextRow();
         return row != null;
     }
 
     @Override
     public void close()	throws SQLException {
-        dataSet.close();
+        closed = true;
     }
 
     public String getString(final int columnIndex) throws SQLException {
+        validateAccess();
         return (String) row.getValue(columnIndex-1, String.class);
     }
 
     public String getString(final String columnName) throws SQLException {
+        validateAccess();
         return (String) row.getValue(columnName, String.class);
     }
 
     public float getFloat(final int columnIndex) throws SQLException {
+        validateAccess();
         return (float) row.getValue(columnIndex-1, float.class);
     }
 
     public float getFloat(final String columnName) throws SQLException {
+        validateAccess();
         return (float) row.getValue(columnName, float.class);
     }
 
     public int getInt(final int columnIndex) throws SQLException {
+        validateAccess();
         return (int) row.getValue(columnIndex-1, int.class);
     }
 
     public int getInt(final String columnName) throws SQLException {
+        validateAccess();
         return (int) row.getValue(columnName, int.class);
     }
 
     public boolean getBoolean(final int columnIndex) throws SQLException {
+        validateAccess();
         return (boolean) row.getValue(columnIndex-1, boolean.class);
     }
 
     public byte getByte(final int columnIndex) throws SQLException {
+        validateAccess();
         return (byte) row.getValue(columnIndex-1, byte.class);
     }
 
     public short getShort(final int columnIndex) throws SQLException {
+        validateAccess();
         return (short) row.getValue(columnIndex-1, short.class);
     }
 
     public long getLong(final int columnIndex) throws SQLException {
+        validateAccess();
         return (long) row.getValue(columnIndex-1, long.class);
     }
 
     public double getDouble(final int columnIndex) throws SQLException {
+        validateAccess();
         return (double) row.getValue(columnIndex-1, double.class);
     }
 
@@ -122,18 +137,22 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public byte[] getBytes(final int columnIndex) throws SQLException {
+        validateAccess();
         return (byte[]) row.getValue(columnIndex-1, byte[].class);
     }
 
     public Date getDate(final int columnIndex) throws SQLException {
+        validateAccess();
         return (Date) row.getValue(columnIndex-1, Date.class);
     }
 
     public Time getTime(final int columnIndex) throws SQLException {
+        validateAccess();
         return (Time) row.getValue(columnIndex-1, Time.class);
     }
 
     public Timestamp getTimestamp(final int columnIndex) throws SQLException {
+        validateAccess();
         return (Timestamp) row.getValue(columnIndex-1, Timestamp.class);
     }
 
@@ -150,30 +169,37 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Object getObject(final int columnIndex) throws SQLException {
+        validateAccess();
         return row.getValue(columnIndex-1);
     }
 
     public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
+        validateAccess();
         return (BigDecimal) row.getValue(columnIndex-1, BigDecimal.class);
     }
 
     public boolean getBoolean(final String columnName) throws SQLException {
+        validateAccess();
         return (boolean) row.getValue(columnName, boolean.class);
     }
 
     public byte getByte(final String columnName) throws SQLException {
+        validateAccess();
         return (byte) row.getValue(columnName, byte.class);
     }
 
     public short getShort(final String columnName) throws SQLException {
+        validateAccess();
         return (short) row.getValue(columnName, short.class);
     }
 
     public long getLong(final String columnName) throws SQLException {
+        validateAccess();
         return (long) row.getValue(columnName, long.class);
     }
 
     public double getDouble(final String columnName) throws SQLException {
+        validateAccess();
         return (double) row.getValue(columnName, double.class);
     }
 
@@ -182,26 +208,32 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public byte[] getBytes(final String columnName) throws SQLException {
+        validateAccess();
         return (byte[]) row.getValue(columnName, byte[].class);
     }
 
     public Date getDate(final String columnName) throws SQLException {
+        validateAccess();
         return (Date) row.getValue(columnName, Date.class);
     }
 
     public Time getTime(final String columnName) throws SQLException {
+        validateAccess();
         return (Time) row.getValue(columnName, Time.class);
     }
 
     public Timestamp getTimestamp(final String columnName) throws SQLException {
+        validateAccess();
         return (Timestamp) row.getValue(columnName, Timestamp.class);
     }
 
     public Object getObject(final String columnName) throws SQLException {
+        validateAccess();
         return row.getValue(columnName);
     }
 
     public BigDecimal getBigDecimal(final String columnName) throws SQLException {
+        validateAccess();
         return (BigDecimal) row.getValue(columnName, BigDecimal.class);
     }
 
@@ -234,7 +266,8 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public int findColumn(final String columnName) throws SQLException {
-        return row.getColumns().indexOf(columnName);
+        validateAccess();
+        return row.getColumns().indexOf(columnName)+1;
     }
 
     public Reader getCharacterStream(final int columnIndex) throws SQLException {
@@ -278,6 +311,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public int getRow() throws SQLException {
+        ensureNotClosed();
         return dataSet.getCursor();
     }
 
@@ -318,14 +352,17 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean rowUpdated() throws SQLException {
+        ensureNotClosed();
         return !dataSet.getRows().isEmpty();
     }
 
     public boolean rowInserted() throws SQLException {
+        ensureNotClosed();
         return !dataSet.getRows().isEmpty();
     }
 
     public boolean rowDeleted() throws SQLException {
+        ensureNotClosed();
         return !dataSet.getRows().isEmpty();
     }
 
@@ -502,9 +539,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Statement getStatement()  throws SQLException {
-        if (isClosed()) {
-            throw new SQLException("ResultSet has already been closed.");
-        }
+        ensureNotClosed();
         return statement;
     }
 
@@ -610,7 +645,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public boolean isClosed() throws SQLException {
-        return dataSet.isClosed();
+        return closed;
     }
 
     @Override
@@ -834,6 +869,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean wasNull()throws SQLException {
+        validateAccess();
         return row.getLastValue() == null;
     }
 
@@ -883,6 +919,23 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
     public Array getArray(final String colName) throws SQLException {
         throw new SQLException("Not supported JDBC result set function 'getArray'");
+    }
+
+    private void validateAccess() throws SQLException {
+        ensureValidCursor();
+        ensureNotClosed();
+    }
+
+    private void ensureValidCursor() throws SQLException {
+        if(row == null){
+            throw new SQLException("No further data - Cursor position is after last row");
+        }
+    }
+
+    private void ensureNotClosed() throws SQLException {
+        if(isClosed()){
+            throw new SQLException("Result set already closed");
+        }
     }
 
     @Override

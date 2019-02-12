@@ -17,20 +17,22 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @PrepareForTest(ConvertUtils.class)
 public class JdbcResultSetTest {
 
-    private JdbcResultSet resultSet;
     private Row rowSpy;
 
     private final int TEST_VALUE_INDEX_JDBC = 2;
@@ -42,7 +44,7 @@ public class JdbcResultSetTest {
     public void testGetStringByIndex() throws SQLException {
         //GIVEN
         final String expectedString = "bar";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedString), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedString);
         resultSet.next();
 
         //WHEN
@@ -58,7 +60,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedString = "bar";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedString), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedString);
         resultSet.next();
 
         //WHEN
@@ -74,7 +76,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final float expectedFloat = 4.2F;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedFloat), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedFloat);
         resultSet.next();
         //WHEN
         final float aFloat = resultSet.getFloat(TEST_VALUE_INDEX_JDBC);
@@ -89,7 +91,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final float expectedFloat = 4.2F;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedFloat), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedFloat);
         resultSet.next();
 
         //WHEN
@@ -105,7 +107,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final int expectedInt = 42;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedInt), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedInt);
         resultSet.next();
 
         //WHEN
@@ -121,7 +123,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final int expectedInt = 42;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedInt), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedInt);
         resultSet.next();
 
         //WHEN
@@ -137,7 +139,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final boolean expectedBoolean = true;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBoolean), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBoolean);
         resultSet.next();
 
         //WHEN
@@ -153,7 +155,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final byte expectedByte = 42;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedByte), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedByte);
         resultSet.next();
 
         //WHEN
@@ -169,7 +171,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final short expectedShort = 42;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedShort), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedShort);
         resultSet.next();
 
         //WHEN
@@ -185,7 +187,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final long expectedLong = 42L;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedLong), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedLong);
         resultSet.next();
 
         //WHEN
@@ -201,7 +203,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final double expectedDouble = 4.2;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedDouble), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedDouble);
         resultSet.next();
 
         //WHEN
@@ -217,7 +219,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBigDecimal), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBigDecimal);
         resultSet.next();
 
         //WHEN
@@ -233,7 +235,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final byte[] expectedBytes = "nuqneh".getBytes();
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBytes), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBytes);
         resultSet.next();
 
         //WHEN
@@ -249,7 +251,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final Date expectedDate = new Date(619912800000L);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedDate), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedDate);
         resultSet.next();
 
         //WHEN
@@ -265,7 +267,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final Time expectedTime = new Time(619912812345L);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedTime), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedTime);
         resultSet.next();
 
         //WHEN
@@ -281,7 +283,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final Timestamp expectedTimestamp = new Timestamp(619912812345L);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedTimestamp), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedTimestamp);
         resultSet.next();
 
         //WHEN
@@ -297,7 +299,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedText), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
         resultSet.next();
 
         //WHEN
@@ -314,7 +316,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedText), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
         resultSet.next();
 
         //WHEN
@@ -331,7 +333,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final byte[] expectedBytes = "nuqneh".getBytes();
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBytes), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBytes);
         resultSet.next();
 
         //WHEN
@@ -348,7 +350,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final Object expectedObject = new Timestamp(619912812345L);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedObject), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedObject);
         resultSet.next();
 
         //WHEN
@@ -359,11 +361,26 @@ public class JdbcResultSetTest {
     }
 
     @Test
+    void testGetObjectByName() throws SQLException {
+
+        //GIVEN
+        final Object expectedObject = new Timestamp(619912812345L);
+        final JdbcResultSet resultSet = generateResultSet(expectedObject);
+        resultSet.next();
+
+        //WHEN
+        final Object anObject = resultSet.getObject(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(anObject, expectedObject);
+    }
+
+    @Test
     void testGetBooleanByName() throws SQLException {
 
         //GIVEN
         final boolean expectedBoolean = true;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBoolean), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBoolean);
         resultSet.next();
 
         //WHEN
@@ -379,7 +396,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final byte expectedByte = 42;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedByte), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedByte);
         resultSet.next();
 
         //WHEN
@@ -395,7 +412,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final short expectedShort = 42;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedShort), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedShort);
         resultSet.next();
 
         //WHEN
@@ -411,7 +428,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final long expectedLong = 42L;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedLong), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedLong);
         resultSet.next();
 
         //WHEN
@@ -427,7 +444,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final double expectedDouble = 4.2;
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedDouble), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedDouble);
         resultSet.next();
 
         //WHEN
@@ -443,7 +460,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBigDecimal), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBigDecimal);
         resultSet.next();
 
         //WHEN
@@ -459,7 +476,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final byte[] expectedBytes = "Foobar".getBytes();
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBytes), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBytes);
         resultSet.next();
 
         //WHEN
@@ -475,7 +492,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final Date expectedDate = new Date(619912800000L);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedDate), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedDate);
         resultSet.next();
 
         //WHEN
@@ -491,7 +508,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final Time expectedTime = new Time(619912812345L);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedTime), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedTime);
         resultSet.next();
 
         //WHEN
@@ -507,7 +524,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final Timestamp expectedTimestamp = new Timestamp(619912812345L);
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedTimestamp), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedTimestamp);
         resultSet.next();
 
         //WHEN
@@ -523,7 +540,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedText), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
         resultSet.next();
 
         //WHEN
@@ -540,7 +557,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedText), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
         resultSet.next();
 
         //WHEN
@@ -557,7 +574,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final byte[] expectedBytes = "nuqneh".getBytes();
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedBytes), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedBytes);
         resultSet.next();
 
         //WHEN
@@ -574,7 +591,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedText), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
         resultSet.next();
 
         //WHEN
@@ -591,7 +608,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        resultSet = new JdbcResultSet(generateTestDataSet(expectedText), null);
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
         resultSet.next();
 
         //WHEN
@@ -607,7 +624,7 @@ public class JdbcResultSetTest {
     void testRowUpdated() throws SQLException {
 
         //GIVEN
-        resultSet = new JdbcResultSet(generateTestDataSet(), null);
+        final JdbcResultSet resultSet = generateResultSet();
 
         //WHEN
         final boolean updated = resultSet.rowUpdated();
@@ -620,7 +637,7 @@ public class JdbcResultSetTest {
     void testRowInserted() throws SQLException {
 
         //GIVEN
-        resultSet = new JdbcResultSet(generateTestDataSet(), null);
+        final JdbcResultSet resultSet = generateResultSet();
 
         //WHEN
         final boolean updated = resultSet.rowInserted();
@@ -633,13 +650,1085 @@ public class JdbcResultSetTest {
     void testRowDeleted() throws SQLException {
 
         //GIVEN
-        resultSet = new JdbcResultSet(generateTestDataSet(), null);
+        final JdbcResultSet resultSet = generateResultSet();
 
         //WHEN
         final boolean updated = resultSet.rowDeleted();
 
         //THEN
         assertTrue(updated);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void nextThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.next();
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getStringByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getString(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getStringByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getString(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getStringByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getString(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getStringByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getString(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getFloatByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getFloat(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getFloatByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getFloat(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getFloatByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getFloat(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getFloatByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getFloat(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getIntByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getInt(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getIntByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getInt(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getIntByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getInt(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getIntByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getInt(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBooleanByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBoolean(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBooleanByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBoolean(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBooleanByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBoolean(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBooleanByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBoolean(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getByteByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getByteByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getByteByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getByteByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getShortByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getShort(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getShortByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getShort(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getShortByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getShort(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getShortByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getShort(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getLongByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getLong(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getLongByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getLong(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getLongByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getLong(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getLongByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getLong(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getDoubleByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getDouble(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getDoubleByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getDouble(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getDoubleByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getDouble(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBigDecimalByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBigDecimal(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBigDecimalByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBigDecimal(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBigDecimalByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBigDecimal(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBigDecimalByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBigDecimal(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBytesByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBytesByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBytesByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBytesByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBytes(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getDateByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getDate(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getDateByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getDate(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getDateByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getDate(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getDateByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getDate(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimeByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getTime(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimeByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getTime(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimeByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getTime(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimeByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getTime(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimestampByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getTimestamp(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimestampByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getTimestamp(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimestampByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getTimestamp(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getTimestampByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getTimestamp(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getAsciiStreamByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getAsciiStream(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getAsciiStreamByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getAsciiStream(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getAsciiStreamByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getAsciiStream(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getAsciiStreamByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getAsciiStream(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getUnicodeStreamByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getUnicodeStream(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getUnicodeStreamByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getUnicodeStream(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getUnicodeStreamByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getUnicodeStream(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getUnicodeStreamByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getUnicodeStream(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBinaryStreamByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBinaryStream(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBinaryStreamByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBinaryStream(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBinaryStreamByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getBinaryStream(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getBinaryStreamByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getBinaryStream(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getObjectByNameThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getObject(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getObjectByNameThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getObject(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getObjectByIndexThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getObject(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void getObjectByIndexThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.getObject(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void findColumnThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.findColumn(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void findColumnThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.findColumn(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testGetRowThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.findColumn(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testGetRowThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.findColumn(TEST_VALUE_NAME);
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testRowUpdatedThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.rowUpdated();
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testRowInsertedThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.rowInserted();
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testRowDeletedThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.rowDeleted();
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testGetStatementThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.getStatement();
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testWasNullThrowsExceptionIfCalledOnClosedResultSet() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateClosedResultSet();
+
+        //WHEN
+        resultSet.wasNull();
+
+        //THEN
+        //exception
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    void testWasNullThrowsExceptionIfCalledWithInvalidCursor() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSetWithInvalidCursor();
+
+        //WHEN
+        resultSet.wasNull();
+
+        //THEN
+        //exception
+    }
+
+    @Test
+    void testWasNullIsFalse() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSet();
+        resultSet.next();
+        resultSet.getString(1);
+
+        //WHEN
+        final boolean wasNull = resultSet.wasNull();
+
+        //THEN
+        assertFalse(wasNull);
+    }
+
+    @Test
+    void testWasNullIsTrue() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSet();
+        resultSet.next();
+        resultSet.getString(2);
+
+        //WHEN
+        final boolean wasNull = resultSet.wasNull();
+
+        //THEN
+        assertTrue(wasNull);
+    }
+
+    @Test
+    void testGetStatement() throws SQLException {
+
+        //GIVEN
+        final JdbcStatement expectedStatement = mock(JdbcStatement.class);
+        final JdbcResultSet resultSet = new JdbcResultSet(null, expectedStatement);
+
+        //WHEN
+        final Statement statement = resultSet.getStatement();
+
+        //THEN
+        assertEquals(statement, expectedStatement);
+    }
+
+    @Test
+    void testFindColumn() throws SQLException {
+
+        //GIVEN
+        final JdbcResultSet resultSet = generateResultSet();
+        resultSet.next();
+
+        //WHEN
+        final int column = resultSet.findColumn(TEST_VALUE_NAME);
+
+        //THEN
+        assertEquals(column, TEST_VALUE_INDEX_JDBC);
     }
 
     @Test
@@ -650,6 +1739,27 @@ public class JdbcResultSetTest {
     @Test
     public void equalsContract(){
         EqualsVerifier.forClass(JdbcResultSet.class);
+    }
+
+    private JdbcResultSet generateClosedResultSet() throws SQLException {
+        final JdbcResultSet jdbcResultSet = new JdbcResultSet(generateTestDataSet(), null);
+        jdbcResultSet.next();
+        jdbcResultSet.close();
+        return jdbcResultSet;
+    }
+
+    private JdbcResultSet generateResultSetWithInvalidCursor() {
+        final DataSet dataSet = new DataSet();
+        dataSet.getRows().add(null);
+        return new JdbcResultSet(dataSet, null);
+    }
+
+    private JdbcResultSet generateResultSet(final Object testValue) throws SQLException {
+        return new JdbcResultSet(generateTestDataSet(testValue), null);
+    }
+
+    private JdbcResultSet generateResultSet() throws SQLException {
+        return new JdbcResultSet(generateTestDataSet(), null);
     }
 
     private DataSet generateTestDataSet() throws SQLException {

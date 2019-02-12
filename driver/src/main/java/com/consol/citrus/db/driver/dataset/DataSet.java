@@ -74,13 +74,12 @@ public class DataSet {
         if (this == o) return true;
         if (!(o instanceof DataSet)) return false;
         final DataSet dataSet = (DataSet) o;
-        return Objects.equals(rows, dataSet.rows) &&
-                Objects.equals(cursor, dataSet.cursor);
+        return Objects.equals(rows, dataSet.rows);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rows, cursor);
+        return Objects.hash(rows);
     }
 
     @Override

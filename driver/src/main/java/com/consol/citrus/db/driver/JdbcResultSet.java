@@ -352,18 +352,15 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public boolean rowUpdated() throws SQLException {
-        ensureNotClosed();
-        return !dataSet.getRows().isEmpty();
+        return rowModified();
     }
 
     public boolean rowInserted() throws SQLException {
-        ensureNotClosed();
-        return !dataSet.getRows().isEmpty();
+        return rowModified();
     }
 
     public boolean rowDeleted() throws SQLException {
-        ensureNotClosed();
-        return !dataSet.getRows().isEmpty();
+        return rowModified();
     }
 
     public void updateNull(final int columnIndex) throws SQLException {
@@ -936,6 +933,11 @@ public class JdbcResultSet implements java.sql.ResultSet {
         if(isClosed()){
             throw new SQLException("Result set already closed");
         }
+    }
+
+    private boolean rowModified() throws SQLException {
+        ensureNotClosed();
+        return !dataSet.getRows().isEmpty();
     }
 
     @Override

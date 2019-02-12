@@ -21,7 +21,6 @@ import com.consol.citrus.db.server.JdbcServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -88,12 +87,8 @@ public abstract class AbstractJdbcController implements JdbcController {
         log.info("EXECUTE QUERY: " + sql);
         final DataSet dataSet = handleQuery(sql);
 
-        try {
-            if(log.isDebugEnabled()){
-                log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
-            }
-        } catch (final SQLException e) {
-            throw new JdbcServerException("Failed to access dataSet", e);
+        if(log.isDebugEnabled()){
+            log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
         }
 
         log.info("QUERY EXECUTION SUCCESSFUL");
@@ -105,12 +100,8 @@ public abstract class AbstractJdbcController implements JdbcController {
         log.info("EXECUTE STATEMENT: " + sql);
         final DataSet dataSet = handleExecute(sql);
 
-        try {
-            if(log.isDebugEnabled()){
-                log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
-            }
-        } catch (final SQLException e) {
-            throw new JdbcServerException("Failed to access dataSet", e);
+        if(log.isDebugEnabled()){
+            log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
         }
 
         log.info("STATEMENT EXECUTION SUCCESSFUL");

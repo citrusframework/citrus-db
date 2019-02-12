@@ -54,6 +54,7 @@
     <apache.rat.plugin.version>0.12</apache.rat.plugin.version>
     <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
     <maven.deploy.plugin.version>3.0.0-M1</maven.deploy.plugin.version>
+    <maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
 
     <!-- maven extensions -->
     <wagon.ssh.extension.version>2.7</wagon.ssh.extension.version>
@@ -373,6 +374,11 @@
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven.deploy.plugin.version}</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>${maven.assembly.plugin.version}</version>
+        </plugin>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -451,7 +457,7 @@
           </executions>
           <configuration>
             <useAgent>true</useAgent>
-            <keyname>christoph.deppisch@consol.de</keyname>
+            <keyname>dev@citrusframework.org</keyname>
             <skip>${skip.gpg}</skip>
             <gpgArguments>
               <arg>--allow-weak-digest-algos</arg>

@@ -385,13 +385,12 @@ public class JdbcStatement implements Statement {
         final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&
                 Objects.equals(serverUrl, that.serverUrl) &&
-                Objects.equals(connection, that.connection) &&
-                Objects.equals(resultSet, that.resultSet);
+                Objects.equals(connection, that.connection);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(httpClient, serverUrl, connection, resultSet);
+        return Objects.hash(httpClient, serverUrl, connection);
     }
 
     @Override

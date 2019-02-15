@@ -751,6 +751,7 @@ public class JdbcCallableStatementTest{
                         new JdbcResultSet(mock(DataSet.class), mock(JdbcStatement.class)),
                         new JdbcResultSet(mock(DataSet.class), mock(JdbcStatement.class)))
                 .suppress(Warning.NONFINAL_FIELDS)
+                .withIgnoredFields("resultSet")
                 .verify();
     }
 

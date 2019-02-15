@@ -85,6 +85,7 @@ public class JdbcPreparedStatementTest {
                         new JdbcResultSet(PowerMockito.mock(DataSet.class), PowerMockito.mock(JdbcStatement.class)))
                 .withRedefinedSuperclass()
                 .suppress(Warning.NONFINAL_FIELDS)
+                .withIgnoredFields("resultSet")
                 .verify();
     }
 }

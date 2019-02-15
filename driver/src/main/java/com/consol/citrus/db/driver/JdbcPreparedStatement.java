@@ -356,8 +356,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
                 Objects.equals(parameters, that.parameters)&&
                 Objects.equals(httpClient, that.httpClient) &&
                 Objects.equals(serverUrl, that.serverUrl) &&
-                Objects.equals(connection, that.connection) &&
-                Objects.equals(resultSet, that.resultSet);
+                Objects.equals(connection, that.connection);
     }
 
     @Override

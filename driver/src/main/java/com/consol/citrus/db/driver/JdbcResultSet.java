@@ -951,18 +951,19 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof JdbcResultSet)) return false;
-        final JdbcResultSet that = (JdbcResultSet) o;
-        return Objects.equals(dataSet, that.dataSet) &&
-                Objects.equals(statement, that.statement) &&
-                Objects.equals(row, that.row);
+        final JdbcResultSet resultSet = (JdbcResultSet) o;
+        return closed == resultSet.closed &&
+                Objects.equals(dataSet, resultSet.dataSet) &&
+                Objects.equals(statement, resultSet.statement) &&
+                Objects.equals(row, resultSet.row);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(dataSet, statement, row);
+    public final int hashCode() {
+        return Objects.hash(dataSet, statement, row, closed);
     }
 
     @Override
@@ -971,6 +972,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
                 "dataSet=" + dataSet +
                 ", statement=" + statement +
                 ", row=" + row +
+                ", closed=" + closed +
                 '}';
     }
 }

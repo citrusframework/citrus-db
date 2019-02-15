@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
 public class JdbcPreparedStatement extends JdbcStatement implements PreparedStatement {
 
     private final String preparedStatement;
-    private Map<String, Object> parameters = new TreeMap<>();
+    private final Map<String, Object> parameters = new TreeMap<>();
 
     public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl, JdbcConnection connection) {
         super(httpClient, serverUrl, connection);
@@ -347,18 +347,22 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof JdbcPreparedStatement)) return false;
-        if (!super.equals(o)) return false;
+        if (o.getClass().equals(JdbcStatement.class)) return false;
         final JdbcPreparedStatement that = (JdbcPreparedStatement) o;
         return Objects.equals(preparedStatement, that.preparedStatement) &&
-                Objects.equals(parameters, that.parameters);
+                Objects.equals(parameters, that.parameters)&&
+                Objects.equals(httpClient, that.httpClient) &&
+                Objects.equals(serverUrl, that.serverUrl) &&
+                Objects.equals(connection, that.connection) &&
+                Objects.equals(resultSet, that.resultSet);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(preparedStatement, parameters);
+    public final int hashCode() {
+        return Objects.hash(super.hashCode(), preparedStatement, parameters);
     }
 
     @Override
@@ -366,7 +370,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
         return "JdbcPreparedStatement{" +
                 "preparedStatement='" + preparedStatement + '\'' +
                 ", parameters=" + parameters +
-                '}';
+                ", resultSet=" + resultSet +
+                "} " + super.toString();
     }
 }
 

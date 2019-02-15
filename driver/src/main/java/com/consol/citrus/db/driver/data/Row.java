@@ -106,19 +106,6 @@ public class Row {
         return Objects.isNull(value) ? null : ConvertUtils.convert(value, clazz);
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final Row row = (Row) o;
-        return Objects.equals(values, row.values);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(values);
-    }
-
     /**
      * Gets the lastValue.
      * @return The last value as object
@@ -128,9 +115,24 @@ public class Row {
     }
 
     @Override
+    public final boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Row)) return false;
+        final Row row = (Row) o;
+        return Objects.equals(values, row.values) &&
+                Objects.equals(lastValue, row.lastValue);
+    }
+
+    @Override
+    public final int hashCode() {
+        return Objects.hash(values, lastValue);
+    }
+
+    @Override
     public String toString() {
         return "Row{" +
                 "values=" + values +
+                ", lastValue=" + lastValue +
                 '}';
     }
 }

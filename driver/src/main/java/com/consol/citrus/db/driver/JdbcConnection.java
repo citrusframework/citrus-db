@@ -442,7 +442,7 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof JdbcConnection)) return false;
         final JdbcConnection that = (JdbcConnection) o;
@@ -452,7 +452,7 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(httpClient, serverUrl, closed);
     }
 

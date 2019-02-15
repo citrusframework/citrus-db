@@ -36,9 +36,9 @@ import java.util.Objects;
 
 public class JdbcStatement implements Statement {
 
-    private final HttpClient httpClient;
-    private final String serverUrl;
-    private final JdbcConnection connection;
+    final HttpClient httpClient;
+    final String serverUrl;
+    final JdbcConnection connection;
 
     protected JdbcResultSet resultSet;
 
@@ -379,6 +379,8 @@ public class JdbcStatement implements Statement {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
+        if (Objects.isNull(o)) return false;
+        if (o.getClass().equals(JdbcPreparedStatement.class)) return false;
         if (!(o instanceof JdbcStatement)) return false;
         final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&

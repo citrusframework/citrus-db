@@ -5,8 +5,10 @@ import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetBuilder;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.client.HttpClient;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.testng.annotations.Test;
 
@@ -1733,12 +1735,18 @@ public class JdbcResultSetTest {
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcResultSet.class);
+        ToStringVerifier.forClass(JdbcResultSet.class).verify();
     }
 
     @Test
     public void equalsContract(){
-        EqualsVerifier.forClass(JdbcResultSet.class);
+        EqualsVerifier.forClass(JdbcResultSet.class)
+                .withPrefabValues(
+                        JdbcStatement.class,
+                        new JdbcStatement(mock(HttpClient.class), "asdf", mock(JdbcConnection.class)),
+                        new JdbcStatement(mock(HttpClient.class), "asdf", mock(JdbcConnection.class)))
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 
     private JdbcResultSet generateClosedResultSet() throws SQLException {

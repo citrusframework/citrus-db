@@ -2,6 +2,7 @@ package com.consol.citrus.db.driver.data;
 
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.apache.commons.beanutils.ConvertUtils;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
@@ -106,12 +107,14 @@ public class RowTest extends PowerMockTestCase {
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(Row.class);
+        ToStringVerifier.forClass(Row.class).verify();
     }
 
     @Test
     public void equalsContract(){
-        EqualsVerifier.forClass(Row.class);
+        EqualsVerifier.forClass(Row.class)
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 
     private Row generateRow() {

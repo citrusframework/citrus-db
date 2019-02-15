@@ -16,8 +16,10 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.dataset.DataSet;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
@@ -25,6 +27,7 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHeader;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -251,11 +254,18 @@ public class JdbcStatementTest {
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcStatement.class);
+        ToStringVerifier.forClass(JdbcStatement.class).verify();
     }
 
     @Test
     public void equalsContract(){
-        EqualsVerifier.forClass(JdbcStatement.class);
+        EqualsVerifier.forClass(JdbcStatement.class)
+                .withPrefabValues(
+                        JdbcResultSet.class,
+                        new JdbcResultSet(PowerMockito.mock(DataSet.class), PowerMockito.mock(JdbcStatement.class)),
+                        new JdbcResultSet(PowerMockito.mock(DataSet.class), PowerMockito.mock(JdbcStatement.class)))
+                .withRedefinedSubclass(JdbcPreparedStatement.class)
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 }

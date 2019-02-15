@@ -18,8 +18,9 @@ package com.consol.citrus.db.driver.dataset;
 
 import com.consol.citrus.db.driver.data.Row;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
@@ -45,9 +46,8 @@ public class DataSetBuilder {
     /**
      * Build new data set instance.
      * @return
-     * @throws SQLException
      */
-    public DataSet build() throws SQLException {
+    public DataSet build() {
         DataSet dataSet = new DataSet();
         dataSet.getRows().addAll(rows);
         return dataSet;

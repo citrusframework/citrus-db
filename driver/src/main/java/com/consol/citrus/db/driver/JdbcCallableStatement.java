@@ -39,7 +39,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
-public class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
+public final class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
 
     public JdbcCallableStatement(final HttpClient httpClient,
                                  final String callableStatement,

@@ -1,8 +1,11 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.dataset.DataSet;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.apache.http.client.HttpClient;
+import org.powermock.api.mockito.PowerMockito;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -70,11 +73,18 @@ public class JdbcPreparedStatementTest {
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcPreparedStatement.class);
+        ToStringVerifier.forClass(JdbcPreparedStatement.class).verify();
     }
 
     @Test
     public void equalsContract(){
-        EqualsVerifier.forClass(JdbcPreparedStatement.class);
+        EqualsVerifier.forClass(JdbcPreparedStatement.class)
+                .withPrefabValues(
+                        JdbcResultSet.class,
+                        new JdbcResultSet(PowerMockito.mock(DataSet.class), PowerMockito.mock(JdbcStatement.class)),
+                        new JdbcResultSet(PowerMockito.mock(DataSet.class), PowerMockito.mock(JdbcStatement.class)))
+                .withRedefinedSuperclass()
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 }

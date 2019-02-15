@@ -70,7 +70,7 @@ public class DataSet {
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof DataSet)) return false;
         final DataSet dataSet = (DataSet) o;
@@ -78,7 +78,7 @@ public class DataSet {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hash(rows);
     }
 

@@ -25,11 +25,14 @@ public class DataSetTest {
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(DataSet.class);
+        ToStringVerifier.forClass(DataSet.class).verify();
     }
 
     @Test
     public void equalsContract(){
-        EqualsVerifier.forClass(DataSet.class);
+        EqualsVerifier
+                .forClass(DataSet.class)
+                .withIgnoredFields("cursor")
+                .verify();
     }
 }

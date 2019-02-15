@@ -1,7 +1,9 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.dataset.DataSet;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.apache.http.client.HttpClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -738,12 +740,18 @@ public class JdbcCallableStatementTest{
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcCallableStatement.class);
+        ToStringVerifier.forClass(JdbcCallableStatement.class).verify();
     }
 
     @Test
     public void equalsContract(){
-        EqualsVerifier.forClass(JdbcCallableStatement.class);
+        EqualsVerifier.forClass(JdbcCallableStatement.class)
+                .withPrefabValues(
+                        JdbcResultSet.class,
+                        new JdbcResultSet(mock(DataSet.class), mock(JdbcStatement.class)),
+                        new JdbcResultSet(mock(DataSet.class), mock(JdbcStatement.class)))
+                .suppress(Warning.NONFINAL_FIELDS)
+                .verify();
     }
 
     private JdbcCallableStatement generateCallableStatement() {

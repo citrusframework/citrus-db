@@ -16,7 +16,12 @@
 
 package com.consol.citrus.db.driver;
 
-import org.apache.http.*;
+import com.jparams.verifier.tostring.ToStringVerifier;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHeader;
 import org.mockito.Mockito;
@@ -29,7 +34,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -240,5 +247,15 @@ public class JdbcStatementTest {
 
         //THEN
         //Exception is thrown
+    }
+
+    @Test
+    public void testToString(){
+        ToStringVerifier.forClass(JdbcStatement.class);
+    }
+
+    @Test
+    public void equalsContract(){
+        EqualsVerifier.forClass(JdbcStatement.class);
     }
 }

@@ -18,40 +18,36 @@ package com.consol.citrus.db.driver.dataset;
 
 import com.consol.citrus.db.driver.data.Row;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**
- * @author Christoph Deppisch
- */
 public class DataSet {
 
     /** Rows in this data set */
     private final List<Row> rows = new ArrayList<>();
 
-    /** Indicates that this data set is closed */
-    private boolean closed = false;
-
     /** Cursor position on selected row */
     private AtomicInteger cursor = new AtomicInteger(0);
 
     /**
-     * Gets next row in this result set based on cursor position.
-     * @return
-     * @throws SQLException
+     * Gets next row in this data set based on cursor position.
+     * @return The next row of the dataset or null if no further row is available
      */
-    public Row getNextRow() throws SQLException {
-        checkNotClosed();
-        return rows.get(cursor.getAndIncrement());
+    public Row getNextRow(){
+        final int index = cursor.getAndIncrement();
+        if(rows.size() <= index){
+            return null;
+        }
+
+        return rows.get(index);
     }
 
     /**
      * Gets list of columns in this dataset.
-     * @return
+     * @return The list of columns of the dataset
      */
     public List<String> getColumns() {
         return rows.stream().flatMap(row -> row.getColumns().stream()).distinct().collect(Collectors.toList());
@@ -59,54 +55,38 @@ public class DataSet {
 
     /**
      * Gets all rows in this dataset.
-     * @return
-     * @throws SQLException
+     * @return The rows of the Dataset
      */
-    public List<Row> getRows() throws SQLException {
-        checkNotClosed();
+    public List<Row> getRows() {
         return rows;
     }
 
     /**
      * Gets current row index.
-     * @return
+     * @return The current curser of the DataSet
      */
     public int getCursor() {
         return cursor.get();
     }
 
-    /**
-     * Close result set - no further access to rows and columns allowed.
-     */
-    public void close() {
-        this.closed = true;
-    }
-
-    /**
-     * If closed throws new SQLException.
-     * @throws SQLException
-     */
-    private void checkNotClosed() throws SQLException {
-        if (closed) {
-            throw new SQLException("Result set already closed");
-        }
-    }
-
-    /**
-     * Returns <code>true</code> if the data set is already closed, otherwise <code>false</code>.
-     * @return
-     */
-    public boolean isClosed() {
-        return closed;
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DataSet)) return false;
+        final DataSet dataSet = (DataSet) o;
+        return Objects.equals(rows, dataSet.rows);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DataSet dataSet = (DataSet) o;
-        return closed == dataSet.closed &&
-                Objects.equals(rows, dataSet.rows) &&
-                Objects.equals(cursor.get(), dataSet.cursor.get());
+    public int hashCode() {
+        return Objects.hash(rows);
+    }
+
+    @Override
+    public String toString() {
+        return "DataSet{" +
+                "rows=" + rows +
+                ", cursor=" + cursor +
+                '}';
     }
 }

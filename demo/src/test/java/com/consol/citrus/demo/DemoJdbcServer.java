@@ -13,8 +13,8 @@ import java.util.regex.Pattern;
  */
 public class DemoJdbcServer {
 
-    public static void main(String[] args) throws IOException, SQLException {
-        JdbcServer dbServer = new JdbcServer(args);
+    public static void main(final String[] args) throws IOException, SQLException {
+        final JdbcServer dbServer = new JdbcServer(args);
 
         dbServer.when()
                 .statement()
@@ -40,6 +40,12 @@ public class DemoJdbcServer {
                 .statement()
                 .executeQuery(Pattern.compile("SELECT id, name FROM cities.*"))
                 .thenReturn(new JsonDataSetProducer(new ClassPathResource("cities.json").getFile()).produce());
+
+        dbServer.when()
+                .statement()
+                .execute(Pattern.compile("CALL findCityByName\\(\\?,\\?\\) - \\(\\?,Munich\\)"))
+                .thenReturn(new JsonDataSetProducer("[{ \"name\": \"Munich\", \"id\": 1 }]").produce());
+
 
         dbServer.start();
     }

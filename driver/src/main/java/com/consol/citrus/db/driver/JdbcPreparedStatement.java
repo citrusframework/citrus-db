@@ -37,9 +37,10 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 /**
@@ -48,7 +49,7 @@ import java.util.stream.Collectors;
 public class JdbcPreparedStatement extends JdbcStatement implements PreparedStatement {
 
     private final String preparedStatement;
-    private List<Object> parameters = new ArrayList<>();
+    private Map<String, Object> parameters = new TreeMap<>();
 
     public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl, JdbcConnection connection) {
         super(httpClient, serverUrl, connection);
@@ -201,7 +202,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public ResultSetMetaData getMetaData() throws SQLException {
-        return new JdbcResultSetMetaData(dataSet);
+        return resultSet.getMetaData();
     }
 
     @Override
@@ -330,19 +331,42 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     void setParameter(final int parameterIndex, final Object value){
-        if (parameters.size() > parameterIndex - 1) {
-            parameters.set(parameterIndex - 1,value);
-        }else {
-            parameters.add(parameterIndex - 1, value);
-        }
+        setParameter(String.valueOf(parameterIndex - 1), value);
+    }
+
+    void setParameter(final String parameterName, final Object value){
+        parameters.put(parameterName, value);
     }
 
     private String composeStatement() {
-        return preparedStatement + " - (" + parameters.stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
+        return preparedStatement + " - (" + parameters.values().stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
     }
 
-    List<Object> getParameters() {
+    Map<String, Object> getParameters() {
         return parameters;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (!(o instanceof JdbcPreparedStatement)) return false;
+        if (!super.equals(o)) return false;
+        final JdbcPreparedStatement that = (JdbcPreparedStatement) o;
+        return Objects.equals(preparedStatement, that.preparedStatement) &&
+                Objects.equals(parameters, that.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(preparedStatement, parameters);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcPreparedStatement{" +
+                "preparedStatement='" + preparedStatement + '\'' +
+                ", parameters=" + parameters +
+                '}';
     }
 }
 

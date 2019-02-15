@@ -28,19 +28,19 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.SQLWarning;
+import java.sql.Statement;
 import java.util.Objects;
 
-/**
- * @author Christoph Deppisch
- */
 public class JdbcStatement implements Statement {
 
     private final HttpClient httpClient;
     private final String serverUrl;
     private final JdbcConnection connection;
 
-    protected DataSet dataSet = new DataSet();
+    protected JdbcResultSet resultSet;
 
     /**
      * Default constructor using remote client reference.
@@ -66,9 +66,10 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute query: " + sqlQuery);
             }
 
-            dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+            DataSet dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+            resultSet = new JdbcResultSet(dataSet, this);
 
-            return new JdbcResultSet(dataSet, this);
+            return resultSet;
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -110,7 +111,8 @@ public class JdbcStatement implements Statement {
             }
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {
-                dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+                final DataSet produce = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+                resultSet = new JdbcResultSet(produce, this);
             }
 
             return true;
@@ -190,7 +192,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public java.sql.ResultSet getResultSet() throws SQLException {
-        return new JdbcResultSet(dataSet, this);
+        return resultSet;
     }
 
     @Override
@@ -377,10 +379,26 @@ public class JdbcStatement implements Statement {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof JdbcStatement)) return false;
         final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&
                 Objects.equals(serverUrl, that.serverUrl) &&
-                Objects.equals(dataSet, that.dataSet);
+                Objects.equals(connection, that.connection) &&
+                Objects.equals(resultSet, that.resultSet);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(httpClient, serverUrl, connection, resultSet);
+    }
+
+    @Override
+    public String toString() {
+        return "JdbcStatement{" +
+                "httpClient=" + httpClient +
+                ", serverUrl='" + serverUrl + '\'' +
+                ", connection=" + connection +
+                ", resultSet=" + resultSet +
+                '}';
     }
 }

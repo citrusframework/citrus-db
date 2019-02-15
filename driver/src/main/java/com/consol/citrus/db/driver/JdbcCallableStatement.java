@@ -21,6 +21,7 @@ import org.apache.http.client.HttpClient;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
@@ -31,6 +32,7 @@ import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLType;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -39,98 +41,116 @@ import java.util.Map;
 
 public class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
 
-    public JdbcCallableStatement(final HttpClient httpClient, final String callableStatement, final String serverUrl, JdbcConnection connection) {
+    public JdbcCallableStatement(final HttpClient httpClient,
+                                 final String callableStatement,
+                                 final String serverUrl,
+                                 final JdbcConnection connection) {
         super(httpClient, callableStatement, serverUrl, connection);
     }
 
     @Override
     public void registerOutParameter(final int parameterIndex, final int sqlType) throws SQLException {
-
+        setOutParameter(parameterIndex);
     }
 
     @Override
     public void registerOutParameter(final int parameterIndex, final int sqlType, final int scale) throws SQLException {
-
+        registerOutParameter(parameterIndex, sqlType);
     }
 
     @Override
     public boolean wasNull() throws SQLException {
-        return false;
+        prepareResultSet();
+        return resultSet.wasNull();
     }
 
     @Override
     public String getString(final int parameterIndex) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getString(parameterIndex);
     }
 
     @Override
     public boolean getBoolean(final int parameterIndex) throws SQLException {
-        return false;
+        prepareResultSet();
+        return resultSet.getBoolean(parameterIndex);
     }
 
     @Override
     public byte getByte(final int parameterIndex) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getByte(parameterIndex);
     }
 
     @Override
     public short getShort(final int parameterIndex) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getShort(parameterIndex);
     }
 
     @Override
     public int getInt(final int parameterIndex) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getInt(parameterIndex);
     }
 
     @Override
     public long getLong(final int parameterIndex) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getLong(parameterIndex);
     }
 
     @Override
     public float getFloat(final int parameterIndex) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getFloat(parameterIndex);
     }
 
     @Override
     public double getDouble(final int parameterIndex) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getDouble(parameterIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(final int parameterIndex, final int scale) throws SQLException {
-        return null;
+        return getBigDecimal(parameterIndex).setScale(scale, RoundingMode.HALF_UP);
     }
 
     @Override
     public byte[] getBytes(final int parameterIndex) throws SQLException {
-        return new byte[0];
+        prepareResultSet();
+        return resultSet.getBytes(parameterIndex);
     }
 
     @Override
     public Date getDate(final int parameterIndex) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getDate(parameterIndex);
     }
 
     @Override
     public Time getTime(final int parameterIndex) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getTime(parameterIndex);
     }
 
     @Override
     public Timestamp getTimestamp(final int parameterIndex) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getTimestamp(parameterIndex);
     }
 
     @Override
     public Object getObject(final int parameterIndex) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getObject(parameterIndex);
     }
 
     @Override
     public BigDecimal getBigDecimal(final int parameterIndex) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getBigDecimal(parameterIndex);
     }
 
     @Override
@@ -175,22 +195,22 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public void registerOutParameter(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
-
+        registerOutParameter(parameterIndex, sqlType);
     }
 
     @Override
     public void registerOutParameter(final String parameterName, final int sqlType) throws SQLException {
-
+        setOutParameter(parameterName);
     }
 
     @Override
     public void registerOutParameter(final String parameterName, final int sqlType, final int scale) throws SQLException {
-
+        registerOutParameter(parameterName, sqlType);
     }
 
     @Override
     public void registerOutParameter(final String parameterName, final int sqlType, final String typeName) throws SQLException {
-
+        registerOutParameter(parameterName, sqlType);
     }
 
     @Override
@@ -200,77 +220,77 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public void setURL(final String parameterName, final URL val) throws SQLException {
-
+        setParameter(parameterName, val);
     }
 
     @Override
     public void setNull(final String parameterName, final int sqlType) throws SQLException {
-
+        setParameter(parameterName, "null");
     }
 
     @Override
     public void setBoolean(final String parameterName, final boolean x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setByte(final String parameterName, final byte x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setShort(final String parameterName, final short x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setInt(final String parameterName, final int x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setLong(final String parameterName, final long x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setFloat(final String parameterName, final float x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setDouble(final String parameterName, final double x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setBigDecimal(final String parameterName, final BigDecimal x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setString(final String parameterName, final String x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setBytes(final String parameterName, final byte[] x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setDate(final String parameterName, final Date x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setTime(final String parameterName, final Time x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
     public void setTimestamp(final String parameterName, final Timestamp x) throws SQLException {
-
+        setParameter(parameterName, x);
     }
 
     @Override
@@ -325,72 +345,86 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
 
     @Override
     public String getString(final String parameterName) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getString(parameterName);
     }
 
     @Override
     public boolean getBoolean(final String parameterName) throws SQLException {
-        return false;
+        prepareResultSet();
+        return resultSet.getBoolean(parameterName);
     }
 
     @Override
     public byte getByte(final String parameterName) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getByte(parameterName);
     }
 
     @Override
     public short getShort(final String parameterName) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getShort(parameterName);
     }
 
     @Override
     public int getInt(final String parameterName) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getInt(parameterName);
     }
 
     @Override
     public long getLong(final String parameterName) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getLong(parameterName);
     }
 
     @Override
     public float getFloat(final String parameterName) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getFloat(parameterName);
     }
 
     @Override
     public double getDouble(final String parameterName) throws SQLException {
-        return 0;
+        prepareResultSet();
+        return resultSet.getDouble(parameterName);
     }
 
     @Override
     public byte[] getBytes(final String parameterName) throws SQLException {
-        return new byte[0];
+        prepareResultSet();
+        return resultSet.getBytes(parameterName);
     }
 
     @Override
     public Date getDate(final String parameterName) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getDate(parameterName);
     }
 
     @Override
     public Time getTime(final String parameterName) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getTime(parameterName);
     }
 
     @Override
     public Timestamp getTimestamp(final String parameterName) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getTimestamp(parameterName);
     }
 
     @Override
     public Object getObject(final String parameterName) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getObject(parameterName);
     }
 
     @Override
     public BigDecimal getBigDecimal(final String parameterName) throws SQLException {
-        return null;
+        prepareResultSet();
+        return resultSet.getBigDecimal(parameterName);
     }
 
     @Override
@@ -606,5 +640,49 @@ public class JdbcCallableStatement extends JdbcPreparedStatement implements Call
     @Override
     public <T> T getObject(final String parameterName, final Class<T> type) throws SQLException {
         return null;
+    }
+
+    @Override
+    public void registerOutParameter(final int parameterIndex, final SQLType sqlType){
+        setOutParameter(parameterIndex);
+    }
+
+    @Override
+    public void registerOutParameter(final int parameterIndex, final SQLType sqlType, final int scale){
+        registerOutParameter(parameterIndex, sqlType);
+    }
+
+    @Override
+    public void registerOutParameter(final int parameterIndex, final SQLType sqlType, final String typeName){
+        registerOutParameter(parameterIndex, sqlType);
+    }
+
+    @Override
+    public void registerOutParameter(final String parameterName, final SQLType sqlType){
+        setOutParameter(parameterName);
+    }
+
+    @Override
+    public void registerOutParameter(final String parameterName, final SQLType sqlType, final int scale){
+        registerOutParameter(parameterName, sqlType);
+    }
+
+    @Override
+    public void registerOutParameter(final String parameterName, final SQLType sqlType, final String typeName){
+        registerOutParameter(parameterName, sqlType);
+    }
+
+    private void setOutParameter(final int parameterIndex) {
+        setParameter(parameterIndex, "?");
+    }
+
+    private void setOutParameter(final String parameterName) {
+        setParameter(parameterName, "?");
+    }
+
+    private void prepareResultSet() throws SQLException {
+        if(resultSet.getRow() == 0){
+            resultSet.next();
+        }
     }
 }

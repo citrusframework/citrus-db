@@ -23,8 +23,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Christoph Deppisch
@@ -40,7 +41,7 @@ public class JsonDataSetWriter implements DataSetWriter {
             ObjectMapper mapper = new ObjectMapper();
             mapper.enable(SerializationFeature.INDENT_OUTPUT);
             return mapper.writeValueAsString(rawDataSet);
-        } catch (JsonProcessingException | SQLException e) {
+        } catch (JsonProcessingException e) {
             throw new JdbcDriverException("Failed to write json dataset", e);
         }
     }

@@ -143,6 +143,7 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to close statement");
             }
             closed = true;
+            closeResultSet();
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -387,6 +388,12 @@ public class JdbcStatement implements Statement {
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         throw new SQLException("Not supported JDBC statement function 'isWrapperFor'");
+    }
+
+    private void closeResultSet() throws SQLException {
+        if(resultSet != null){
+            resultSet.close();
+        }
     }
 
     @Override

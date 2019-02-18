@@ -26,7 +26,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHeader;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -38,40 +37,43 @@ import java.sql.SQLException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 @SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
 public class JdbcStatementTest {
 
-    private final HttpClient httpClient = mock(HttpClient.class);
-    private final String serverUrl = "db.klingon-empire.kr";
-    private final JdbcConnection connection = Mockito.mock(JdbcConnection.class);
-    private final JdbcStatement jdbcStatement = new JdbcStatement(httpClient, serverUrl, connection);
+    private JdbcStatement jdbcStatement;
+    private HttpClient httpClient;
+    private final String responsePayload = "[{ \"foo\": \"bar\" }]";
 
-    private final HttpResponse httpResponse = mock(HttpResponse.class);
-    private final StatusLine statusLine = mock(StatusLine.class);
-    private final HttpEntity httpEntity = mock(HttpEntity.class);
+    private StatusLine statusLine;
+    private HttpEntity httpEntity;
 
     @SuppressWarnings("Duplicates")
     @BeforeMethod
     public void setup() throws Exception{
-        reset(httpClient);
-        reset(httpResponse);
-        reset(statusLine);
+        final HttpResponse httpResponse = mock(HttpResponse.class);
+        final JdbcConnection connection = mock(JdbcConnection.class);
+        final String serverUrl = "db.klingon-empire.kr";
+
+        httpClient = mock(HttpClient.class);
+        statusLine = mock(StatusLine.class);
+        httpEntity = mock(HttpEntity.class);
 
         when(httpClient.execute(any())).thenReturn(httpResponse);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
+
+        jdbcStatement = new JdbcStatement(httpClient, serverUrl, connection);
     }
 
     @Test
     public void testExecuteQuery() throws Exception{
 
         //GIVEN
-        final String responsePayload = "[{ \"foo\": \"bar\" }]";
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
@@ -174,7 +176,6 @@ public class JdbcStatementTest {
     public void testExecute() throws Exception{
 
         //GIVEN
-        final String responsePayload = "[{ \"foo\": \"bar\" }]";
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
@@ -219,11 +220,32 @@ public class JdbcStatementTest {
 
         //GIVEN
         when(statusLine.getStatusCode()).thenReturn(200);
+        assertFalse(jdbcStatement.isClosed());
 
         //WHEN
         jdbcStatement.close();
 
         //THEN
+        assertTrue(jdbcStatement.isClosed());
+    }
+
+    @Test
+    public void testCloseAlsoClosesResultSet() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
+        jdbcStatement.execute("SELECT foo FROM bar");
+        assertFalse(jdbcStatement.getResultSet().isClosed());
+
+        //WHEN
+        jdbcStatement.close();
+
+        //THEN
+        assertTrue(jdbcStatement.getResultSet().isClosed());
     }
 
     @Test(expectedExceptions = SQLException.class)

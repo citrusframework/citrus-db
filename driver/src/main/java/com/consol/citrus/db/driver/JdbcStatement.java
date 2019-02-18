@@ -42,14 +42,14 @@ public class JdbcStatement implements Statement {
     final String serverUrl;
     final JdbcConnection connection;
 
-    private final List<String> batchStatements = new LinkedList<>();
+    final List<String> batchStatements = new LinkedList<>();
 
-    protected JdbcResultSet resultSet;
+    JdbcResultSet resultSet;
 
     /**
      * Whether the statement has been closed
      */
-    private boolean closed;
+    boolean closed;
 
     /**
      * Default constructor using remote client reference.

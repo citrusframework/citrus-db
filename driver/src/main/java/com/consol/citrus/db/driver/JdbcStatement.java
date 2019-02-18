@@ -32,6 +32,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class JdbcStatement implements Statement {
@@ -40,7 +42,14 @@ public class JdbcStatement implements Statement {
     final String serverUrl;
     final JdbcConnection connection;
 
+    private final List<String> batchStatements = new LinkedList<>();
+
     protected JdbcResultSet resultSet;
+
+    /**
+     * Whether the statement has been closed
+     */
+    private boolean closed;
 
     /**
      * Default constructor using remote client reference.
@@ -133,6 +142,7 @@ public class JdbcStatement implements Statement {
             if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                 throw new SQLException("Failed to close statement");
             }
+            closed = true;
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -240,7 +250,10 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void addBatch(final String sql) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'addBatch'");
+        if(isClosed()){
+            throw new SQLException("The statement has already been closed");
+        }
+        batchStatements.add(sql);
     }
 
     @Override
@@ -305,7 +318,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'isClosed'");
+        return closed;
     }
 
     @Override
@@ -385,12 +398,14 @@ public class JdbcStatement implements Statement {
         final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&
                 Objects.equals(serverUrl, that.serverUrl) &&
-                Objects.equals(connection, that.connection);
+                Objects.equals(connection, that.connection) &&
+                Objects.equals(batchStatements, that.batchStatements) &&
+                Objects.equals(closed, that.closed);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(httpClient, serverUrl, connection);
+        return Objects.hash(httpClient, serverUrl, connection, batchStatements, closed);
     }
 
     @Override
@@ -400,6 +415,12 @@ public class JdbcStatement implements Statement {
                 ", serverUrl='" + serverUrl + '\'' +
                 ", connection=" + connection +
                 ", resultSet=" + resultSet +
+                ", batchStatements=" + batchStatements +
+                ", closed=" + closed +
                 '}';
+    }
+
+    List<String> getBatchStatements() {
+        return batchStatements;
     }
 }

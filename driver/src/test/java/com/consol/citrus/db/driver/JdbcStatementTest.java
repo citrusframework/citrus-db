@@ -43,7 +43,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-@SuppressWarnings("SqlNoDataSourceInspection")
+@SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
 public class JdbcStatementTest {
 
     private final HttpClient httpClient = mock(HttpClient.class);
@@ -250,6 +250,36 @@ public class JdbcStatementTest {
 
         //THEN
         //Exception is thrown
+    }
+
+    @Test
+    public void testAddBatchStatement() throws SQLException {
+
+        //GIVEN
+        final String statementOne = "SELECT * FROM somewhere";
+        final String statementTwo = "SELECT * FROM somewhereElse";
+
+        //WHEN
+        jdbcStatement.addBatch(statementOne);
+        jdbcStatement.addBatch(statementTwo);
+
+        //THEN
+        assertEquals(jdbcStatement.getBatchStatements().get(0), statementOne);
+        assertEquals(jdbcStatement.getBatchStatements().get(1), statementTwo);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testAddBatchThrowsExceptionOnClosedStatement() throws SQLException {
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        jdbcStatement.close();
+
+        //WHEN
+        jdbcStatement.addBatch("some statement");
+
+        //THEN
+        //exception is thrown
     }
 
     @Test

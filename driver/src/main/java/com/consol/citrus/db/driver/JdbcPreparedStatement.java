@@ -173,6 +173,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void addBatch() throws SQLException {
+        //TODO #36
     }
 
     @Override

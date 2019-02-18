@@ -46,16 +46,13 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-/**
- * @author Christoph Deppisch
- */
 public class JdbcConnection implements Connection {
 
     /** Http remote client */
     private final HttpClient httpClient;
     private final String serverUrl;
 
-    /** Indicates that this data set is closed */
+    /** Indicates that this connection is closed */
     private boolean closed = false;
 
     /**

@@ -305,6 +305,33 @@ public class JdbcStatementTest {
     }
 
     @Test
+    public void testClearBatchStatement() throws SQLException {
+
+        //GIVEN
+        jdbcStatement.addBatch("SELECT * FROM somewhere");
+
+        //WHEN
+        jdbcStatement.clearBatch();
+
+        //THEN
+        assertEquals(jdbcStatement.getBatchStatements().size(), 0);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testClearBatchThrowsExceptionOnClosedStatement() throws SQLException {
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        jdbcStatement.close();
+
+        //WHEN
+        jdbcStatement.clearBatch();
+
+        //THEN
+        //exception is thrown
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier.forClass(JdbcStatement.class).verify();
     }

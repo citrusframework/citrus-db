@@ -251,15 +251,14 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void addBatch(final String sql) throws SQLException {
-        if(isClosed()){
-            throw new SQLException("The statement has already been closed");
-        }
+        verifyNotClosed();
         batchStatements.add(sql);
     }
 
     @Override
     public void clearBatch() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'clearBatch'");
+        verifyNotClosed();
+        batchStatements.clear();
     }
 
     @Override
@@ -393,6 +392,12 @@ public class JdbcStatement implements Statement {
     private void closeResultSet() throws SQLException {
         if(resultSet != null){
             resultSet.close();
+        }
+    }
+
+    private void verifyNotClosed() throws SQLException {
+        if(isClosed()){
+            throw new SQLException("The statement has already been closed");
         }
     }
 

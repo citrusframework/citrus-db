@@ -333,7 +333,9 @@ public class JdbcStatementTest {
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcStatement.class).verify();
+        ToStringVerifier.forClass(JdbcStatement.class)
+                .withIgnoredFields("resultSet")
+                .verify();
     }
 
     @Test

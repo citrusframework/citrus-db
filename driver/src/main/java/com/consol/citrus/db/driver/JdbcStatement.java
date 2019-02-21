@@ -426,7 +426,6 @@ public class JdbcStatement implements Statement {
                 "httpClient=" + httpClient +
                 ", serverUrl='" + serverUrl + '\'' +
                 ", connection=" + connection +
-                ", resultSet=" + resultSet +
                 ", batchStatements=" + batchStatements +
                 ", closed=" + closed +
                 '}';

@@ -359,7 +359,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
                 Objects.equals(serverUrl, that.serverUrl) &&
                 Objects.equals(connection, that.connection) &&
                 Objects.equals(batchStatements, that.batchStatements) &&
-                Objects.equals(closed, that.closed);
+                Objects.equals(closed, that.closed) &&
+                Objects.equals(updateCount, that.updateCount);
     }
 
     @Override

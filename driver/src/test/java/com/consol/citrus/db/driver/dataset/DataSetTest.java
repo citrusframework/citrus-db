@@ -5,16 +5,16 @@ import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.testng.annotations.Test;
 
-import java.sql.SQLException;
-
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 public class DataSetTest {
 
-    private DataSet dataSet = new DataSet();
-
     @Test
-    public void emptyDataSetReturnsNullOnGetNextRow() throws SQLException {
+    public void testEmptyDataSetReturnsNullOnGetNextRow() {
+
+        //GIVEN
+        final DataSet dataSet = new DataSet();
 
         //WHEN
         final Row nextRow = dataSet.getNextRow();
@@ -24,12 +24,28 @@ public class DataSetTest {
     }
 
     @Test
+    public void testGetAffectedRows() {
+
+        //GIVEN
+        final int expectedAffectedRows = 42;
+
+        final DataSet dataSet = new DataSet();
+        dataSet.setAffectedRows(expectedAffectedRows);
+
+        //WHEN
+        final int affectedRows = dataSet.getAffectedRows();
+
+        //THEN
+        assertEquals(affectedRows, expectedAffectedRows);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier.forClass(DataSet.class).verify();
     }
 
     @Test
-    public void equalsContract(){
+    public void testEqualsContract(){
         EqualsVerifier
                 .forClass(DataSet.class)
                 .withIgnoredFields("cursor")

@@ -18,6 +18,7 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -32,6 +33,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -50,13 +52,14 @@ public class JdbcStatement implements Statement {
      * Whether the statement has been closed
      */
     boolean closed;
+    private int updateCount;
 
     /**
      * Default constructor using remote client reference.
      * @param httpClient The http client to use for the db communication
      * @param serverUrl Thr url of the server
      */
-    JdbcStatement(final HttpClient httpClient, final String serverUrl, JdbcConnection connection) {
+    JdbcStatement(final HttpClient httpClient, final String serverUrl, final JdbcConnection connection) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
         this.connection = connection;
@@ -75,7 +78,7 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute query: " + sqlQuery);
             }
 
-            DataSet dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+            final DataSet dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
             resultSet = new JdbcResultSet(dataSet, this);
 
             return resultSet;
@@ -120,8 +123,16 @@ public class JdbcStatement implements Statement {
             }
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {
-                final DataSet produce = new JsonDataSetProducer(response.getEntity().getContent()).produce();
-                resultSet = new JdbcResultSet(produce, this);
+                final DataSet receivedDataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
+                if(!receivedDataSet.getRows().isEmpty()){
+                    resultSet = new JdbcResultSet(receivedDataSet, this);
+                    updateCount = -1;
+                    return true;
+                }else if(receivedDataSet.getAffectedRows() != 0){
+                    resultSet = null;
+                    this.updateCount = receivedDataSet.getAffectedRows();
+                    return false;
+                }
             }
 
             return true;
@@ -208,9 +219,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public int getUpdateCount() throws SQLException {
-        //Because currently there are only ResultSet responses implemented,
-        //the hardcoded return value -1 matches the JDBC interface specification
-        return -1;
+        return updateCount;
     }
 
     @Override
@@ -263,7 +272,12 @@ public class JdbcStatement implements Statement {
 
     @Override
     public int[] executeBatch() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'executeBatch'");
+        final ArrayList<Integer> arrayList = new ArrayList<>();
+        for (final String batchStatement : batchStatements){
+            execute(batchStatement);
+            arrayList.add(getUpdateCount());
+        }
+        return ArrayUtils.toPrimitive(arrayList.toArray(new Integer[0]));
     }
 
     @Override

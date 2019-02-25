@@ -17,14 +17,18 @@
 package com.consol.citrus.db.driver.json;
 
 import com.consol.citrus.db.driver.JdbcDriverException;
-import com.consol.citrus.db.driver.data.Row;
-import com.consol.citrus.db.driver.dataset.*;
+import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.dataset.DataSetProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.*;
 
 /**
  * @author Christoph Deppisch
@@ -33,8 +37,6 @@ public class JsonDataSetProducer implements DataSetProducer {
 
     /** Json data used as table source */
     private final InputStream input;
-
-    private DataSetBuilder builder;
 
     public JsonDataSetProducer(File file) {
         this(file.toPath());
@@ -58,24 +60,10 @@ public class JsonDataSetProducer implements DataSetProducer {
 
     @Override
     public DataSet produce() throws SQLException {
-        if (builder != null) {
-            return builder.build();
-        }
-
-        builder = new DataSetBuilder();
-
         try {
-            List<Map<String, Object>> rawDataSet = new ObjectMapper().readValue(input, List.class);
-
-            rawDataSet.forEach(rowData -> {
-                Row row = new Row();
-                row.getValues().putAll(rowData);
-                builder.add(row);
-            });
+            return new ObjectMapper().readValue(input, DataSet.class);
         } catch (IOException e) {
             throw new JdbcDriverException("Unable to read table data set from Json input", e);
         }
-
-        return builder.build();
     }
 }

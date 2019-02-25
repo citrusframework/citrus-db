@@ -32,6 +32,7 @@
     <mockito.version>2.24.0</mockito.version>
     <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
     <apache.commons.beanutils.version>1.9.3</apache.commons.beanutils.version>
+    <apache.commons.lang.version>3.8.1</apache.commons.lang.version>
     <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
     <apache.commons.io.version>2.6</apache.commons.io.version>
     <!-- https://mvnrepository.com/artifact/com.jparams/to-string-verifier -->
@@ -227,6 +228,11 @@
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <version>${apache.commons.beanutils.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${apache.commons.lang.version}</version>
       </dependency>
 
       <!-- Test scoped -->

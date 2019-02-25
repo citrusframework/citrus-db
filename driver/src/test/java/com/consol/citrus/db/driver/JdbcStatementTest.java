@@ -47,7 +47,8 @@ public class JdbcStatementTest {
 
     private JdbcStatement jdbcStatement;
     private HttpClient httpClient;
-    private final String responsePayload = "[{ \"foo\": \"bar\" }]";
+    private final String databaseResponse =
+            "{\"dataSet\":{\"rows\":[{\"values\":{\"foo\":\"bar\"}}]},\"affectedRows\":-1,\"isDataSet\":true}";
 
     private StatusLine statusLine;
     private HttpEntity httpEntity;
@@ -78,7 +79,7 @@ public class JdbcStatementTest {
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseResponse.getBytes()));
 
         //WHEN
         final ResultSet resultSet = jdbcStatement.executeQuery("SELECT something FROM somewhere");
@@ -180,7 +181,7 @@ public class JdbcStatementTest {
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseResponse.getBytes()));
 
         //WHEN
         final boolean isResultSet = jdbcStatement.execute("statement");
@@ -237,7 +238,7 @@ public class JdbcStatementTest {
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseResponse.getBytes()));
         jdbcStatement.execute("SELECT foo FROM bar");
         assertFalse(jdbcStatement.getResultSet().isClosed());
 

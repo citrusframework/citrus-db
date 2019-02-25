@@ -52,7 +52,9 @@ public class JdbcStatement implements Statement {
      * Whether the statement has been closed
      */
     boolean closed;
-    private int updateCount;
+
+    /** The update count of the statement */
+    int updateCount;
 
     /**
      * Default constructor using remote client reference.
@@ -426,12 +428,13 @@ public class JdbcStatement implements Statement {
                 Objects.equals(serverUrl, that.serverUrl) &&
                 Objects.equals(connection, that.connection) &&
                 Objects.equals(batchStatements, that.batchStatements) &&
-                Objects.equals(closed, that.closed);
+                Objects.equals(closed, that.closed) &&
+                Objects.equals(updateCount, that.updateCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(httpClient, serverUrl, connection, batchStatements, closed);
+        return Objects.hash(httpClient, serverUrl, connection, batchStatements, closed, updateCount);
     }
 
     @Override
@@ -442,6 +445,7 @@ public class JdbcStatement implements Statement {
                 ", connection=" + connection +
                 ", batchStatements=" + batchStatements +
                 ", closed=" + closed +
+                ", updateCount=" + updateCount +
                 '}';
     }
 

@@ -171,6 +171,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -180,10 +181,12 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setMaxRows(final int max) throws SQLException {
+        //currently not required
     }
 
     @Override
     public void setEscapeProcessing(final boolean enable) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -193,6 +196,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setQueryTimeout(final int seconds) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -212,6 +216,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setCursorName(final String name) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -226,14 +231,17 @@ public class JdbcStatement implements Statement {
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        //Multiple results in one statement like
-        //select * from foo; select * from bar;
-        //are currently not supported
-    	return false;
+        /*
+        Multiple results in one statement like
+        select * from foo; select * from bar;
+        are currently not supported
+        */
+        return false;
     }
 
     @Override
     public void setFetchDirection(final int direction) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -243,6 +251,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setFetchSize(final int rows) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -339,6 +348,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setPoolable(final boolean poolable) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -363,6 +373,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setLargeMaxRows(final long max) throws SQLException {
+        //currently not required
     }
 
     @Override

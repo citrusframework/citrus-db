@@ -17,7 +17,7 @@
 package com.consol.citrus.db.server.controller;
 
 
-import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.server.JdbcServerException;
 
 import java.util.Map;
@@ -32,26 +32,26 @@ public interface JdbcController {
      * @param properties The properties to open the connection with
      * @throws JdbcServerException In case that the connection could not be opened
      */
-    void openConnection(Map<String, String> properties) throws JdbcServerException;
+    void openConnection(Map<String, String> properties);
 
     /**
      * Create statement request.
      * @throws JdbcServerException In case that the statement could not be created
      */
-    void createStatement() throws JdbcServerException;
+    void createStatement();
 
     /**
      * Close connection request.
      * @throws JdbcServerException In case that the connection could not be closed
      */
-    void closeConnection() throws JdbcServerException;
+    void closeConnection();
 
     /**
      * Create new prepared statement.
      * @param sql The SQL statement to prepare
      * @throws JdbcServerException In that the statement could not be created
      */
-    void createPreparedStatement(String sql) throws JdbcServerException;
+    void createPreparedStatement(String sql);
 
     /**
      * Execute query statement
@@ -59,7 +59,7 @@ public interface JdbcController {
      * @throws JdbcServerException In case there was an error processing the query
      * @return The result of the query
      */
-    DataSet executeQuery(String sql) throws JdbcServerException;
+    DatabaseResult executeQuery(String sql);
 
     /**
      * Execute statement.
@@ -67,7 +67,7 @@ public interface JdbcController {
      * @throws JdbcServerException In case that the statement could not be executed
      * @return The result of the execution
      */
-    DataSet executeStatement(String sql) throws JdbcServerException;
+    DatabaseResult executeStatement(String sql);
 
     /**
      * Execute update statement.
@@ -75,13 +75,13 @@ public interface JdbcController {
      * @return The number of affected rows
      * @throws JdbcServerException In case that the update could not be performed
      */
-    int executeUpdate(String sql) throws JdbcServerException;
+    int executeUpdate(String sql);
 
     /**
      * Close request.
      * @throws JdbcServerException In case the statement could not be closed
      */
-    void closeStatement() throws JdbcServerException;
+    void closeStatement();
 
     /**
      * Sets whether the server is in a transaction state or not.

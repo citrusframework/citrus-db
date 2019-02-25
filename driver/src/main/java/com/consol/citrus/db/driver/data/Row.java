@@ -16,6 +16,9 @@
 
 package com.consol.citrus.db.driver.data;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.beanutils.ConvertUtils;
 
 import java.util.Arrays;
@@ -32,10 +35,19 @@ public class Row {
 
     private Object lastValue;
 
+    public Row() {
+    }
+
+    @JsonCreator
+    public Row(@JsonProperty("values") final Map<String, Object> values) {
+        this.values = values;
+    }
+
     /**
      * Gets set of column names available in this row.
      * @return A list of column values
      */
+    @JsonIgnore
     public List<String> getColumns() {
         return Arrays.asList(values.keySet().toArray(new String[0]));
     }
@@ -45,6 +57,7 @@ public class Row {
      * @param columnName The name to get the value for
      * @return The value of that column
      */
+    @JsonIgnore
     public Object getValue(final String columnName) {
         lastValue = values.get(columnName);
         return lastValue;
@@ -57,6 +70,7 @@ public class Row {
      * @param <T> Generic parameter to ensure correct conversion
      * @return The converted object
      */
+    @JsonIgnore
     public <T> Object getValue(final String parameterName, final Class<T> clazz) {
         final Object value = getValue(parameterName);
         return convertData(value, clazz);
@@ -67,6 +81,7 @@ public class Row {
      * @param columnIndex The column index to get the value from
      * @return The object of that index
      */
+    @JsonIgnore
     public Object getValue(final int columnIndex) {
         lastValue = values.values().toArray()[columnIndex];
         return lastValue;
@@ -79,6 +94,7 @@ public class Row {
      * @param <T> Generic parameter to ensure correct conversion
      * @return The converted object
      */
+    @JsonIgnore
     public  <T> Object getValue(final int columnIndex, final Class<T> clazz){
         final Object value = getValue(columnIndex);
         return convertData(value, clazz);
@@ -110,6 +126,7 @@ public class Row {
      * Gets the lastValue.
      * @return The last value as object
      */
+    @JsonIgnore
     public Object getLastValue() {
         return lastValue;
     }

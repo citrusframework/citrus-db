@@ -17,7 +17,7 @@
 package com.consol.citrus.db.server.transformer;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.json.JsonDataSetWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -29,8 +29,8 @@ import static org.mockito.Mockito.when;
 
 public class JsonResponseTransformerTest {
 
-    private final JsonDataSetWriter jsonDataSetWriterMock = mock(JsonDataSetWriter.class);
-    private final JsonResponseTransformer jsonResponseTransformer = new JsonResponseTransformer(jsonDataSetWriterMock);
+    private final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private final JsonResponseTransformer jsonResponseTransformer = new JsonResponseTransformer(objectMapper);
 
     @Test
     public void testResponseTransformation() throws Exception {
@@ -38,13 +38,13 @@ public class JsonResponseTransformerTest {
         //GIVEN
         final DataSet dataSet = mock(DataSet.class);
         final String expectedRenderedResponse = String.valueOf(UUID.randomUUID());
-        when(jsonDataSetWriterMock.write(dataSet)).thenReturn(expectedRenderedResponse);
+        when(objectMapper.writeValueAsString(dataSet)).thenReturn(expectedRenderedResponse);
 
         //WHEN
         final String renderedResponse = jsonResponseTransformer.render(dataSet);
 
         //THEN
         Assert.assertEquals(renderedResponse, expectedRenderedResponse);
-        verify(jsonDataSetWriterMock).write(dataSet);
+        verify(objectMapper).writeValueAsString(dataSet);
     }
 }

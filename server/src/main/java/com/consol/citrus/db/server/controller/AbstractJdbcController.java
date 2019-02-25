@@ -16,7 +16,7 @@
 
 package com.consol.citrus.db.server.controller;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.server.JdbcServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,14 +43,14 @@ public abstract class AbstractJdbcController implements JdbcController {
      * @param sql The sql statement to map to a DataSet
      * @return The data set mapped to the given query
      */
-    protected abstract DataSet handleQuery(String sql) throws JdbcServerException;
+    protected abstract DatabaseResult handleQuery(String sql) throws JdbcServerException;
 
     /**
      * Subclasses must provide proper data set for SQL statement.
      * @param sql The sql statement to map to a DataSet
      * @return The data set mapped to the given query
      */
-    protected abstract DataSet handleExecute(String sql) throws JdbcServerException;
+    protected abstract DatabaseResult handleExecute(String sql) throws JdbcServerException;
 
     /**
      * Subclasses must provide number of row updated by SQL statement.
@@ -83,30 +83,30 @@ public abstract class AbstractJdbcController implements JdbcController {
     }
 
     @Override
-    public DataSet executeQuery(final String sql) throws JdbcServerException {
+    public DatabaseResult executeQuery(final String sql) throws JdbcServerException {
         log.info("EXECUTE QUERY: " + sql);
-        final DataSet dataSet = handleQuery(sql);
+        final DatabaseResult databaseResult = handleQuery(sql);
 
-        if(log.isDebugEnabled()){
-            log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
+        if(log.isDebugEnabled() && databaseResult.isDataSet()){
+            log.debug(String.format("RESULT SET with %s rows", databaseResult.getDataSet().getRows().size()));
         }
 
         log.info("QUERY EXECUTION SUCCESSFUL");
-        return dataSet;
+        return databaseResult;
     }
 
     @Override
-    public DataSet executeStatement(final String sql) throws JdbcServerException {
+    public DatabaseResult executeStatement(final String sql) throws JdbcServerException {
         log.info("EXECUTE STATEMENT: " + sql);
-        final DataSet dataSet = handleExecute(sql);
+        final DatabaseResult databaseResult = handleExecute(sql);
 
-        if(log.isDebugEnabled()){
-            log.debug(String.format("RESULT SET with %s rows", dataSet.getRows().size()));
+        if(log.isDebugEnabled() && databaseResult.isDataSet()){
+            log.debug(String.format("RESULT SET with %s rows", databaseResult.getDataSet().getRows().size()));
         }
 
         log.info("STATEMENT EXECUTION SUCCESSFUL");
 
-        return dataSet;
+        return databaseResult;
     }
 
     @Override

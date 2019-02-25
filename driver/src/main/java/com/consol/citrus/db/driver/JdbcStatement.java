@@ -16,8 +16,8 @@
 
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.json.JsonDataSetProducer;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -79,9 +79,9 @@ public class JdbcStatement implements Statement {
                     || !response.getEntity().getContentType().getValue().equals("application/json")) {
                 throw new SQLException("Failed to execute query: " + sqlQuery);
             }
-
-            final DataSet dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
-            resultSet = new JdbcResultSet(dataSet, this);
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final DatabaseResult databaseResult = objectMapper.readValue(response.getEntity().getContent(), DatabaseResult.class);
+            resultSet = new JdbcResultSet(databaseResult.getDataSet(), this);
 
             return resultSet;
         } catch (final IOException e) {
@@ -125,19 +125,22 @@ public class JdbcStatement implements Statement {
             }
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {
-                final DataSet receivedDataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
-                if(!receivedDataSet.getRows().isEmpty()){
-                    resultSet = new JdbcResultSet(receivedDataSet, this);
+
+                final ObjectMapper objectMapper = new ObjectMapper();
+                final DatabaseResult databaseResult = objectMapper.readValue(response.getEntity().getContent(), DatabaseResult.class);
+
+                if(databaseResult.isDataSet()){
+                    resultSet = new JdbcResultSet(databaseResult.getDataSet(), this);
                     updateCount = -1;
                     return true;
-                }else if(receivedDataSet.getAffectedRows() != 0){
+                }else{
                     resultSet = null;
-                    this.updateCount = receivedDataSet.getAffectedRows();
+                    this.updateCount = databaseResult.getAffectedRows();
                     return false;
                 }
             }
 
-            return true;
+            return false;
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {

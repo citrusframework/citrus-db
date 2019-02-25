@@ -18,6 +18,7 @@ package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetProducer;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.server.JdbcServerException;
 
 import java.sql.SQLException;
@@ -45,18 +46,18 @@ public class SimpleJdbcController extends AbstractJdbcController {
     }
 
     @Override
-    protected DataSet handleQuery(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleQuery(final String sql) throws JdbcServerException {
         try {
-            return dataSetProducer.produce();
+            return new DatabaseResult(dataSetProducer.produce());
         } catch (final SQLException e) {
             throw new JdbcServerException("Failed to produce dataSet", e);
         }
     }
 
     @Override
-    protected DataSet handleExecute(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleExecute(final String sql) throws JdbcServerException {
         try {
-            return dataSetProducer.produce();
+            return new DatabaseResult(dataSetProducer.produce());
         } catch (final SQLException e) {
             throw new JdbcServerException("Failed to produce dataSet", e);
         }

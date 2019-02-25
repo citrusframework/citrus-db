@@ -17,7 +17,9 @@
 package com.consol.citrus.db.driver.dataset;
 
 import com.consol.citrus.db.driver.data.Row;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +35,13 @@ public class DataSet {
     /** Cursor position on selected row */
     private AtomicInteger cursor = new AtomicInteger(0);
 
-    /** The affected rows of the data set */
-    private int affectedRows;
+    public DataSet() {
+    }
+
+    @JsonCreator
+    public DataSet(@JsonProperty("rows") final List<Row> rows){
+        this.rows.addAll(rows);
+    }
 
     /**
      * Gets next row in this data set based on cursor position.
@@ -98,13 +105,5 @@ public class DataSet {
                 "rows=" + rows +
                 ", cursor=" + cursor +
                 '}';
-    }
-
-    public int getAffectedRows() {
-        return affectedRows;
-    }
-
-    public void setAffectedRows(final int affectedRows) {
-        this.affectedRows = affectedRows;
     }
 }

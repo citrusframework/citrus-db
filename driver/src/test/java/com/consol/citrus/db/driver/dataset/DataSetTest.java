@@ -5,7 +5,6 @@ import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 public class DataSetTest {
@@ -21,22 +20,6 @@ public class DataSetTest {
 
         //THEN
         assertNull(nextRow);
-    }
-
-    @Test
-    public void testGetAffectedRows() {
-
-        //GIVEN
-        final int expectedAffectedRows = 42;
-
-        final DataSet dataSet = new DataSet();
-        dataSet.setAffectedRows(expectedAffectedRows);
-
-        //WHEN
-        final int affectedRows = dataSet.getAffectedRows();
-
-        //THEN
-        assertEquals(affectedRows, expectedAffectedRows);
     }
 
     @Test

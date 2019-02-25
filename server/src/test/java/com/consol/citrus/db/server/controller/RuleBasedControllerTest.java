@@ -16,7 +16,7 @@
 
 package com.consol.citrus.db.server.controller;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.server.rules.ExecuteQueryRule;
 import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
 import com.consol.citrus.db.server.rules.Mapping;
@@ -56,8 +56,8 @@ public class RuleBasedControllerTest {
         when(precondition.match(incomingQuery)).thenReturn(true);
 
         //Prepare return value for match
-        final DataSet expectedDataSet = mock(DataSet.class);
-        final Mapping<String, DataSet> mapping = (Mapping<String, DataSet>) mock(Mapping.class);
+        final DatabaseResult expectedDataSet = mock(DatabaseResult.class);
+        final Mapping<String, DatabaseResult> mapping = (Mapping<String, DatabaseResult>) mock(Mapping.class);
         when(mapping.map(incomingQuery)).thenReturn(expectedDataSet);
 
         //Compose Rule
@@ -67,10 +67,10 @@ public class RuleBasedControllerTest {
         ruleBasedController.add(executeQueryRule);
 
         //WHEN
-        final DataSet dataSet = ruleBasedController.handleQuery(incomingQuery);
+        final DatabaseResult databaseResult = ruleBasedController.handleQuery(incomingQuery);
 
         //THEN
-        assertEquals(dataSet, expectedDataSet);
+        assertEquals(databaseResult, expectedDataSet);
     }
 
     @Test
@@ -78,15 +78,15 @@ public class RuleBasedControllerTest {
 
         //GIVEN
         final String incomingQuery = "some query";
-        final DataSet expectedDataSet = mock(DataSet.class);
-        when(jdbcControllerMock.handleQuery(incomingQuery)).thenReturn(expectedDataSet);
+        final DatabaseResult expectedDatabaseResult = mock(DatabaseResult.class);
+        when(jdbcControllerMock.handleQuery(incomingQuery)).thenReturn(expectedDatabaseResult);
 
 
         //WHEN
-        final DataSet dataSet = ruleBasedController.handleQuery(incomingQuery);
+        final DatabaseResult databaseResult = ruleBasedController.handleQuery(incomingQuery);
 
         //THEN
-        assertEquals(dataSet, expectedDataSet);
+        assertEquals(databaseResult, expectedDatabaseResult);
     }
 
     @Test

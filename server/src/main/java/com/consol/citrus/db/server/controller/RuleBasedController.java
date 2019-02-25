@@ -16,9 +16,21 @@
 
 package com.consol.citrus.db.server.controller;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.server.JdbcServerException;
-import com.consol.citrus.db.server.rules.*;
+import com.consol.citrus.db.server.rules.CloseConnectionRule;
+import com.consol.citrus.db.server.rules.CloseStatementRule;
+import com.consol.citrus.db.server.rules.CommitTransactionRule;
+import com.consol.citrus.db.server.rules.CreateCallableStatementRule;
+import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
+import com.consol.citrus.db.server.rules.CreateStatementRule;
+import com.consol.citrus.db.server.rules.ExecuteQueryRule;
+import com.consol.citrus.db.server.rules.ExecuteRule;
+import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
+import com.consol.citrus.db.server.rules.OpenConnectionRule;
+import com.consol.citrus.db.server.rules.RollbackTransactionRule;
+import com.consol.citrus.db.server.rules.Rule;
+import com.consol.citrus.db.server.rules.StartTransactionRule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +65,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    protected DataSet handleQuery(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleQuery(final String sql) throws JdbcServerException {
         return executeQueryRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
@@ -62,7 +74,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    protected DataSet handleExecute(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleExecute(final String sql) throws JdbcServerException {
         return executeRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()

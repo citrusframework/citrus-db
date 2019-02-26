@@ -32,6 +32,7 @@ import java.sql.NClob;
 import java.sql.Ref;
 import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.SQLType;
 import java.sql.SQLXML;
 import java.sql.Time;
@@ -155,41 +156,49 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public Object getObject(final int parameterIndex, final Map<String, Class<?>> map) throws SQLException {
+        notSupported("getObject(int parameterIndex, Map<String, Class<?>> map)");
         return null;
     }
 
     @Override
     public Ref getRef(final int parameterIndex) throws SQLException {
+        notSupported("getRef(int parameterIndex)");
         return null;
     }
 
     @Override
     public Blob getBlob(final int parameterIndex) throws SQLException {
+        notSupported("getBlob(int parameterIndex)");
         return null;
     }
 
     @Override
     public Clob getClob(final int parameterIndex) throws SQLException {
+        notSupported("getClob(int parameterIndex)");
         return null;
     }
 
     @Override
     public Array getArray(final int parameterIndex) throws SQLException {
+        notSupported("getArray(int parameterIndex)");
         return null;
     }
 
     @Override
     public Date getDate(final int parameterIndex, final Calendar cal) throws SQLException {
+        notSupported("getDate(int parameterIndex, Calendar cal)");
         return null;
     }
 
     @Override
     public Time getTime(final int parameterIndex, final Calendar cal) throws SQLException {
+        notSupported("getTime(int parameterIndex, Calendar cal)");
         return null;
     }
 
     @Override
     public Timestamp getTimestamp(final int parameterIndex, final Calendar cal) throws SQLException {
+        notSupported("getTimestamp(int parameterIndex, Calendar cal)");
         return null;
     }
 
@@ -199,148 +208,149 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public void registerOutParameter(final String parameterName, final int sqlType) throws SQLException {
+    public void registerOutParameter(final String parameterName, final int sqlType){
         setOutParameter(parameterName);
     }
 
     @Override
-    public void registerOutParameter(final String parameterName, final int sqlType, final int scale) throws SQLException {
+    public void registerOutParameter(final String parameterName, final int sqlType, final int scale){
         registerOutParameter(parameterName, sqlType);
     }
 
     @Override
-    public void registerOutParameter(final String parameterName, final int sqlType, final String typeName) throws SQLException {
+    public void registerOutParameter(final String parameterName, final int sqlType, final String typeName){
         registerOutParameter(parameterName, sqlType);
     }
 
     @Override
     public URL getURL(final int parameterIndex) throws SQLException {
+        notSupported("getURL(int parameterIndex)");
         return null;
     }
 
     @Override
-    public void setURL(final String parameterName, final URL val) throws SQLException {
+    public void setURL(final String parameterName, final URL val){
         setParameter(parameterName, val);
     }
 
     @Override
-    public void setNull(final String parameterName, final int sqlType) throws SQLException {
+    public void setNull(final String parameterName, final int sqlType){
         setParameter(parameterName, "null");
     }
 
     @Override
-    public void setBoolean(final String parameterName, final boolean x) throws SQLException {
+    public void setBoolean(final String parameterName, final boolean x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setByte(final String parameterName, final byte x) throws SQLException {
+    public void setByte(final String parameterName, final byte x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setShort(final String parameterName, final short x) throws SQLException {
+    public void setShort(final String parameterName, final short x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setInt(final String parameterName, final int x) throws SQLException {
+    public void setInt(final String parameterName, final int x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setLong(final String parameterName, final long x) throws SQLException {
+    public void setLong(final String parameterName, final long x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setFloat(final String parameterName, final float x) throws SQLException {
+    public void setFloat(final String parameterName, final float x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setDouble(final String parameterName, final double x) throws SQLException {
+    public void setDouble(final String parameterName, final double x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setBigDecimal(final String parameterName, final BigDecimal x) throws SQLException {
+    public void setBigDecimal(final String parameterName, final BigDecimal x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setString(final String parameterName, final String x) throws SQLException {
+    public void setString(final String parameterName, final String x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setBytes(final String parameterName, final byte[] x) throws SQLException {
+    public void setBytes(final String parameterName, final byte[] x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setDate(final String parameterName, final Date x) throws SQLException {
+    public void setDate(final String parameterName, final Date x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setTime(final String parameterName, final Time x) throws SQLException {
+    public void setTime(final String parameterName, final Time x){
         setParameter(parameterName, x);
     }
 
     @Override
-    public void setTimestamp(final String parameterName, final Timestamp x) throws SQLException {
+    public void setTimestamp(final String parameterName, final Timestamp x) {
         setParameter(parameterName, x);
     }
 
     @Override
     public void setAsciiStream(final String parameterName, final InputStream x, final int length) throws SQLException {
-
+        notSupported("setAsciiStream(String parameterName, InputStream x, int length)");
     }
 
     @Override
     public void setBinaryStream(final String parameterName, final InputStream x, final int length) throws SQLException {
-
+        notSupported("setBinaryStream(String parameterName, InputStream x, int length)");
     }
 
     @Override
     public void setObject(final String parameterName, final Object x, final int targetSqlType, final int scale) throws SQLException {
-
+        notSupported("setObject(String parameterName, Object x, int targetSqlType, int scale)");
     }
 
     @Override
     public void setObject(final String parameterName, final Object x, final int targetSqlType) throws SQLException {
-
+        notSupported("setObject(String parameterName, Object x, int targetSqlType)");
     }
 
     @Override
     public void setObject(final String parameterName, final Object x) throws SQLException {
-
+        notSupported("setObject(String parameterName, Object x)");
     }
 
     @Override
     public void setCharacterStream(final String parameterName, final Reader reader, final int length) throws SQLException {
-
+        notSupported("setCharacterStream(String parameterName, Reader reader, int length)");
     }
 
     @Override
     public void setDate(final String parameterName, final Date x, final Calendar cal) throws SQLException {
-
+        notSupported("setDate(String parameterName, Date x, Calendar cal)");
     }
 
     @Override
     public void setTime(final String parameterName, final Time x, final Calendar cal) throws SQLException {
-
+        notSupported("setTime(String parameterName, Time x, Calendar cal)");
     }
 
     @Override
     public void setTimestamp(final String parameterName, final Timestamp x, final Calendar cal) throws SQLException {
-
+        notSupported("setTimestamp(String parameterName, Timestamp x, Calendar cal)");
     }
 
     @Override
     public void setNull(final String parameterName, final int sqlType, final String typeName) throws SQLException {
-
+        notSupported("setNull(String parameterName, int sqlType, String typeName)");
     }
 
     @Override
@@ -429,216 +439,240 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public Object getObject(final String parameterName, final Map<String, Class<?>> map) throws SQLException {
+        notSupported("getObject(String parameterName, Map<String, Class<?>> map)");
         return null;
     }
 
     @Override
     public Ref getRef(final String parameterName) throws SQLException {
+        notSupported("getRef(String parameterName)");
         return null;
     }
 
     @Override
     public Blob getBlob(final String parameterName) throws SQLException {
+        notSupported("getBlob(String parameterName)");
         return null;
     }
 
     @Override
     public Clob getClob(final String parameterName) throws SQLException {
+        notSupported("getClob(String parameterName)");
         return null;
     }
 
     @Override
     public Array getArray(final String parameterName) throws SQLException {
+        notSupported("getArray(String parameterName)");
         return null;
     }
 
     @Override
     public Date getDate(final String parameterName, final Calendar cal) throws SQLException {
+        notSupported("getDate(String parameterName, Calendar cal)");
         return null;
     }
 
     @Override
     public Time getTime(final String parameterName, final Calendar cal) throws SQLException {
+        notSupported("getTime(String parameterName, Calendar cal)");
         return null;
     }
 
     @Override
     public Timestamp getTimestamp(final String parameterName, final Calendar cal) throws SQLException {
+        notSupported("getTimestamp(String parameterName, Calendar cal)");
         return null;
     }
 
     @Override
     public URL getURL(final String parameterName) throws SQLException {
+        notSupported("getURL(String parameterName)");
         return null;
     }
 
     @Override
     public RowId getRowId(final int parameterIndex) throws SQLException {
+        notSupported("getRowId(int parameterIndex)");
         return null;
     }
 
     @Override
     public RowId getRowId(final String parameterName) throws SQLException {
+        notSupported("getRowId(String parameterName)");
         return null;
     }
 
     @Override
     public void setRowId(final String parameterName, final RowId x) throws SQLException {
-
+        notSupported("setRowId(String parameterName, RowId x)");
     }
 
     @Override
     public void setNString(final String parameterName, final String value) throws SQLException {
-
+        notSupported("setNString(String parameterName, String value)");
     }
 
     @Override
     public void setNCharacterStream(final String parameterName, final Reader value, final long length) throws SQLException {
-
+        notSupported("setNCharacterStream(String parameterName, Reader value, long length)");
     }
 
     @Override
     public void setNClob(final String parameterName, final NClob value) throws SQLException {
-
+        notSupported("setClob(String parameterName, NClob value)");
     }
 
     @Override
     public void setClob(final String parameterName, final Reader reader, final long length) throws SQLException {
-
+        notSupported("setClob(String parameterName, Reader reader, long length)");
     }
 
     @Override
     public void setBlob(final String parameterName, final InputStream inputStream, final long length) throws SQLException {
-
+        notSupported("setBlob(String parameterName, InputStream inputStream, long length)");
     }
 
     @Override
     public void setNClob(final String parameterName, final Reader reader, final long length) throws SQLException {
-
+        notSupported("setNClob(String parameterName, Reader reader, long length)");
     }
 
     @Override
     public NClob getNClob(final int parameterIndex) throws SQLException {
+        notSupported("getNClob(int parameterIndex)");
         return null;
     }
 
     @Override
     public NClob getNClob(final String parameterName) throws SQLException {
+        notSupported("getNClob(String parameterName)");
         return null;
     }
 
     @Override
     public void setSQLXML(final String parameterName, final SQLXML xmlObject) throws SQLException {
+        notSupported("setSQLXML(String parameterName, SQLXML xmlObject)");
 
     }
 
     @Override
     public SQLXML getSQLXML(final int parameterIndex) throws SQLException {
+        notSupported("getSQLXML(int parameterIndex)");
         return null;
     }
 
     @Override
     public SQLXML getSQLXML(final String parameterName) throws SQLException {
+        notSupported("getSQLXML(String parameterName)");
         return null;
     }
 
     @Override
     public String getNString(final int parameterIndex) throws SQLException {
+        notSupported("getNString(int parameterIndex)");
         return null;
     }
 
     @Override
     public String getNString(final String parameterName) throws SQLException {
+        notSupported("getNString(String parameterName)");
         return null;
     }
 
     @Override
     public Reader getNCharacterStream(final int parameterIndex) throws SQLException {
+        notSupported("getNCharacterStream(int parameterIndex)");
         return null;
     }
 
     @Override
     public Reader getNCharacterStream(final String parameterName) throws SQLException {
+        notSupported("getNCharacterStream(String parameterName)");
         return null;
     }
 
     @Override
     public Reader getCharacterStream(final int parameterIndex) throws SQLException {
+        notSupported("getCharacterStream(int parameterIndex)");
         return null;
     }
 
     @Override
     public Reader getCharacterStream(final String parameterName) throws SQLException {
+        notSupported("getCharacterStream(String parameterName)");
         return null;
     }
 
     @Override
     public void setBlob(final String parameterName, final Blob x) throws SQLException {
-
+        notSupported("setBlob(String parameterName,  Blob x)");
     }
 
     @Override
     public void setClob(final String parameterName, final Clob x) throws SQLException {
-
+        notSupported("setClob(String parameterName,  Clob x)");
     }
 
     @Override
     public void setAsciiStream(final String parameterName, final InputStream x, final long length) throws SQLException {
-
+        notSupported("setAsciiStream(String parameterName,  InputStream x, long length)");
     }
 
     @Override
     public void setBinaryStream(final String parameterName, final InputStream x, final long length) throws SQLException {
-
+        notSupported("setBinaryStream(String parameterName,  InputStream x, long length)");
     }
 
     @Override
     public void setCharacterStream(final String parameterName, final Reader reader, final long length) throws SQLException {
-
+        notSupported("setCharacterStream(String parameterName,  Reader reader, long length)");
     }
 
     @Override
     public void setAsciiStream(final String parameterName, final InputStream x) throws SQLException {
-
+        notSupported("setAsciiStream(String parameterName, InputStream x)");
     }
 
     @Override
     public void setBinaryStream(final String parameterName, final InputStream x) throws SQLException {
-
+        notSupported("setBinaryStream(String parameterName, InputStream x)");
     }
 
     @Override
     public void setCharacterStream(final String parameterName, final Reader reader) throws SQLException {
-
+        notSupported("setCharacterStream(String parameterName, Reader reader)");
     }
 
     @Override
     public void setNCharacterStream(final String parameterName, final Reader value) throws SQLException {
-
+        notSupported("setNCharacterStream(String parameterName, Reader value)");
     }
 
     @Override
     public void setClob(final String parameterName, final Reader reader) throws SQLException {
-
+        notSupported("setClob(String parameterName, Reader reader)");
     }
 
     @Override
     public void setBlob(final String parameterName, final InputStream inputStream) throws SQLException {
-
+        notSupported("setBlob(String parameterName, InputStream inputStream)");
     }
 
     @Override
     public void setNClob(final String parameterName, final Reader reader) throws SQLException {
-
+        notSupported("setNClob(String parameterName, Reader reader)");
     }
 
     @Override
     public <T> T getObject(final int parameterIndex, final Class<T> type) throws SQLException {
+        notSupported("getObject(int parameterIndex, Class<T> type)");
         return null;
     }
 
     @Override
     public <T> T getObject(final String parameterName, final Class<T> type) throws SQLException {
+        notSupported("getObject(String parameterName, Class<T> type)");
         return null;
     }
 
@@ -684,5 +718,9 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
         if(resultSet.getRow() == 0){
             resultSet.next();
         }
+    }
+
+    private void notSupported(final String featureDescription) throws SQLFeatureNotSupportedException {
+        throw new SQLFeatureNotSupportedException("Not supported feature: " + featureDescription );
     }
 }

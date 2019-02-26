@@ -23,10 +23,6 @@ import com.consol.citrus.db.driver.exchange.DatabaseResult;
  */
 public class ExecuteQueryRule extends Rule<String, DatabaseResult, ExecuteQueryRule> {
 
-    public ExecuteQueryRule() {
-        super();
-    }
-
     public ExecuteQueryRule(final Mapping<String, DatabaseResult> mapping) {
         super(mapping);
     }

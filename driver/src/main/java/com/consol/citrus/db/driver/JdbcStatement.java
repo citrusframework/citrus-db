@@ -34,6 +34,7 @@ import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -378,7 +379,8 @@ public class JdbcStatement implements Statement {
 
     @Override
     public long[] executeLargeBatch() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'executeLargeBatch'");
+        final int[] affectedRowsList = executeBatch();
+        return Arrays.stream(affectedRowsList).asLongStream().toArray();
     }
 
     @Override

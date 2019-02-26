@@ -10,9 +10,14 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.sql.SQLException;
+import java.util.List;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.testng.Assert.assertTrue;
 
+@SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class JdbcPreparedStatementTest {
 
     private HttpClient httpClientMock = mock(HttpClient.class);
@@ -69,6 +74,23 @@ public class JdbcPreparedStatementTest {
         //THEN
         Assert.assertEquals(jdbcPreparedStatement.getParameters().size(), 1);
         Assert.assertEquals(jdbcPreparedStatement.getParameters().get("0"), 42);
+    }
+
+    @Test
+    public void testAddParametersToBatch() throws SQLException {
+
+        //GIVEN
+        jdbcPreparedStatement.addBatch("SELECT id, name FROM cities WHERE abbreviation = ?");
+        jdbcPreparedStatement.addBatch("SELECT id, name FROM airports WHERE name = ?");
+        jdbcPreparedStatement.setParameter(1, "'MUC'");
+
+        //WHEN
+        jdbcPreparedStatement.addBatch();
+
+        //THEN
+        final List<String> batchStatements = jdbcPreparedStatement.getBatchStatements();
+        assertTrue(batchStatements.contains("SELECT id, name FROM cities WHERE abbreviation = ? - ('MUC')"));
+        assertTrue(batchStatements.contains("SELECT id, name FROM airports WHERE name = ? - ('MUC')"));
     }
 
     @Test

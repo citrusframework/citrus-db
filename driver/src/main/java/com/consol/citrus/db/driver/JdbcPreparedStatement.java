@@ -38,6 +38,7 @@ import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
@@ -51,7 +52,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     private final String preparedStatement;
     private final Map<String, Object> parameters = new TreeMap<>();
 
-    public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl, JdbcConnection connection) {
+    public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl, final JdbcConnection connection) {
         super(httpClient, serverUrl, connection);
         this.preparedStatement = preparedStatement;
     }
@@ -172,8 +173,10 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void addBatch() throws SQLException {
-        //TODO #36
+    public void addBatch() {
+        final List<String> collect = batchStatements.stream().map(this::composeStatement).collect(Collectors.toList());
+        batchStatements.clear();
+        batchStatements.addAll(collect);
     }
 
     @Override
@@ -340,7 +343,11 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     private String composeStatement() {
-        return preparedStatement + " - (" + parameters.values().stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
+        return composeStatement(preparedStatement);
+    }
+
+    private String composeStatement(final String statement) {
+        return statement + " - (" + parameters.values().stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
     }
 
     Map<String, Object> getParameters() {

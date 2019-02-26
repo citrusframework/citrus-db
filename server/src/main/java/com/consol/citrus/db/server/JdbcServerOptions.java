@@ -3,7 +3,10 @@ package com.consol.citrus.db.server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Christoph Deppisch
@@ -32,7 +35,7 @@ public class JdbcServerOptions {
 
         options.add(new CliOption("t", "time", "Maximum time in milliseconds the server should be up and running - server will terminate automatically when time exceeds") {
             @Override
-            protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs) throws JdbcServerException {
+            protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs){
                 if (value != null && value.length() > 0) {
                     configuration.setTimeToLive(Long.valueOf(value));
                 } else {
@@ -43,7 +46,7 @@ public class JdbcServerOptions {
 
         options.add(new CliOption("d", "deamon", "Flag to indicate that this server should be started as deamon thread") {
             @Override
-            protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs) throws JdbcServerException {
+            protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs){
                 if (value != null && value.length() > 0) {
                     configuration.setDeamon(Boolean.valueOf(value));
                 } else {
@@ -54,7 +57,7 @@ public class JdbcServerOptions {
 
         options.add(new CliOption("p", "port", "Jdbc server port") {
             @Override
-            protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs) throws JdbcServerException {
+            protected void doProcess(JdbcServerConfiguration configuration, String arg, String value, LinkedList<String> remainingArgs){
                 if (value != null && value.length() > 0) {
                     configuration.setPort(Integer.valueOf(value));
                 } else {
@@ -70,7 +73,7 @@ public class JdbcServerOptions {
      * @param arguments
      * @throws JdbcServerException
      */
-    public void apply(JdbcServerConfiguration configuration, String[] arguments) throws JdbcServerException {
+    public void apply(JdbcServerConfiguration configuration, String[] arguments){
         LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
 
         while (!args.isEmpty()) {
@@ -98,7 +101,7 @@ public class JdbcServerOptions {
             this.description = description;
         }
 
-        public boolean processOption(JdbcServerConfiguration configuration, String arg, LinkedList<String> remainingArgs) throws JdbcServerException {
+        public boolean processOption(JdbcServerConfiguration configuration, String arg, LinkedList<String> remainingArgs){
             if (arg.equalsIgnoreCase(shortName) || fullName.startsWith(arg)) {
                 if (remainingArgs.isEmpty()) {
                     doProcess(configuration, arg, null, remainingArgs);

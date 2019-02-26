@@ -47,7 +47,7 @@ public abstract class AbstractRuleBuilder<T extends Rule<P, R, T>, P, R> {
      * @return A Rule throwing the exception
      */
     public T thenThrow(final JdbcServerException exception) {
-        final T rule = createRule(Precondition.matchAll(), (any) -> { throw exception; });
+        final T rule = createRule(Precondition.matchAll(), any -> { throw exception; });
         addRule(rule);
         return rule;
     }

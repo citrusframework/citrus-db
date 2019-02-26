@@ -46,7 +46,7 @@ public class SimpleJdbcController extends AbstractJdbcController {
     }
 
     @Override
-    protected DatabaseResult handleQuery(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleQuery(final String sql){
         try {
             return new DatabaseResult(dataSetProducer.produce());
         } catch (final SQLException e) {
@@ -55,7 +55,7 @@ public class SimpleJdbcController extends AbstractJdbcController {
     }
 
     @Override
-    protected DatabaseResult handleExecute(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleExecute(final String sql){
         try {
             return new DatabaseResult(dataSetProducer.produce());
         } catch (final SQLException e) {
@@ -64,7 +64,7 @@ public class SimpleJdbcController extends AbstractJdbcController {
     }
 
     @Override
-    protected int handleUpdate(final String sql) throws JdbcServerException {
+    protected int handleUpdate(final String sql){
         return 0;
     }
 }

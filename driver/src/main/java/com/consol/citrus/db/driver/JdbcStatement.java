@@ -230,11 +230,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        /*
-        Multiple results in one statement like
-        select * from foo; select * from bar;
-        are currently not supported
-        */
+        //Multiple results in one statement are currently not supported
         return false;
     }
 

@@ -42,7 +42,7 @@ public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRul
     }
 
     public ExecuteQueryRule thenReturn(final DataSet dataSet) {
-        return createRule(precondition, (any) -> new DatabaseResult(dataSet));
+        return createRule(precondition, any -> new DatabaseResult(dataSet));
     }
 
     public ExecuteQueryRule thenReturn(final File file) {
@@ -64,7 +64,7 @@ public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRul
             throw new JdbcServerException(e);
         }
 
-        return createRule(precondition, (any) -> new DatabaseResult(dataSet));
+        return createRule(precondition, any -> new DatabaseResult(dataSet));
     }
 
     @Override

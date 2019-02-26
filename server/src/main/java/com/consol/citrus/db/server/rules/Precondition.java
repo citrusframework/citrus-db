@@ -36,6 +36,6 @@ public interface Precondition<P> {
      * @return Always true
      */
     static <T> Precondition<T> matchAll() {
-        return (any) -> true;
+        return any -> true;
     }
 }

@@ -17,17 +17,34 @@
 package com.consol.citrus.db.server;
 
 import com.consol.citrus.db.server.builder.RuleBasedControllerBuilder;
-import com.consol.citrus.db.server.controller.*;
+import com.consol.citrus.db.server.controller.JdbcController;
+import com.consol.citrus.db.server.controller.RuleBasedController;
+import com.consol.citrus.db.server.controller.SimpleJdbcController;
 import com.consol.citrus.db.server.exceptionhandler.JdbcServerExceptionHandler;
-import com.consol.citrus.db.server.handler.connection.*;
-import com.consol.citrus.db.server.handler.statement.*;
+import com.consol.citrus.db.server.handler.connection.CloseConnectionHandler;
+import com.consol.citrus.db.server.handler.connection.CommitTransactionStatementsHandler;
+import com.consol.citrus.db.server.handler.connection.GetTransactionStateHandler;
+import com.consol.citrus.db.server.handler.connection.OpenConnectionHandler;
+import com.consol.citrus.db.server.handler.connection.RollbackTransactionStatementsHandler;
+import com.consol.citrus.db.server.handler.connection.SetTransactionStateHandler;
+import com.consol.citrus.db.server.handler.statement.CloseStatementHandler;
+import com.consol.citrus.db.server.handler.statement.CreateCallableStatementHandler;
+import com.consol.citrus.db.server.handler.statement.CreatePreparedStatementHandler;
+import com.consol.citrus.db.server.handler.statement.CreateStatementHandler;
+import com.consol.citrus.db.server.handler.statement.ExecuteQueryHandler;
+import com.consol.citrus.db.server.handler.statement.ExecuteStatementHandler;
+import com.consol.citrus.db.server.handler.statement.ExecuteUpdateHandler;
 import com.consol.citrus.db.server.transformer.JsonResponseTransformer;
 import com.consol.citrus.db.server.util.DeamonThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Service;
 
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author Christoph Deppisch
@@ -74,7 +91,7 @@ public class JdbcServer {
         this.configuration = configuration;
     }
 
-    public JdbcServer(final String[] args) throws JdbcServerException {
+    public JdbcServer(final String[] args){
         this();
         new JdbcServerOptions().apply(configuration, args);
     }
@@ -91,7 +108,7 @@ public class JdbcServer {
      * Main method
      * @param args The command line arguments of the java call
      */
-    public static void main(final String[] args) throws JdbcServerException {
+    public static void main(final String[] args){
         final JdbcServer server = new JdbcServer(args);
 
         if (server.configuration.getTimeToLive() > 0) {

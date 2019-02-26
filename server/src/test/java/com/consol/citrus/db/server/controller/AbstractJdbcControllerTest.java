@@ -17,7 +17,6 @@
 package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.exchange.DatabaseResult;
-import com.consol.citrus.db.server.JdbcServerException;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -46,17 +45,17 @@ public class AbstractJdbcControllerTest {
     private void setUp(){
         jdbcController = spy(new AbstractJdbcController() {
             @Override
-            protected DatabaseResult handleQuery(final String sql) throws JdbcServerException {
+            protected DatabaseResult handleQuery(final String sql){
                 return null;
             }
 
             @Override
-            protected DatabaseResult handleExecute(final String sql) throws JdbcServerException {
+            protected DatabaseResult handleExecute(final String sql){
                 return null;
             }
 
             @Override
-            protected int handleUpdate(final String sql) throws JdbcServerException {
+            protected int handleUpdate(final String sql){
                 return 0;
             }
         });

@@ -56,9 +56,9 @@ public class RuleBasedControllerTest {
         when(precondition.match(incomingQuery)).thenReturn(true);
 
         //Prepare return value for match
-        final DatabaseResult expectedDataSet = mock(DatabaseResult.class);
+        final DatabaseResult expectedDatabaseResult = mock(DatabaseResult.class);
         final Mapping<String, DatabaseResult> mapping = (Mapping<String, DatabaseResult>) mock(Mapping.class);
-        when(mapping.map(incomingQuery)).thenReturn(expectedDataSet);
+        when(mapping.map(incomingQuery)).thenReturn(expectedDatabaseResult);
 
         //Compose Rule
         final ExecuteQueryRule executeQueryRule = new ExecuteQueryRule(precondition, mapping);
@@ -70,7 +70,7 @@ public class RuleBasedControllerTest {
         final DatabaseResult databaseResult = ruleBasedController.handleQuery(incomingQuery);
 
         //THEN
-        assertEquals(databaseResult, expectedDataSet);
+        assertEquals(databaseResult, expectedDatabaseResult);
     }
 
     @Test

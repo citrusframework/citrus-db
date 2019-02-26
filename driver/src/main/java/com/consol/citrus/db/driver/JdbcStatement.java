@@ -44,13 +44,13 @@ public class JdbcStatement implements Statement {
     final String serverUrl;
     final JdbcConnection connection;
 
+    /** List of batch statements */
     final List<String> batchStatements = new LinkedList<>();
 
+    /** The JdbcResultSet holding the result data of the query if existent  */
     JdbcResultSet resultSet;
 
-    /**
-     * Whether the statement has been closed
-     */
+    /** Whether the statement has been closed */
     boolean closed;
 
     /** The update count of the statement */
@@ -79,11 +79,9 @@ public class JdbcStatement implements Statement {
                     || !response.getEntity().getContentType().getValue().equals("application/json")) {
                 throw new SQLException("Failed to execute query: " + sqlQuery);
             }
-            final ObjectMapper objectMapper = new ObjectMapper();
-            final DatabaseResult databaseResult = objectMapper.readValue(response.getEntity().getContent(), DatabaseResult.class);
-            resultSet = new JdbcResultSet(databaseResult.getDataSet(), this);
 
-            return resultSet;
+            final DatabaseResult databaseResult = getDatabaseResult(response);
+            return new JdbcResultSet(databaseResult.getDataSet(), this);
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -125,9 +123,7 @@ public class JdbcStatement implements Statement {
             }
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {
-
-                final ObjectMapper objectMapper = new ObjectMapper();
-                final DatabaseResult databaseResult = objectMapper.readValue(response.getEntity().getContent(), DatabaseResult.class);
+                final DatabaseResult databaseResult = getDatabaseResult(response);
 
                 if(databaseResult.isDataSet()){
                     resultSet = new JdbcResultSet(databaseResult.getDataSet(), this);
@@ -417,6 +413,11 @@ public class JdbcStatement implements Statement {
     @Override
     public boolean isWrapperFor(final Class<?> iface) throws SQLException {
         throw new SQLException("Not supported JDBC statement function 'isWrapperFor'");
+    }
+
+    private DatabaseResult getDatabaseResult(final HttpResponse response) throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(response.getEntity().getContent(), DatabaseResult.class);
     }
 
     private void closeResultSet() throws SQLException {

@@ -885,7 +885,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getArray'");
     }
 
-    private boolean rowModified() throws SQLException {
+    private boolean rowModified() {
         return !dataSet.getRows().isEmpty();
     }
 

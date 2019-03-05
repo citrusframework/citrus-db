@@ -17,12 +17,15 @@
 package com.consol.citrus.db.server.transformer;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.server.JdbcServerException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -46,5 +49,18 @@ public class JsonResponseTransformerTest {
         //THEN
         Assert.assertEquals(renderedResponse, expectedRenderedResponse);
         verify(objectMapper).writeValueAsString(dataSet);
+    }
+
+    @Test(expectedExceptions = JdbcServerException.class)
+    public void testResponseTransformationWrapsJsonProcessingException() throws Exception {
+
+        //GIVEN
+        when(objectMapper.writeValueAsString(any())).thenThrow(JsonProcessingException.class);
+
+        //WHEN
+        jsonResponseTransformer.render(null);
+
+        //THEN
+        //exception is thrown
     }
 }

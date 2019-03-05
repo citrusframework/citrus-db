@@ -47,24 +47,24 @@ public class SimpleJdbcController extends AbstractJdbcController {
 
     @Override
     protected DatabaseResult handleQuery(final String sql){
-        try {
-            return new DatabaseResult(dataSetProducer.produce());
-        } catch (final SQLException e) {
-            throw new JdbcServerException("Failed to produce dataSet", e);
-        }
+        return generateDatabaseResult();
     }
 
     @Override
     protected DatabaseResult handleExecute(final String sql){
-        try {
-            return new DatabaseResult(dataSetProducer.produce());
-        } catch (final SQLException e) {
-            throw new JdbcServerException("Failed to produce dataSet", e);
-        }
+        return generateDatabaseResult();
     }
 
     @Override
     protected int handleUpdate(final String sql){
         return 0;
+    }
+
+    private DatabaseResult generateDatabaseResult() {
+        try {
+            return new DatabaseResult(dataSetProducer.produce());
+        } catch (final SQLException e) {
+            throw new JdbcServerException("Failed to produce dataSet", e);
+        }
     }
 }

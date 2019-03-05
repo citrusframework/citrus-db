@@ -82,7 +82,8 @@ public class JdbcStatement implements Statement {
             }
 
             final DatabaseResult databaseResult = getDatabaseResult(response);
-            return new JdbcResultSet(databaseResult.getDataSet(), this);
+            resultSet = new JdbcResultSet(databaseResult.getDataSet(), this);
+            return resultSet;
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {

@@ -47,8 +47,12 @@ public class JdbcStatementTest {
 
     private JdbcStatement jdbcStatement;
     private HttpClient httpClient;
-    private final String databaseResponse =
+    private final String databaseDatasetResponse =
             "{\"dataSet\":{\"rows\":[{\"values\":{\"foo\":\"bar\"}}]},\"affectedRows\":-1,\"isDataSet\":true}";
+
+    private static final int AFFECTED_ROWS = 42;
+    private final String databaseAffectedRowsResponse =
+            "{\"dataSet\":{\"rows\":[]},\"affectedRows\":"+AFFECTED_ROWS+",\"isDataSet\":false}";
 
     private StatusLine statusLine;
     private HttpEntity httpEntity;
@@ -79,7 +83,7 @@ public class JdbcStatementTest {
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(databaseResponse.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseDatasetResponse.getBytes()));
 
         //WHEN
         final ResultSet resultSet = jdbcStatement.executeQuery("SELECT something FROM somewhere");
@@ -181,13 +185,46 @@ public class JdbcStatementTest {
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(databaseResponse.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseDatasetResponse.getBytes()));
 
         //WHEN
         final boolean isResultSet = jdbcStatement.execute("statement");
 
         //THEN
         assertTrue(isResultSet);
+    }
+
+    @Test
+    public void testExecuteReturnsUpdateCount() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(databaseAffectedRowsResponse.getBytes()));
+
+        //WHEN
+        final boolean isResultSet = jdbcStatement.execute("statement");
+
+        //THEN
+        assertFalse(isResultSet);
+        assertEquals(jdbcStatement.getUpdateCount(), AFFECTED_ROWS);
+    }
+
+    @Test
+    public void testExecuteReturnsFalseOnDefault() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/whatever"));
+
+        //WHEN
+        final boolean isResultSet = jdbcStatement.execute("statement");
+
+        //THEN
+        assertFalse(isResultSet);
     }
 
     @Test(expectedExceptions = SQLException.class)
@@ -238,7 +275,7 @@ public class JdbcStatementTest {
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(databaseResponse.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseDatasetResponse.getBytes()));
         jdbcStatement.execute("SELECT foo FROM bar");
         assertFalse(jdbcStatement.getResultSet().isClosed());
 
@@ -333,6 +370,45 @@ public class JdbcStatementTest {
     }
 
     @Test
+    public void getMoreResultsReturnsFalseByDefault() throws SQLException {
+
+        //WHEN
+        final boolean moreResults = jdbcStatement.getMoreResults();
+
+        //THEN
+        assertFalse(moreResults);
+    }
+
+    @Test
+    public void testExecuteBatch() throws Exception {
+
+        //GIVEN
+        prepareBatchStatements();
+
+        final int[] expectedAffectedRows = new int[]{AFFECTED_ROWS, AFFECTED_ROWS};
+
+        //WHEN
+        final int[] affectedRows = jdbcStatement.executeBatch();
+
+        //THEN
+        assertEquals(affectedRows, expectedAffectedRows);
+    }
+    @Test
+    public void testExecuteLargeBatch() throws Exception {
+
+        //GIVEN
+        prepareBatchStatements();
+
+        final long[] expectedAffectedRows = new long[]{AFFECTED_ROWS, AFFECTED_ROWS};
+
+        //WHEN
+        final long[] affectedRows = jdbcStatement.executeLargeBatch();
+
+        //THEN
+        assertEquals(affectedRows, expectedAffectedRows);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier.forClass(JdbcStatement.class)
                 .withIgnoredFields("resultSet")
@@ -350,5 +426,18 @@ public class JdbcStatementTest {
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
                 .verify();
+    }
+
+    private void prepareBatchStatements() throws IOException, SQLException {
+        when(statusLine.getStatusCode()).thenReturn(200).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(databaseAffectedRowsResponse.getBytes()))
+                .thenReturn(new ByteArrayInputStream(databaseAffectedRowsResponse.getBytes()));
+
+        jdbcStatement.addBatch("statement one");
+        jdbcStatement.addBatch("statement two");
     }
 }

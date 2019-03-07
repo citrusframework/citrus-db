@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.client.HttpClient;
 
 import java.io.InputStream;
@@ -37,7 +38,10 @@ import java.sql.SQLException;
 import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -49,8 +53,14 @@ import java.util.stream.Collectors;
  */
 public class JdbcPreparedStatement extends JdbcStatement implements PreparedStatement {
 
+    /** The prepared statement to be executed */
     private final String preparedStatement;
+
+    /** The parameters to add to the statement */
     private final Map<String, Object> parameters = new TreeMap<>();
+
+    /** A list of parameter sets for batch execution purposes */
+    private final List<Map<String, Object>> batchParameters = new LinkedList<>();
 
     public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl, final JdbcConnection connection) {
         super(httpClient, serverUrl, connection);
@@ -174,9 +184,23 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void addBatch() {
-        final List<String> collect = batchStatements.stream().map(this::composeStatement).collect(Collectors.toList());
-        batchStatements.clear();
-        batchStatements.addAll(collect);
+        batchParameters.add(new HashMap<>(parameters));
+        parameters.clear();
+    }
+
+    @Override
+    public int[] executeBatch() throws SQLException {
+        final ArrayList<Integer> arrayList = new ArrayList<>();
+        for (final Map<String, Object> statementParameters : batchParameters){
+            execute(composeStatement(statementParameters));
+            arrayList.add(getUpdateCount());
+        }
+        return ArrayUtils.toPrimitive(arrayList.toArray(new Integer[0]));
+    }
+
+    @Override
+    public void addBatch(final String sql) throws SQLException {
+        throw new SQLException("Adding batch statements is not allowed on prepared statements");
     }
 
     @Override
@@ -343,11 +367,11 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     private String composeStatement() {
-        return composeStatement(preparedStatement);
+        return composeStatement(parameters);
     }
 
-    private String composeStatement(final String statement) {
-        return statement + " - (" + parameters.values().stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
+    private String composeStatement(final Map<String, Object> parameters) {
+        return preparedStatement + " - (" + parameters.values().stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
     }
 
     Map<String, Object> getParameters() {
@@ -367,12 +391,13 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
                 Objects.equals(connection, that.connection) &&
                 Objects.equals(batchStatements, that.batchStatements) &&
                 Objects.equals(closed, that.closed) &&
-                Objects.equals(updateCount, that.updateCount);
+                Objects.equals(updateCount, that.updateCount) &&
+                Objects.equals(batchParameters, that.batchParameters);
     }
 
     @Override
     public final int hashCode() {
-        return Objects.hash(super.hashCode(), preparedStatement, parameters);
+        return Objects.hash(super.hashCode(), preparedStatement, parameters, batchParameters);
     }
 
     @Override
@@ -381,6 +406,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
                 "preparedStatement='" + preparedStatement + '\'' +
                 ", parameters=" + parameters +
                 ", resultSet=" + resultSet +
+                ", batchParameters=" + batchParameters +
                 "} " + super.toString();
     }
 }

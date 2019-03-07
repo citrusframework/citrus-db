@@ -16,23 +16,28 @@
 
 package com.consol.citrus.db.server.transformer;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.json.JsonDataSetWriter;
+import com.consol.citrus.db.server.JdbcServerException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import spark.ResponseTransformer;
 
 public class JsonResponseTransformer implements ResponseTransformer {
 
-    private JsonDataSetWriter jsonDataSetWriter = new JsonDataSetWriter();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public JsonResponseTransformer() {
     }
 
-    JsonResponseTransformer(final JsonDataSetWriter jsonDataSetWriter) {
-        this.jsonDataSetWriter = jsonDataSetWriter;
+    JsonResponseTransformer(final ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     @Override
     public String render(final Object model) {
-        return jsonDataSetWriter.write((DataSet) model);
+        try {
+            return objectMapper.writeValueAsString(model);
+        } catch (final JsonProcessingException e) {
+            throw new JdbcServerException("Could not prepare json response", e);
+        }
     }
 }

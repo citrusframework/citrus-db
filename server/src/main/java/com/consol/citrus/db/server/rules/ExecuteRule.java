@@ -16,22 +16,18 @@
 
 package com.consol.citrus.db.server.rules;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 
 /**
  * @author Christoph Deppisch
  */
-public class ExecuteRule extends Rule<String, DataSet, ExecuteRule> {
+public class ExecuteRule extends Rule<String, DatabaseResult, ExecuteRule> {
 
-    public ExecuteRule() {
-        super();
-    }
-
-    public ExecuteRule(final Mapping<String, DataSet> mapping) {
+    public ExecuteRule(final Mapping<String, DatabaseResult> mapping) {
         super(mapping);
     }
 
-    public ExecuteRule(final Precondition<String> precondition, final Mapping<String, DataSet> mapping) {
+    public ExecuteRule(final Precondition<String> precondition, final Mapping<String, DatabaseResult> mapping) {
         super(precondition, mapping);
     }
 }

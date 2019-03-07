@@ -35,7 +35,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 
-@SuppressWarnings("unchecked")
 public class ExecuteQueryRuleBuilderTest {
 
     private Precondition<String> precondition = Precondition.matchAll();
@@ -54,7 +53,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.applyOn("whatever"), dataSet);
+        assertEquals(rule.applyOn("whatever").getDataSet(), dataSet);
     }
 
     @Test
@@ -72,7 +71,7 @@ public class ExecuteQueryRuleBuilderTest {
         //THEN
         verify(ruleBasedControllerMock).add(rule);
         verify(executeQueryRuleBuilder).thenReturn(file.toPath());
-        assertEquals(rule.applyOn("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever").getDataSet(), expectedDataSet);
     }
 
     @Test
@@ -87,7 +86,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.applyOn("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever").getDataSet(), expectedDataSet);
     }
 
     @Test
@@ -102,7 +101,7 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.applyOn("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever").getDataSet(), expectedDataSet);
     }
 
     @Test
@@ -117,6 +116,6 @@ public class ExecuteQueryRuleBuilderTest {
 
         //THEN
         verify(ruleBasedControllerMock).add(rule);
-        assertEquals(rule.applyOn("whatever"), expectedDataSet);
+        assertEquals(rule.applyOn("whatever").getDataSet(), expectedDataSet);
     }
 }

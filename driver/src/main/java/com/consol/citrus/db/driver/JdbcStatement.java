@@ -16,8 +16,9 @@
 
 package com.consol.citrus.db.driver;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.json.JsonDataSetProducer;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -32,6 +33,10 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class JdbcStatement implements Statement {
@@ -40,14 +45,24 @@ public class JdbcStatement implements Statement {
     final String serverUrl;
     final JdbcConnection connection;
 
-    protected JdbcResultSet resultSet;
+    /** List of batch statements */
+    final List<String> batchStatements = new LinkedList<>();
+
+    /** The JdbcResultSet holding the result data of the query if existent  */
+    JdbcResultSet resultSet;
+
+    /** Whether the statement has been closed */
+    boolean closed;
+
+    /** The update count of the statement */
+    int updateCount;
 
     /**
      * Default constructor using remote client reference.
      * @param httpClient The http client to use for the db communication
      * @param serverUrl Thr url of the server
      */
-    JdbcStatement(final HttpClient httpClient, final String serverUrl, JdbcConnection connection) {
+    JdbcStatement(final HttpClient httpClient, final String serverUrl, final JdbcConnection connection) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
         this.connection = connection;
@@ -66,9 +81,8 @@ public class JdbcStatement implements Statement {
                 throw new SQLException("Failed to execute query: " + sqlQuery);
             }
 
-            DataSet dataSet = new JsonDataSetProducer(response.getEntity().getContent()).produce();
-            resultSet = new JdbcResultSet(dataSet, this);
-
+            final DatabaseResult databaseResult = getDatabaseResult(response);
+            resultSet = new JdbcResultSet(databaseResult.getDataSet(), this);
             return resultSet;
         } catch (final IOException e) {
             throw new SQLException(e);
@@ -111,11 +125,20 @@ public class JdbcStatement implements Statement {
             }
 
             if (response.getEntity().getContentType().getValue().equals("application/json")) {
-                final DataSet produce = new JsonDataSetProducer(response.getEntity().getContent()).produce();
-                resultSet = new JdbcResultSet(produce, this);
+                final DatabaseResult databaseResult = getDatabaseResult(response);
+
+                if(databaseResult.isDataSet()){
+                    resultSet = new JdbcResultSet(databaseResult.getDataSet(), this);
+                    updateCount = -1;
+                    return true;
+                }else{
+                    resultSet = null;
+                    this.updateCount = databaseResult.getAffectedRows();
+                    return false;
+                }
             }
 
-            return true;
+            return false;
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -133,6 +156,8 @@ public class JdbcStatement implements Statement {
             if (response.getStatusLine().getStatusCode() < 200 || response.getStatusLine().getStatusCode() > 299) {
                 throw new SQLException("Failed to close statement");
             }
+            closed = true;
+            closeResultSet();
         } catch (final IOException e) {
             throw new SQLException(e);
         } finally {
@@ -147,6 +172,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setMaxFieldSize(final int max) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -156,10 +182,12 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setMaxRows(final int max) throws SQLException {
+        //currently not required
     }
 
     @Override
     public void setEscapeProcessing(final boolean enable) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -169,6 +197,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setQueryTimeout(final int seconds) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -188,6 +217,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setCursorName(final String name) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -197,21 +227,18 @@ public class JdbcStatement implements Statement {
 
     @Override
     public int getUpdateCount() throws SQLException {
-        //Because currently there are only ResultSet responses implemented,
-        //the hardcoded return value -1 matches the JDBC interface specification
-        return -1;
+        return updateCount;
     }
 
     @Override
     public boolean getMoreResults() throws SQLException {
-        //Multiple results in one statement like
-        //select * from foo; select * from bar;
-        //are currently not supported
-    	return false;
+        //Multiple results in one statement are currently not supported
+        return false;
     }
 
     @Override
     public void setFetchDirection(final int direction) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -221,6 +248,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setFetchSize(final int rows) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -240,17 +268,24 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void addBatch(final String sql) throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'addBatch'");
+        verifyNotClosed();
+        batchStatements.add(sql);
     }
 
     @Override
     public void clearBatch() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'clearBatch'");
+        verifyNotClosed();
+        batchStatements.clear();
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'executeBatch'");
+        final ArrayList<Integer> arrayList = new ArrayList<>();
+        for (final String batchStatement : batchStatements){
+            execute(batchStatement);
+            arrayList.add(getUpdateCount());
+        }
+        return ArrayUtils.toPrimitive(arrayList.toArray(new Integer[0]));
     }
 
     @Override
@@ -305,11 +340,12 @@ public class JdbcStatement implements Statement {
 
     @Override
     public boolean isClosed() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'isClosed'");
+        return closed;
     }
 
     @Override
     public void setPoolable(final boolean poolable) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -334,6 +370,7 @@ public class JdbcStatement implements Statement {
 
     @Override
     public void setLargeMaxRows(final long max) throws SQLException {
+        //currently not required
     }
 
     @Override
@@ -343,7 +380,8 @@ public class JdbcStatement implements Statement {
 
     @Override
     public long[] executeLargeBatch() throws SQLException {
-        throw new SQLException("Not supported JDBC statement function 'executeLargeBatch'");
+        final int[] affectedRowsList = executeBatch();
+        return Arrays.stream(affectedRowsList).asLongStream().toArray();
     }
 
     @Override
@@ -376,6 +414,23 @@ public class JdbcStatement implements Statement {
         throw new SQLException("Not supported JDBC statement function 'isWrapperFor'");
     }
 
+    private DatabaseResult getDatabaseResult(final HttpResponse response) throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(response.getEntity().getContent(), DatabaseResult.class);
+    }
+
+    private void closeResultSet() throws SQLException {
+        if(resultSet != null){
+            resultSet.close();
+        }
+    }
+
+    private void verifyNotClosed() throws SQLException {
+        if(isClosed()){
+            throw new SQLException("The statement has already been closed");
+        }
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -385,12 +440,15 @@ public class JdbcStatement implements Statement {
         final JdbcStatement that = (JdbcStatement) o;
         return Objects.equals(httpClient, that.httpClient) &&
                 Objects.equals(serverUrl, that.serverUrl) &&
-                Objects.equals(connection, that.connection);
+                Objects.equals(connection, that.connection) &&
+                Objects.equals(batchStatements, that.batchStatements) &&
+                Objects.equals(closed, that.closed) &&
+                Objects.equals(updateCount, that.updateCount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(httpClient, serverUrl, connection);
+        return Objects.hash(httpClient, serverUrl, connection, batchStatements, closed, updateCount);
     }
 
     @Override
@@ -399,7 +457,13 @@ public class JdbcStatement implements Statement {
                 "httpClient=" + httpClient +
                 ", serverUrl='" + serverUrl + '\'' +
                 ", connection=" + connection +
-                ", resultSet=" + resultSet +
+                ", batchStatements=" + batchStatements +
+                ", closed=" + closed +
+                ", updateCount=" + updateCount +
                 '}';
+    }
+
+    List<String> getBatchStatements() {
+        return batchStatements;
     }
 }

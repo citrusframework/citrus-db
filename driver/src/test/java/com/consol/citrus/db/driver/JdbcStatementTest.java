@@ -26,7 +26,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.message.BasicHeader;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -38,45 +37,53 @@ import java.sql.SQLException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
-@SuppressWarnings("SqlNoDataSourceInspection")
+@SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
 public class JdbcStatementTest {
 
-    private final HttpClient httpClient = mock(HttpClient.class);
-    private final String serverUrl = "db.klingon-empire.kr";
-    private final JdbcConnection connection = Mockito.mock(JdbcConnection.class);
-    private final JdbcStatement jdbcStatement = new JdbcStatement(httpClient, serverUrl, connection);
+    private JdbcStatement jdbcStatement;
+    private HttpClient httpClient;
+    private final String databaseDatasetResponse =
+            "{\"dataSet\":{\"rows\":[{\"values\":{\"foo\":\"bar\"}}]},\"affectedRows\":-1,\"isDataSet\":true}";
 
-    private final HttpResponse httpResponse = mock(HttpResponse.class);
-    private final StatusLine statusLine = mock(StatusLine.class);
-    private final HttpEntity httpEntity = mock(HttpEntity.class);
+    private static final int AFFECTED_ROWS = 42;
+    private final String databaseAffectedRowsResponse =
+            "{\"dataSet\":{\"rows\":[]},\"affectedRows\":"+AFFECTED_ROWS+",\"isDataSet\":false}";
+
+    private StatusLine statusLine;
+    private HttpEntity httpEntity;
 
     @SuppressWarnings("Duplicates")
     @BeforeMethod
     public void setup() throws Exception{
-        reset(httpClient);
-        reset(httpResponse);
-        reset(statusLine);
+        final HttpResponse httpResponse = mock(HttpResponse.class);
+        final JdbcConnection connection = mock(JdbcConnection.class);
+        final String serverUrl = "db.klingon-empire.kr";
+
+        httpClient = mock(HttpClient.class);
+        statusLine = mock(StatusLine.class);
+        httpEntity = mock(HttpEntity.class);
 
         when(httpClient.execute(any())).thenReturn(httpResponse);
         when(httpResponse.getStatusLine()).thenReturn(statusLine);
         when(httpResponse.getEntity()).thenReturn(httpEntity);
+
+        jdbcStatement = new JdbcStatement(httpClient, serverUrl, connection);
     }
 
     @Test
     public void testExecuteQuery() throws Exception{
 
         //GIVEN
-        final String responsePayload = "[{ \"foo\": \"bar\" }]";
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseDatasetResponse.getBytes()));
 
         //WHEN
         final ResultSet resultSet = jdbcStatement.executeQuery("SELECT something FROM somewhere");
@@ -174,18 +181,50 @@ public class JdbcStatementTest {
     public void testExecute() throws Exception{
 
         //GIVEN
-        final String responsePayload = "[{ \"foo\": \"bar\" }]";
         when(statusLine.getStatusCode()).thenReturn(200);
         when(httpEntity.getContentType())
                 .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
         when(httpEntity.getContent())
-                .thenReturn(new ByteArrayInputStream(responsePayload.getBytes()));
+                .thenReturn(new ByteArrayInputStream(databaseDatasetResponse.getBytes()));
 
         //WHEN
         final boolean isResultSet = jdbcStatement.execute("statement");
 
         //THEN
         assertTrue(isResultSet);
+    }
+
+    @Test
+    public void testExecuteReturnsUpdateCount() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(databaseAffectedRowsResponse.getBytes()));
+
+        //WHEN
+        final boolean isResultSet = jdbcStatement.execute("statement");
+
+        //THEN
+        assertFalse(isResultSet);
+        assertEquals(jdbcStatement.getUpdateCount(), AFFECTED_ROWS);
+    }
+
+    @Test
+    public void testExecuteReturnsFalseOnDefault() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/whatever"));
+
+        //WHEN
+        final boolean isResultSet = jdbcStatement.execute("statement");
+
+        //THEN
+        assertFalse(isResultSet);
     }
 
     @Test(expectedExceptions = SQLException.class)
@@ -219,11 +258,32 @@ public class JdbcStatementTest {
 
         //GIVEN
         when(statusLine.getStatusCode()).thenReturn(200);
+        assertFalse(jdbcStatement.isClosed());
 
         //WHEN
         jdbcStatement.close();
 
         //THEN
+        assertTrue(jdbcStatement.isClosed());
+    }
+
+    @Test
+    public void testCloseAlsoClosesResultSet() throws Exception{
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(databaseDatasetResponse.getBytes()));
+        jdbcStatement.execute("SELECT foo FROM bar");
+        assertFalse(jdbcStatement.getResultSet().isClosed());
+
+        //WHEN
+        jdbcStatement.close();
+
+        //THEN
+        assertTrue(jdbcStatement.getResultSet().isClosed());
     }
 
     @Test(expectedExceptions = SQLException.class)
@@ -253,8 +313,106 @@ public class JdbcStatementTest {
     }
 
     @Test
+    public void testAddBatchStatement() throws SQLException {
+
+        //GIVEN
+        final String statementOne = "SELECT * FROM somewhere";
+        final String statementTwo = "SELECT * FROM somewhereElse";
+
+        //WHEN
+        jdbcStatement.addBatch(statementOne);
+        jdbcStatement.addBatch(statementTwo);
+
+        //THEN
+        assertEquals(jdbcStatement.getBatchStatements().get(0), statementOne);
+        assertEquals(jdbcStatement.getBatchStatements().get(1), statementTwo);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testAddBatchThrowsExceptionOnClosedStatement() throws SQLException {
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        jdbcStatement.close();
+
+        //WHEN
+        jdbcStatement.addBatch("some statement");
+
+        //THEN
+        //exception is thrown
+    }
+
+    @Test
+    public void testClearBatchStatement() throws SQLException {
+
+        //GIVEN
+        jdbcStatement.addBatch("SELECT * FROM somewhere");
+
+        //WHEN
+        jdbcStatement.clearBatch();
+
+        //THEN
+        assertEquals(jdbcStatement.getBatchStatements().size(), 0);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testClearBatchThrowsExceptionOnClosedStatement() throws SQLException {
+
+        //GIVEN
+        when(statusLine.getStatusCode()).thenReturn(200);
+        jdbcStatement.close();
+
+        //WHEN
+        jdbcStatement.clearBatch();
+
+        //THEN
+        //exception is thrown
+    }
+
+    @Test
+    public void getMoreResultsReturnsFalseByDefault() throws SQLException {
+
+        //WHEN
+        final boolean moreResults = jdbcStatement.getMoreResults();
+
+        //THEN
+        assertFalse(moreResults);
+    }
+
+    @Test
+    public void testExecuteBatch() throws Exception {
+
+        //GIVEN
+        prepareBatchStatements();
+
+        final int[] expectedAffectedRows = new int[]{AFFECTED_ROWS, AFFECTED_ROWS};
+
+        //WHEN
+        final int[] affectedRows = jdbcStatement.executeBatch();
+
+        //THEN
+        assertEquals(affectedRows, expectedAffectedRows);
+    }
+    @Test
+    public void testExecuteLargeBatch() throws Exception {
+
+        //GIVEN
+        prepareBatchStatements();
+
+        final long[] expectedAffectedRows = new long[]{AFFECTED_ROWS, AFFECTED_ROWS};
+
+        //WHEN
+        final long[] affectedRows = jdbcStatement.executeLargeBatch();
+
+        //THEN
+        assertEquals(affectedRows, expectedAffectedRows);
+    }
+
+    @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcStatement.class).verify();
+        ToStringVerifier.forClass(JdbcStatement.class)
+                .withIgnoredFields("resultSet")
+                .verify();
     }
 
     @Test
@@ -268,5 +426,18 @@ public class JdbcStatementTest {
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
                 .verify();
+    }
+
+    private void prepareBatchStatements() throws IOException, SQLException {
+        when(statusLine.getStatusCode()).thenReturn(200).thenReturn(200);
+        when(httpEntity.getContentType())
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"))
+                .thenReturn(new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+        when(httpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(databaseAffectedRowsResponse.getBytes()))
+                .thenReturn(new ByteArrayInputStream(databaseAffectedRowsResponse.getBytes()));
+
+        jdbcStatement.addBatch("statement one");
+        jdbcStatement.addBatch("statement two");
     }
 }

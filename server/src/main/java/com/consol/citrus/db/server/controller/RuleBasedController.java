@@ -16,9 +16,20 @@
 
 package com.consol.citrus.db.server.controller;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.server.JdbcServerException;
-import com.consol.citrus.db.server.rules.*;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
+import com.consol.citrus.db.server.rules.CloseConnectionRule;
+import com.consol.citrus.db.server.rules.CloseStatementRule;
+import com.consol.citrus.db.server.rules.CommitTransactionRule;
+import com.consol.citrus.db.server.rules.CreateCallableStatementRule;
+import com.consol.citrus.db.server.rules.CreatePreparedStatementRule;
+import com.consol.citrus.db.server.rules.CreateStatementRule;
+import com.consol.citrus.db.server.rules.ExecuteQueryRule;
+import com.consol.citrus.db.server.rules.ExecuteRule;
+import com.consol.citrus.db.server.rules.ExecuteUpdateRule;
+import com.consol.citrus.db.server.rules.OpenConnectionRule;
+import com.consol.citrus.db.server.rules.RollbackTransactionRule;
+import com.consol.citrus.db.server.rules.Rule;
+import com.consol.citrus.db.server.rules.StartTransactionRule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +64,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    protected DataSet handleQuery(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleQuery(final String sql){
         return executeQueryRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
@@ -62,7 +73,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    protected DataSet handleExecute(final String sql) throws JdbcServerException {
+    protected DatabaseResult handleExecute(final String sql){
         return executeRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
@@ -71,7 +82,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    protected int handleUpdate(final String sql) throws JdbcServerException {
+    protected int handleUpdate(final String sql){
         return executeUpdateRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
@@ -80,7 +91,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    public void openConnection(final Map<String, String> properties) throws JdbcServerException {
+    public void openConnection(final Map<String, String> properties){
         openConnectionRules.stream()
                 .filter(rule -> rule.matches(properties))
                 .findFirst()
@@ -91,7 +102,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    public void closeConnection() throws JdbcServerException {
+    public void closeConnection(){
         closeConnectionRules.stream()
                 .filter(rule -> rule.matches(null))
                 .findFirst()
@@ -102,7 +113,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    public void createStatement() throws JdbcServerException {
+    public void createStatement(){
         createStatementRules.stream()
                 .filter(rule -> rule.matches(null))
                 .findFirst()
@@ -113,7 +124,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    public void createPreparedStatement(final String sql) throws JdbcServerException {
+    public void createPreparedStatement(final String sql){
         createPreparedStatementRules.stream()
                 .filter(rule -> rule.matches(sql))
                 .findFirst()
@@ -124,7 +135,7 @@ public class RuleBasedController extends AbstractJdbcController{
     }
 
     @Override
-    public void closeStatement() throws JdbcServerException {
+    public void closeStatement(){
         closeStatementRules.stream()
                 .filter(rule -> rule.matches(null))
                 .findFirst()

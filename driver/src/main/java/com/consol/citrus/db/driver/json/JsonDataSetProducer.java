@@ -18,13 +18,21 @@ package com.consol.citrus.db.driver.json;
 
 import com.consol.citrus.db.driver.JdbcDriverException;
 import com.consol.citrus.db.driver.data.Row;
-import com.consol.citrus.db.driver.dataset.*;
+import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.dataset.DataSetBuilder;
+import com.consol.citrus.db.driver.dataset.DataSetProducer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Christoph Deppisch
@@ -36,23 +44,23 @@ public class JsonDataSetProducer implements DataSetProducer {
 
     private DataSetBuilder builder;
 
-    public JsonDataSetProducer(File file) {
+    public JsonDataSetProducer(final File file) {
         this(file.toPath());
     }
 
-    public JsonDataSetProducer(Path path) {
+    public JsonDataSetProducer(final Path path) {
         try {
             this.input = new FileInputStream(path.toFile());
-        } catch (FileNotFoundException e) {
+        } catch (final FileNotFoundException e) {
             throw new JdbcDriverException("Failed to access json input file content", e);
         }
     }
 
-    public JsonDataSetProducer(String jsonInput) {
+    public JsonDataSetProducer(final String jsonInput) {
         this.input = new ByteArrayInputStream(jsonInput.getBytes());
     }
 
-    public JsonDataSetProducer(InputStream inputStream) {
+    public JsonDataSetProducer(final InputStream inputStream) {
         this.input = inputStream;
     }
 
@@ -65,14 +73,14 @@ public class JsonDataSetProducer implements DataSetProducer {
         builder = new DataSetBuilder();
 
         try {
-            List<Map<String, Object>> rawDataSet = new ObjectMapper().readValue(input, List.class);
+            final List<Map<String, Object>> rawDataSet = new ObjectMapper().readValue(input, List.class);
 
             rawDataSet.forEach(rowData -> {
-                Row row = new Row();
+                final Row row = new Row();
                 row.getValues().putAll(rowData);
                 builder.add(row);
             });
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new JdbcDriverException("Unable to read table data set from Json input", e);
         }
 

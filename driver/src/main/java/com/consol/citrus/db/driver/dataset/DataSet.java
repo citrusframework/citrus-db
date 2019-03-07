@@ -17,6 +17,9 @@
 package com.consol.citrus.db.driver.dataset;
 
 import com.consol.citrus.db.driver.data.Row;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +35,19 @@ public class DataSet {
     /** Cursor position on selected row */
     private AtomicInteger cursor = new AtomicInteger(0);
 
+    public DataSet() {
+    }
+
+    @JsonCreator
+    public DataSet(@JsonProperty("rows") final List<Row> rows){
+        this.rows.addAll(rows);
+    }
+
     /**
      * Gets next row in this data set based on cursor position.
      * @return The next row of the dataset or null if no further row is available
      */
+    @JsonIgnore
     public Row getNextRow(){
         final int index = cursor.getAndIncrement();
         if(rows.size() <= index){
@@ -49,6 +61,7 @@ public class DataSet {
      * Gets list of columns in this dataset.
      * @return The list of columns of the dataset
      */
+    @JsonIgnore
     public List<String> getColumns() {
         return rows.stream().flatMap(row -> row.getColumns().stream()).distinct().collect(Collectors.toList());
     }
@@ -65,11 +78,13 @@ public class DataSet {
      * Gets current row index.
      * @return The current curser of the DataSet
      */
+    @JsonIgnore
     public int getCursor() {
         return cursor.get();
     }
 
     @Override
+    @JsonIgnore
     public final boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof DataSet)) return false;
@@ -78,11 +93,13 @@ public class DataSet {
     }
 
     @Override
+    @JsonIgnore
     public final int hashCode() {
         return Objects.hash(rows);
     }
 
     @Override
+    @JsonIgnore
     public String toString() {
         return "DataSet{" +
                 "rows=" + rows +

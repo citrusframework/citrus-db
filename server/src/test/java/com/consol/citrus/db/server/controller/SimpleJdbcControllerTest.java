@@ -18,6 +18,7 @@ package com.consol.citrus.db.server.controller;
 
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetProducer;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.server.JdbcServerException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -48,11 +49,11 @@ public class SimpleJdbcControllerTest {
         when(dataSetProducerMock.produce()).thenReturn(expectedDataSet);
 
         //WHEN
-        final DataSet dataSet = simpleJdbcController.handleQuery("Some statement");
+        final DatabaseResult databaseResult = simpleJdbcController.handleQuery("Some statement");
 
         //THEN
         verify(dataSetProducerMock).produce();
-        assertEquals(dataSet, expectedDataSet);
+        assertEquals(databaseResult.getDataSet(), expectedDataSet);
     }
 
     @Test(expectedExceptions = JdbcServerException.class)
@@ -78,5 +79,32 @@ public class SimpleJdbcControllerTest {
 
         //THEN
         assertEquals(affectedRows, expectedAffectedRows);
+    }
+
+    @Test
+    public void testHandleExecuteDelegatesToDataSetProducer() throws Exception{
+
+        //GIVEN
+        final DataSet expectedDataSet = mock(DataSet.class);
+        when(dataSetProducerMock.produce()).thenReturn(expectedDataSet);
+
+        //WHEN
+        final DatabaseResult databaseResult = simpleJdbcController.handleExecute("Some statement");
+
+        //THEN
+        verify(dataSetProducerMock).produce();
+        assertEquals(databaseResult.getDataSet(), expectedDataSet);
+    }
+
+    @Test(expectedExceptions = JdbcServerException.class)
+    public void testExceptionHandlingOfHandleExecute() throws Exception{
+
+        //GIVEN
+        when(dataSetProducerMock.produce()).thenThrow(SQLException.class);
+
+        //WHEN
+        simpleJdbcController.handleExecute("Some statement");
+
+        //THEN
     }
 }

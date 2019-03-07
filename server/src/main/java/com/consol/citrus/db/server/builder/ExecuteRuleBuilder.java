@@ -19,17 +19,20 @@ package com.consol.citrus.db.server.builder;
 import com.consol.citrus.db.driver.data.Table;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.TableDataSetProducer;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
 import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
 import com.consol.citrus.db.server.JdbcServerException;
 import com.consol.citrus.db.server.controller.RuleBasedController;
-import com.consol.citrus.db.server.rules.*;
+import com.consol.citrus.db.server.rules.ExecuteRule;
+import com.consol.citrus.db.server.rules.Mapping;
+import com.consol.citrus.db.server.rules.Precondition;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.sql.SQLException;
 
-public class ExecuteRuleBuilder extends AbstractRuleBuilder<ExecuteRule, String, DataSet>{
+public class ExecuteRuleBuilder extends AbstractRuleBuilder<ExecuteRule, String, DatabaseResult>{
 
     private final Precondition<String> precondition;
 
@@ -39,7 +42,7 @@ public class ExecuteRuleBuilder extends AbstractRuleBuilder<ExecuteRule, String,
     }
 
     public ExecuteRule thenReturn(final DataSet dataSet) {
-        return createRule(precondition, (any) -> dataSet);
+        return createRule(precondition, any -> new DatabaseResult(dataSet));
     }
 
     public ExecuteRule thenReturn(final File file) {
@@ -61,17 +64,17 @@ public class ExecuteRuleBuilder extends AbstractRuleBuilder<ExecuteRule, String,
             throw new JdbcServerException(e);
         }
 
-        return createRule(precondition, (any) -> dataSet);
+        return createRule(precondition, any -> new DatabaseResult(dataSet));
     }
 
     public ExecuteRule thenReturn() {
-        return createRule(precondition, (any) -> new DataSet());
+        return createRule(precondition, any -> new DatabaseResult(new DataSet()));
     }
 
     @Override
     protected ExecuteRule createRule(
             final Precondition<String> precondition,
-            final Mapping<String, DataSet> mapping) {
+            final Mapping<String, DatabaseResult> mapping) {
         final ExecuteRule rule = new ExecuteRule(precondition, mapping);
         addRule(rule);
         return rule;

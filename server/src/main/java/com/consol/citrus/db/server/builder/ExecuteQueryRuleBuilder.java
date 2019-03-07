@@ -19,6 +19,7 @@ package com.consol.citrus.db.server.builder;
 import com.consol.citrus.db.driver.data.Table;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.TableDataSetProducer;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.consol.citrus.db.driver.json.JsonDataSetProducer;
 import com.consol.citrus.db.driver.xml.XmlDataSetProducer;
 import com.consol.citrus.db.server.JdbcServerException;
@@ -31,7 +32,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.sql.SQLException;
 
-public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRule, String, DataSet>{
+public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRule, String, DatabaseResult>{
 
     private final Precondition<String> precondition;
 
@@ -41,7 +42,7 @@ public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRul
     }
 
     public ExecuteQueryRule thenReturn(final DataSet dataSet) {
-        return createRule(precondition, (any) -> dataSet);
+        return createRule(precondition, any -> new DatabaseResult(dataSet));
     }
 
     public ExecuteQueryRule thenReturn(final File file) {
@@ -63,13 +64,13 @@ public class ExecuteQueryRuleBuilder extends AbstractRuleBuilder<ExecuteQueryRul
             throw new JdbcServerException(e);
         }
 
-        return createRule(precondition, (any) -> dataSet);
+        return createRule(precondition, any -> new DatabaseResult(dataSet));
     }
 
     @Override
     protected ExecuteQueryRule createRule(
             final Precondition<String> precondition,
-            final Mapping<String, DataSet> mapping) {
+            final Mapping<String, DatabaseResult> mapping) {
         final ExecuteQueryRule rule = new ExecuteQueryRule(precondition, mapping);
         addRule(rule);
         return rule;

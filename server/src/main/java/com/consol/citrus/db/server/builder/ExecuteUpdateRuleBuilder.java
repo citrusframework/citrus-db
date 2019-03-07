@@ -32,15 +32,15 @@ public class ExecuteUpdateRuleBuilder extends AbstractRuleBuilder<ExecuteUpdateR
     }
 
     public ExecuteUpdateRule thenReturn(final Integer rowsUpdated) {
-        return createRule(precondition, (any) -> rowsUpdated);
+        return createRule(precondition, any -> rowsUpdated);
     }
 
     public ExecuteUpdateRule thenReturn() {
-        return createRule(precondition, (any) -> 0);
+        return createRule(precondition, any -> 0);
     }
 
     public ExecuteUpdateRule thenThrow(final JdbcServerException exception) {
-        return createRule(precondition, (any) -> { throw exception; });
+        return createRule(precondition, any -> { throw exception; });
     }
 
     @Override

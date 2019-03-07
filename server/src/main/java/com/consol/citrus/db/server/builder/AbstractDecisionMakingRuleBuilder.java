@@ -114,12 +114,12 @@ public abstract class AbstractDecisionMakingRuleBuilder<T extends Rule<P, Boolea
 
     /** Returns a Mapping that accepts any value */
     private Mapping<P, Boolean> accept() {
-        return (any) -> true;
+        return any -> true;
     }
 
     /** Return a Mapping, that refuses any value */
     private Mapping<P, Boolean> refuse() {
-        return (any) -> false;
+        return any -> false;
     }
 
 

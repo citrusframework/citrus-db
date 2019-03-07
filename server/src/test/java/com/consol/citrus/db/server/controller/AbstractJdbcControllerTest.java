@@ -16,8 +16,7 @@
 
 package com.consol.citrus.db.server.controller;
 
-import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.server.JdbcServerException;
+import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -37,7 +36,7 @@ public class AbstractJdbcControllerTest {
 
     //return values for stubbed spy methods
     private final int affectedRows = new Random().nextInt();
-    private final DataSet dataSet = mock(DataSet.class);
+    private final DatabaseResult databaseResult = mock(DatabaseResult.class);
 
     //GIVEN
     private String sql = "statement";
@@ -46,44 +45,44 @@ public class AbstractJdbcControllerTest {
     private void setUp(){
         jdbcController = spy(new AbstractJdbcController() {
             @Override
-            protected DataSet handleQuery(final String sql) throws JdbcServerException {
+            protected DatabaseResult handleQuery(final String sql){
                 return null;
             }
 
             @Override
-            protected DataSet handleExecute(final String sql) throws JdbcServerException {
+            protected DatabaseResult handleExecute(final String sql){
                 return null;
             }
 
             @Override
-            protected int handleUpdate(final String sql) throws JdbcServerException {
+            protected int handleUpdate(final String sql){
                 return 0;
             }
         });
 
-        doReturn(dataSet).when(jdbcController).handleQuery(anyString());
-        doReturn(dataSet).when(jdbcController).handleExecute(anyString());
+        doReturn(databaseResult).when(jdbcController).handleQuery(anyString());
+        doReturn(databaseResult).when(jdbcController).handleExecute(anyString());
         doReturn(affectedRows).when(jdbcController).handleUpdate(anyString());
     }
 
     @Test
     public void testExecuteQueryDelegatesToHandleQuery(){
         //WHEN
-        DataSet dataSet = jdbcController.executeQuery(sql);
+        final DatabaseResult databaseResult = jdbcController.executeQuery(sql);
 
         //THEN
         verify(jdbcController).handleQuery(sql);
-        Assert.assertEquals(dataSet, this.dataSet);
+        Assert.assertEquals(databaseResult, this.databaseResult);
     }
 
     @Test
     public void testExecuteDelegatesToHandleExecute(){
         //WHEN
-        DataSet dataSet = jdbcController.executeStatement(sql);
+        final DatabaseResult databaseResult = jdbcController.executeStatement(sql);
 
         //THEN
         verify(jdbcController).handleExecute(sql);
-        Assert.assertEquals(dataSet, this.dataSet);
+        Assert.assertEquals(databaseResult, this.databaseResult);
     }
 
     @Test

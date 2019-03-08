@@ -3,28 +3,47 @@ package com.consol.citrus.db.driver.data;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
 import java.io.Writer;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.Objects;
 
+import static java.lang.Math.toIntExact;
+
+/**
+ * CLOB implementation of the Citrus JDBC Driver.
+ *
+ * <b>Caution:</b>
+ * This CLOB implementation is limited to String size objects to reduce the memory footprint.
+ */
 public class CitrusClob implements Clob {
 
-    private final StringBuffer stringBuffer = new StringBuffer();
+    private final StringBuilder stringBuilder = new StringBuilder();
 
     @Override
-    public long length() throws SQLException {
-        return 0;
+    public long length() {
+        return stringBuilder.length();
     }
 
     @Override
-    public String getSubString(final long pos, final int length) throws SQLException {
+    public String getSubString(final long pos, final int length) {
+        final long longOffset = applyOffset(pos);
+        if(fitsInInt(longOffset)){
+            final int offset = toIntExact(longOffset);
+            return stringBuilder.substring(offset, offset + length);
+        }
+
         return null;
     }
 
+    private long applyOffset(long pos) {
+        return pos - 1;
+    }
+
     @Override
-    public Reader getCharacterStream() throws SQLException {
-        return null;
+    public Reader getCharacterStream() {
+        return new StringReader(stringBuilder.toString());
     }
 
     @Override
@@ -43,8 +62,15 @@ public class CitrusClob implements Clob {
     }
 
     @Override
-    public int setString(final long pos, final String str) throws SQLException {
-        return 0;
+    public int setString(final long pos, final String str) {
+        final long offset = applyOffset(pos);
+        if(fitsInInt(offset)){
+            stringBuilder.insert((int) offset, str);
+            return str.length();
+        }else {
+            return 0;
+        }
+
     }
 
     @Override
@@ -79,19 +105,25 @@ public class CitrusClob implements Clob {
 
     @Override
     public String toString() {
-        return "CitrusClob{}";
+        return "CitrusClob{" +
+                "stringBuilder=" + stringBuilder +
+                '}';
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof CitrusClob)) return false;
         final CitrusClob that = (CitrusClob) o;
-        return Objects.equals(stringBuffer.toString(), that.stringBuffer.toString());
+        return  Objects.equals(stringBuilder.toString(), that.stringBuilder.toString());
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(stringBuffer);
+    public final int hashCode() {
+        return Objects.hash(stringBuilder);
+    }
+
+    private boolean fitsInInt(final long value) {
+        return (int)value == value;
     }
 }

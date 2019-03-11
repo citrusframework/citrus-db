@@ -1,6 +1,7 @@
 package com.consol.citrus.db.driver.data;
 
 import com.jparams.verifier.tostring.ToStringVerifier;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.commons.io.IOUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -83,6 +84,20 @@ public class CitrusClobTest {
 
         //THEN
         assertNull(subString);
+    }
+
+    @Test
+    public void testEqualsContract(){
+        final StringBuilder one = new StringBuilder();
+        one.append("foo");
+        final StringBuilder two = new StringBuilder();
+        one.append("bar");
+
+        EqualsVerifier
+                .forClass(CitrusClob.class)
+                .withNonnullFields("stringBuilder")
+                .withPrefabValues(StringBuilder.class, one, two)
+                .verify();
     }
 
     @Test

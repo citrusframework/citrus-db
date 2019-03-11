@@ -103,6 +103,45 @@ public class CitrusClobTest {
     }
 
     @Test
+    public void testPositionWithStringNeedle() throws Exception{
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        //WHEN
+        final long position = citrusClob.position("and", 1);
+
+        //THEN
+        assertEquals(position, 10);
+    }
+
+    @Test
+    public void testPositionWithStringNeedleWithoutMatch() throws Exception{
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        //WHEN
+        final long position = citrusClob.position("and", 13);
+
+        //THEN
+        assertEquals(position, -1);
+    }
+
+    @Test
+    public void testPositionWithLongPositionReturnsMinusOne() throws Exception{
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        //WHEN
+        final long position = citrusClob.position("and", Long.MAX_VALUE);
+
+        //THEN
+        assertEquals(position, -1);
+    }
+
+    @Test
     public void testEqualsContract(){
         final StringBuilder one = new StringBuilder();
         one.append("foo");

@@ -1,5 +1,6 @@
 package com.consol.citrus.db.driver.data;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -37,18 +38,14 @@ public class CitrusClob implements Clob {
         return null;
     }
 
-    private long applyOffset(long pos) {
-        return pos - 1;
-    }
-
     @Override
     public Reader getCharacterStream() {
         return new StringReader(stringBuilder.toString());
     }
 
     @Override
-    public InputStream getAsciiStream() throws SQLException {
-        return null;
+    public InputStream getAsciiStream() {
+        return new ByteArrayInputStream(stringBuilder.toString().getBytes());
     }
 
     @Override
@@ -125,5 +122,9 @@ public class CitrusClob implements Clob {
 
     private boolean fitsInInt(final long value) {
         return (int)value == value;
+    }
+
+    private long applyOffset(final long pos) {
+        return pos - 1;
     }
 }

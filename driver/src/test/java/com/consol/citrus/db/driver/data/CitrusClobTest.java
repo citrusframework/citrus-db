@@ -6,6 +6,8 @@ import org.apache.commons.io.IOUtils;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
 
@@ -84,6 +86,20 @@ public class CitrusClobTest {
 
         //THEN
         assertNull(subString);
+    }
+
+    @Test
+    public void testGetAsciiStream() throws Exception{
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        //WHEN
+        final InputStream asciiStream = citrusClob.getAsciiStream();
+
+        //THEN
+        final String clob = IOUtils.toString(asciiStream, Charset.forName("UTF8"));
+        assertEquals(clob, sampleText);
     }
 
     @Test

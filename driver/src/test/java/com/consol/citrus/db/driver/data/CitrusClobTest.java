@@ -185,6 +185,44 @@ public class CitrusClobTest {
     }
 
     @Test
+    public void testSetStringWithOffsetAndLengthExtendingContent() throws Exception{
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        final String textToAdd = "just calm down and kill zombies and stuff";
+
+        final String expectedClobContent = "Keep calm and kill zombies";
+
+        //WHEN
+        final long writtenCharacters = citrusClob.setString(15, textToAdd, 19, 12);
+
+        //THEN
+        final String clobContent = IOUtils.toString(citrusClob.getCharacterStream());
+        assertEquals(clobContent, expectedClobContent);
+        assertEquals(writtenCharacters, 12);
+    }
+
+    @Test
+    public void testSetStringWithOffsetAndLengthReplacingContent() throws Exception{
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        final String textToAdd = "but";
+
+        final String expectedClobContent = "Keep calm but allons-y";
+
+        //WHEN
+        final long writtenCharacters = citrusClob.setString(11, textToAdd, 0, 3);
+
+        //THEN
+        final String clobContent = IOUtils.toString(citrusClob.getCharacterStream());
+        assertEquals(clobContent, expectedClobContent);
+        assertEquals(writtenCharacters, 3);
+    }
+
+    @Test
     public void testEqualsContract(){
         final StringBuilder one = new StringBuilder();
         one.append("foo");

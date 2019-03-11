@@ -68,19 +68,17 @@ public class CitrusClob implements Clob {
 
     @Override
     public int setString(final long pos, final String str) {
-        final long offset = applyOffset(pos);
-        if(fitsInInt(offset)){
-            stringBuilder.insert((int) offset, str);
-            return str.length();
-        }else {
-            return 0;
-        }
-
+        return setString(pos, str, 0, str.length());
     }
 
     @Override
-    public int setString(final long pos, final String str, final int offset, final int len) throws SQLException {
-        return 0;
+    public int setString(final long pos, final String str, final int offset, final int len) {
+        final long positionWithOffset = applyOffset(pos);
+        if(fitsInInt(positionWithOffset)){
+            return setContent((int) positionWithOffset, str, offset, len);
+        }else {
+            return 0;
+        }
     }
 
     @Override
@@ -134,5 +132,27 @@ public class CitrusClob implements Clob {
 
     private long applyOffset(final long pos) {
         return pos - 1;
+    }
+
+    /**
+     * Alters the {@link StringBuilder} of this @{@link CitrusClob} to contain the given string.
+     * If the size of the altered string exceeds the current StringBuilder size, it is automatically extended to the
+     * required capacity.
+     * @param position The start position for altering the content. Starts at 0.
+     * @param stringToSet The String to set the content from.
+     * @param offset  the index of the first character of {@code stringToSet} to be inserted. Starting at 0.
+     * @param length The length of the string to set.
+     * @return
+     */
+    private int setContent(final int position, final String stringToSet, final int offset, final int length) {
+        final boolean expandsString = position + length > stringBuilder.length();
+
+        if(expandsString){
+            stringBuilder.delete(position, stringBuilder.length());
+            stringBuilder.insert(position, stringToSet.toCharArray(), offset, length);
+        }else{
+            stringBuilder.replace(position, position+length, stringToSet);
+        }
+        return length;
     }
 }

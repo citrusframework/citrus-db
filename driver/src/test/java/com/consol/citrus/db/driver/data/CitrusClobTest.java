@@ -7,6 +7,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.sql.Clob;
 import java.sql.SQLException;
@@ -220,6 +221,27 @@ public class CitrusClobTest {
         final String clobContent = IOUtils.toString(citrusClob.getCharacterStream());
         assertEquals(clobContent, expectedClobContent);
         assertEquals(writtenCharacters, 3);
+    }
+
+    @Test
+    public void testSetAsciiStream() throws Exception{
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        final int position = 15;
+        final String textToAdd = "fire photon torpedoes";
+
+        final String expectedClobContent = "Keep calm and fire photon torpedoes";
+
+        //WHEN
+        final OutputStream outputStream = citrusClob.setAsciiStream(position);
+        outputStream.write(textToAdd.getBytes());
+        outputStream.close();
+
+        //THEN
+        final String clobContent = IOUtils.toString(citrusClob.getCharacterStream());
+        assertEquals(clobContent, expectedClobContent);
     }
 
     @Test

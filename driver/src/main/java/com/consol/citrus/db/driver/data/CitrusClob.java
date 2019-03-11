@@ -82,8 +82,17 @@ public class CitrusClob implements Clob {
     }
 
     @Override
-    public OutputStream setAsciiStream(final long pos) throws SQLException {
-        return null;
+    public OutputStream setAsciiStream(final long pos) {
+        return new OutputStream() {
+
+            private long position = pos;
+
+            @Override
+            public void write(final int b) {
+                final byte character = (byte) b;
+                setString(position++, new String(new byte[]{character}));
+            }
+        };
     }
 
     @Override

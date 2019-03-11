@@ -75,7 +75,7 @@ public class CitrusClob implements Clob {
     public int setString(final long pos, final String str, final int offset, final int len) {
         final long positionWithOffset = applyOffset(pos);
         if(fitsInInt(positionWithOffset)){
-            return setContent((int) positionWithOffset, str, offset, len);
+            return setContent(stringBuilder, (int) positionWithOffset, str, offset, len);
         }else {
             return 0;
         }
@@ -96,8 +96,26 @@ public class CitrusClob implements Clob {
     }
 
     @Override
-    public Writer setCharacterStream(final long pos) throws SQLException {
-        return null;
+    public Writer setCharacterStream(final long pos) {
+        return new Writer() {
+
+            private StringBuilder buffer = new StringBuilder();
+
+            @Override
+            public void write(final char[] cbuf, final int off, final int len) {
+                setContent(buffer, off, new String(cbuf), 0, len);
+            }
+
+            @Override
+            public void flush() {
+                buffer = new StringBuilder();
+            }
+
+            @Override
+            public void close() {
+                setString(pos, buffer.toString());
+            }
+        };
     }
 
     @Override
@@ -147,13 +165,14 @@ public class CitrusClob implements Clob {
      * Alters the {@link StringBuilder} of this @{@link CitrusClob} to contain the given string.
      * If the size of the altered string exceeds the current StringBuilder size, it is automatically extended to the
      * required capacity.
+     * @param stringBuilder The string builder to alter
      * @param position The start position for altering the content. Starts at 0.
      * @param stringToSet The String to set the content from.
      * @param offset  the index of the first character of {@code stringToSet} to be inserted. Starting at 0.
      * @param length The length of the string to set.
      * @return
      */
-    private int setContent(final int position, final String stringToSet, final int offset, final int length) {
+    private int setContent(final StringBuilder stringBuilder, final int position, final String stringToSet, final int offset, final int length) {
         final boolean expandsString = position + length > stringBuilder.length();
 
         if(expandsString){

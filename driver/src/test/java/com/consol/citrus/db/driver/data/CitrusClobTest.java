@@ -129,13 +129,56 @@ public class CitrusClobTest {
     }
 
     @Test
-    public void testPositionWithLongPositionReturnsMinusOne() throws Exception{
+    public void testPositionWithStringNeedleAndLongPositionReturnsMinusOne() throws Exception{
 
         //GIVEN
         citrusClob.setString(1, sampleText);
 
         //WHEN
         final long position = citrusClob.position("and", Long.MAX_VALUE);
+
+        //THEN
+        assertEquals(position, -1);
+    }
+
+    @Test
+    public void testPositionWithClobNeedle() throws Exception{
+
+        //GIVEN
+        final CitrusClob needle = createClobNeedle();
+        citrusClob.setString(1, sampleText);
+
+
+        //WHEN
+        final long position = citrusClob.position(needle, 1);
+
+        //THEN
+        assertEquals(position, 10);
+    }
+
+    @Test
+    public void testPositionWithClobNeedleWithoutMatch() throws Exception{
+
+        //GIVEN
+        final CitrusClob needle = createClobNeedle();
+        citrusClob.setString(1, sampleText);
+
+        //WHEN
+        final long position = citrusClob.position(needle, 13);
+
+        //THEN
+        assertEquals(position, -1);
+    }
+
+    @Test
+    public void testPositionWithClobNeedleAndLongPositionReturnsMinusOne() throws Exception{
+
+        //GIVEN
+        final CitrusClob needle = createClobNeedle();
+        citrusClob.setString(1, sampleText);
+
+        //WHEN
+        final long position = citrusClob.position(needle, Long.MAX_VALUE);
 
         //THEN
         assertEquals(position, -1);
@@ -158,5 +201,11 @@ public class CitrusClobTest {
     @Test
     public void testToString(){
         ToStringVerifier.forClass(CitrusClob.class).verify();
+    }
+
+    private CitrusClob createClobNeedle() {
+        final CitrusClob needle = new CitrusClob();
+        needle.setString(1, "and");
+        return needle;
     }
 }

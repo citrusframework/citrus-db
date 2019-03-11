@@ -58,7 +58,12 @@ public class CitrusClob implements Clob {
 
     @Override
     public long position(final Clob searchstr, final long start) throws SQLException {
-        return 0;
+        final long clobLength = searchstr.length();
+        if(fitsInInt(clobLength)){
+            final String subString = searchstr.getSubString(1, (int)clobLength);
+            return position(subString, start);
+        }
+        return -1;
     }
 
     @Override

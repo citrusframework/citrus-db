@@ -268,15 +268,9 @@ public class CitrusClobTest {
 
     @Test
     public void testEqualsContract(){
-        final StringBuilder one = new StringBuilder();
-        one.append("foo");
-        final StringBuilder two = new StringBuilder();
-        one.append("bar");
-
         EqualsVerifier
                 .forClass(CitrusClob.class)
                 .withNonnullFields("stringBuilder")
-                .withPrefabValues(StringBuilder.class, one, two)
                 .verify();
     }
 

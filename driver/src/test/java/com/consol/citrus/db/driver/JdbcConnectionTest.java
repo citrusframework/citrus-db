@@ -40,7 +40,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
-@SuppressWarnings("SqlNoDataSourceInspection")
+@SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
 public class JdbcConnectionTest {
 
     private final HttpClient httpClient = mock(HttpClient.class);
@@ -188,7 +188,7 @@ public class JdbcConnectionTest {
         when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(transactionState.getBytes()));
 
         //WHEN
-        final Boolean isAutoCommit = jdbcConnection.getAutoCommit();
+        final boolean isAutoCommit = jdbcConnection.getAutoCommit();
 
         //THEN
         Assert.assertFalse(isAutoCommit);
@@ -338,7 +338,7 @@ public class JdbcConnectionTest {
     }
 
     @Test
-    public void testCreateClb() throws Exception{
+    public void testCreateClb() {
 
         //GIVEN
         final Clob expectedClob = new CitrusClob();

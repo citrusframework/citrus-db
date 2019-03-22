@@ -119,8 +119,10 @@ public class CitrusClob implements Clob {
     }
 
     @Override
-    public void truncate(final long len) throws SQLException {
-
+    public void truncate(final long len) {
+        if(fitsInInt(len)){
+            stringBuilder.delete((int)len, stringBuilder.length());
+        }
     }
 
     @Override
@@ -170,12 +172,16 @@ public class CitrusClob implements Clob {
      * @param stringToSet The String to set the content from.
      * @param offset  the index of the first character of {@code stringToSet} to be inserted. Starting at 0.
      * @param length The length of the string to set.
-     * @return
+     * @return The length of the string that has been set
      */
-    private int setContent(final StringBuilder stringBuilder, final int position, final String stringToSet, final int offset, final int length) {
-        final boolean expandsString = position + length > stringBuilder.length();
+    private int setContent(final StringBuilder stringBuilder,
+                           final int position,
+                           final String stringToSet,
+                           final int offset,
+                           final int length) {
+        final boolean expandsCurrentContent = position + length > stringBuilder.length();
 
-        if(expandsString){
+        if(expandsCurrentContent){
             stringBuilder.delete(position, stringBuilder.length());
             stringBuilder.insert(position, stringToSet.toCharArray(), offset, length);
         }else{

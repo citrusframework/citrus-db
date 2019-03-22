@@ -267,6 +267,22 @@ public class CitrusClobTest {
     }
 
     @Test
+    public void testTruncate() throws Exception {
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+        final String expectedTruncatedString = "Keep calm";
+        final long desiredLength = expectedTruncatedString.length();
+
+        //WHEN
+        citrusClob.truncate(desiredLength);
+
+        //THEN
+        final String clobContent = IOUtils.toString(citrusClob.getCharacterStream());
+        assertEquals(clobContent, expectedTruncatedString);
+    }
+
+    @Test
     public void testEqualsContract(){
         EqualsVerifier
                 .forClass(CitrusClob.class)

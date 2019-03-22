@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.sql.Clob;
@@ -297,6 +298,41 @@ public class CitrusClobTest {
 
         //THEN
         assertEquals(citrusClob.length(), 0);
+    }
+
+    @Test
+    public void testGetCharacterStream() throws Exception {
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+        final String expectedStreamContent = "calm and";
+
+        //WHEN
+        final Reader characterStream = citrusClob.getCharacterStream(6, 8);
+
+        //THEN
+        final String streamContent = IOUtils.toString(characterStream);
+        assertEquals(streamContent, expectedStreamContent);
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testGetCharacterStreamThrowsExceptionOnInvalidPosition() throws SQLException {
+
+        //WHEN
+        citrusClob.getCharacterStream(0, 5);
+
+        //THEN
+        //ExceptionIsThrown
+    }
+
+    @Test(expectedExceptions = SQLException.class)
+    public void testGetCharacterStreamThrowsExceptionWhenReferenceExceedsClobSize() throws SQLException {
+
+        //WHEN
+        citrusClob.getCharacterStream(5, 42);
+
+        //THEN
+        //ExceptionIsThrown
     }
 
     @Test

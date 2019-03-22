@@ -132,6 +132,21 @@ public class CitrusClob implements Clob {
 
     @Override
     public Reader getCharacterStream(final long pos, final long length) throws SQLException {
+        if(pos < 1){
+            throw new SQLException("position is < 1 but CLOB starts at 1.");
+        }
+
+        if(pos + length > stringBuilder.length()){
+            throw new SQLException("CLOB references exceeds actual CLOB size");
+        }
+
+        final long posWithOffset = applyOffset(pos);
+        if(fitsInInt(posWithOffset + length)){
+            final int intPos = (int) posWithOffset;
+            final String substring = stringBuilder.substring(intPos, intPos + (int)length);
+            return new StringReader(substring);
+        }
+
         return null;
     }
 

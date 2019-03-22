@@ -340,12 +340,16 @@ public class CitrusClobTest {
         EqualsVerifier
                 .forClass(CitrusClob.class)
                 .withNonnullFields("stringBuilder")
+                .withIgnoredFields("clobUtils")//stateless
                 .verify();
     }
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(CitrusClob.class).verify();
+        ToStringVerifier
+                .forClass(CitrusClob.class)
+                .withIgnoredFields("clobUtils")//stateless
+                .verify();
     }
 
     private CitrusClob createClobNeedle() {

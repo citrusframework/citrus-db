@@ -163,7 +163,10 @@ public class JdbcPreparedStatementTest {
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcPreparedStatement.class).verify();
+        ToStringVerifier
+                .forClass(JdbcPreparedStatement.class)
+                .withIgnoredFields("clobUtils")//stateless
+                .verify();
     }
 
     @Test
@@ -176,6 +179,7 @@ public class JdbcPreparedStatementTest {
                 .withRedefinedSuperclass()
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
+                .withIgnoredFields("clobUtils")//stateless
                 .verify();
     }
 }

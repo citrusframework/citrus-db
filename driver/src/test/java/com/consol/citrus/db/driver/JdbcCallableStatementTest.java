@@ -740,7 +740,10 @@ public class JdbcCallableStatementTest{
 
     @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcCallableStatement.class).verify();
+        ToStringVerifier
+                .forClass(JdbcCallableStatement.class)
+                .withIgnoredFields("clobUtils")//stateless
+                .verify();
     }
 
     @Test
@@ -752,6 +755,7 @@ public class JdbcCallableStatementTest{
                         new JdbcResultSet(mock(DataSet.class), mock(JdbcStatement.class)))
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
+                .withIgnoredFields("clobUtils")//stateless
                 .verify();
     }
 

@@ -288,13 +288,17 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${apache.commons.io.version}</version>
-        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
 
   <!-- Global dependencies -->
   <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+
     <!-- Test scoped dependencies -->
     <dependency>
       <groupId>org.testng</groupId>
@@ -329,11 +333,6 @@
     <dependency>
       <groupId>org.powermock</groupId>
       <artifactId>powermock-api-mockito2</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

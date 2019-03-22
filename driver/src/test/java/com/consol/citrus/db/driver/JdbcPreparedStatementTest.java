@@ -1,14 +1,18 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.StringReader;
+import java.sql.Clob;
 import java.sql.SQLException;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -110,6 +114,51 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         //exception is thrown
+    }
+
+    @Test
+    public void testSetClobWithParameterIndexAndClob() {
+
+        //GIVEN
+        final Clob clob = mock(Clob.class);
+
+        //WHEN
+        jdbcPreparedStatement.setClob(5, clob);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(5, clob);
+    }
+
+    @Test
+    public void setLimitedClobFromReader() throws Exception {
+
+        //GIVEN
+        final StringReader stringReader = new StringReader("Stay positive, always!");
+        final String expectedClobContent = "Stay positive";
+
+        //WHEN
+        jdbcPreparedStatement.setClob(5, stringReader, 13);
+
+        //THEN
+        final CitrusClob storedClob = (CitrusClob) jdbcPreparedStatement.getParameters().get("4");
+        final String clobContent = IOUtils.toString(storedClob.getCharacterStream());
+        assertEquals(clobContent, expectedClobContent);
+    }
+
+    @Test
+    public void setClobFromReader() throws Exception {
+
+        //GIVEN
+        final String expectedClobContent = "Stay positive, always!";
+        final StringReader stringReader = new StringReader(expectedClobContent);
+
+        //WHEN
+        jdbcPreparedStatement.setClob(5, stringReader);
+
+        //THEN
+        final CitrusClob storedClob = (CitrusClob) jdbcPreparedStatement.getParameters().get("4");
+        final String clobContent = IOUtils.toString(storedClob.getCharacterStream());
+        assertEquals(clobContent, expectedClobContent);
     }
 
     @Test

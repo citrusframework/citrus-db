@@ -126,8 +126,8 @@ public class CitrusClob implements Clob {
     }
 
     @Override
-    public void free() throws SQLException {
-
+    public void free() {
+        stringBuilder.delete(0, stringBuilder.length());
     }
 
     @Override

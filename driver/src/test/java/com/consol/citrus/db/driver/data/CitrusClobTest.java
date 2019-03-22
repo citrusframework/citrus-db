@@ -283,6 +283,23 @@ public class CitrusClobTest {
     }
 
     @Test
+    public void testFree() throws SQLException {
+        //We break with the jdbc contract here as it is might cause issues
+        //to throw such an exceptions during testing.
+        //The subject to test is the system using the database and not the database
+        //integration itself.
+
+        //GIVEN
+        citrusClob.setString(1, sampleText);
+
+        //WHEN
+        citrusClob.free();
+
+        //THEN
+        assertEquals(citrusClob.length(), 0);
+    }
+
+    @Test
     public void testEqualsContract(){
         EqualsVerifier
                 .forClass(CitrusClob.class)

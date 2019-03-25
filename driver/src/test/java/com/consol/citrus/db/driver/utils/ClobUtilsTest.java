@@ -54,4 +54,19 @@ public class ClobUtilsTest {
         final String clobContent = IOUtils.toString(clobFromReader.getCharacterStream());
         assertEquals(clobContent, expectedClobContent);
     }
+
+    @Test
+    public void setUnlimitedClobFromReader() throws Exception {
+
+        //GIVEN
+        final String expectedClobContent = "Stay positive, always!";
+        final StringReader stringReader = new StringReader(expectedClobContent);
+
+        //WHEN
+        final CitrusClob clobFromReader = clobUtils.createClobFromReader(stringReader, -1);
+
+        //THEN
+        final String clobContent = IOUtils.toString(clobFromReader.getCharacterStream());
+        assertEquals(clobContent, expectedClobContent);
+    }
 }

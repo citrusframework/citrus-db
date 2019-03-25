@@ -18,11 +18,9 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.utils.ClobUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.client.HttpClient;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
@@ -366,14 +364,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setClob(final int parameterIndex, final Reader reader) throws SQLException {
-        try {
-            final CitrusClob citrusClob = new CitrusClob();
-            final String desiredClobContent = IOUtils.toString(reader);
-            citrusClob.setString(1, desiredClobContent);
-            setParameter(parameterIndex, citrusClob);
-        } catch (final IOException e) {
-            throw new SQLException("Could not create Clob from reader", e);
-        }
+        final CitrusClob citrusClob = clobUtils.createClobFromReader(reader, -1);
+        setParameter(parameterIndex, citrusClob);
     }
 
     @Override

@@ -13,14 +13,29 @@ public class ClobUtils {
         return (int)value == value;
     }
 
+    /**
+     * Creates a {@link CitrusClob} from the given {@link Reader}
+     * @param reader The reader to create the clob from
+     * @param length The length of the substring to take from the reader or -1 to transfer the whole content
+     * @return The created Citrus Clob
+     * @throws SQLException In case the clob could not be created from the reader
+     */
     public CitrusClob createClobFromReader(final Reader reader, final int length) throws SQLException {
         try{
-            final CitrusClob citrusClob = new CitrusClob();
             final String desiredClobContent = IOUtils.toString(reader);
-            citrusClob.setString(1, desiredClobContent.substring(0, length));
-            return citrusClob;
+            return createClob(length, desiredClobContent);
         } catch (final IOException e) {
             throw new SQLException("Could not create Clob from reader", e);
         }
+    }
+
+    private CitrusClob createClob(final int length, final String desiredClobContent) {
+        final CitrusClob citrusClob = new CitrusClob();
+        if(length >= 0){
+            citrusClob.setString(1, desiredClobContent.substring(0, length));
+        }else{
+            citrusClob.setString(1, desiredClobContent);
+        }
+        return citrusClob;
     }
 }

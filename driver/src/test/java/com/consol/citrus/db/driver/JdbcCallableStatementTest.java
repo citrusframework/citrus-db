@@ -7,6 +7,7 @@ import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.apache.http.client.HttpClient;
+import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -783,6 +784,38 @@ public class JdbcCallableStatementTest{
 
         //THEN
         verify(clobUtils, never()).createClobFromReader(any(Reader.class), anyInt());
+    }
+
+    @Test
+    public void testSetClob() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myClob";
+        final CitrusClob expectedClob = mock(CitrusClob.class);
+
+        //WHEN
+        callableStatement.setClob(parameterName, expectedClob);
+
+        //THEN
+        final CitrusClob storedClob = (CitrusClob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedClob);
+    }
+
+    @Test
+    public void setClobFromReader() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myClob";
+        final Reader readerMock = Mockito.mock(Reader.class);
+        final CitrusClob expectedClob = Mockito.mock(CitrusClob.class);
+        Mockito.when(clobUtils.createClobFromReader(readerMock, -1)).thenReturn(expectedClob);
+
+        //WHEN
+        callableStatement.setClob(parameterName, readerMock);
+
+        //THEN
+        final CitrusClob storedClob = (CitrusClob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedClob);
     }
 
     @Test

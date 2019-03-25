@@ -627,7 +627,7 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setClob(final String parameterName, final Clob x) throws SQLException {
-        notSupported("setClob(String parameterName,  Clob x)");
+        setParameter(parameterName, x);
     }
 
     @Override
@@ -667,7 +667,8 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setClob(final String parameterName, final Reader reader) throws SQLException {
-        notSupported("setClob(String parameterName, Reader reader)");
+        final CitrusClob citrusClob = clobUtils.createClobFromReader(reader, -1);
+        setParameter(parameterName, citrusClob);
     }
 
     @Override

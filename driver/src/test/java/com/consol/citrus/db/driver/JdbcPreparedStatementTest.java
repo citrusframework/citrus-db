@@ -6,7 +6,6 @@ import com.consol.citrus.db.driver.utils.ClobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
@@ -172,16 +171,15 @@ public class JdbcPreparedStatementTest {
     public void setClobFromReader() throws Exception {
 
         //GIVEN
-        final String expectedClobContent = "Stay positive, always!";
-        final StringReader stringReader = new StringReader(expectedClobContent);
+        final Reader readerMock = mock(Reader.class);
+        final CitrusClob citrusClobMock = mock(CitrusClob.class);
+        when(clobUtils.createClobFromReader(readerMock, -1)).thenReturn(citrusClobMock);
 
         //WHEN
-        jdbcPreparedStatement.setClob(5, stringReader);
+        jdbcPreparedStatement.setClob(5, readerMock);
 
         //THEN
-        final CitrusClob storedClob = (CitrusClob) jdbcPreparedStatement.getParameters().get("4");
-        final String clobContent = IOUtils.toString(storedClob.getCharacterStream());
-        assertEquals(clobContent, expectedClobContent);
+        verify(jdbcPreparedStatement).setParameter(5, citrusClobMock);
     }
 
     @Test

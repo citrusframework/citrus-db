@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Clob;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -720,6 +721,23 @@ public class JdbcResultSetTest {
     }
 
     @Test
+    void testGetClobByIndex() throws SQLException, IOException {
+
+        //GIVEN
+        final String expectedText = "nuqneh";
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
+        resultSet.next();
+
+        //WHEN
+        final Clob clob = resultSet.getClob(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        final String text = IOUtils.toString(clob.getCharacterStream());
+        assertEquals(text, expectedText);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, String.class);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier.forClass(JdbcResultSet.class).verify();
     }
@@ -747,7 +765,7 @@ public class JdbcResultSetTest {
         return generateTestDataSet(null);
     }
 
-    private DataSet generateTestDataSet(final Object testValue) throws SQLException {
+    private DataSet generateTestDataSet(final Object testValue) {
         final SortedMap<String, Object> testData = new TreeMap<>();
         testData.put("col1", "dummyValue");
         testData.put("col2", testValue);

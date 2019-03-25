@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
 
@@ -859,7 +860,10 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Clob getClob(final int i) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getClob'");
+        final String string = getString(i);
+        final CitrusClob citrusClob = new CitrusClob();
+        citrusClob.setString(1, string);
+        return citrusClob;
     }
 
     public Array getArray(final int i) throws SQLException {

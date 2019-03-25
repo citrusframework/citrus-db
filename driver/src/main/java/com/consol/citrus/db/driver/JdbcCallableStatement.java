@@ -16,6 +16,8 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusClob;
+import com.consol.citrus.db.driver.utils.ClobUtils;
 import org.apache.http.client.HttpClient;
 
 import java.io.InputStream;
@@ -42,11 +44,22 @@ import java.util.Map;
 
 public final class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
 
+    private ClobUtils clobUtils = new ClobUtils();
+
     public JdbcCallableStatement(final HttpClient httpClient,
                                  final String callableStatement,
                                  final String serverUrl,
                                  final JdbcConnection connection) {
         super(httpClient, callableStatement, serverUrl, connection);
+    }
+
+    JdbcCallableStatement(final HttpClient httpClient,
+                          final String callableStatement,
+                          final String serverUrl,
+                          final JdbcConnection connection,
+                          final ClobUtils clobUtils) {
+        this(httpClient, callableStatement, serverUrl, connection);
+        this.clobUtils = clobUtils;
     }
 
     @Override
@@ -520,12 +533,15 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setNClob(final String parameterName, final NClob value) throws SQLException {
-        notSupported("setClob(String parameterName, NClob value)");
+        notSupported("setNClob(String parameterName, NClob value)");
     }
 
     @Override
     public void setClob(final String parameterName, final Reader reader, final long length) throws SQLException {
-        notSupported("setClob(String parameterName, Reader reader, long length)");
+        if(clobUtils.fitsInInt(length)){
+            final CitrusClob clobFromReader = clobUtils.createClobFromReader(reader, (int) length);
+            setParameter(parameterName, clobFromReader);
+        }
     }
 
     @Override

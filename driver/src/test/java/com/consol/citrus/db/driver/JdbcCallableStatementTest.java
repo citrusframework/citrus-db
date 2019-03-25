@@ -1,6 +1,8 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.utils.ClobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -8,10 +10,13 @@ import org.apache.http.client.HttpClient;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Clob;
 import java.sql.Date;
 import java.sql.JDBCType;
 import java.sql.SQLException;
@@ -19,6 +24,10 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -32,6 +41,7 @@ public class JdbcCallableStatementTest{
     private JdbcConnection jdbcConnection;
     private final int TEST_VALUE_INDEX = 2;
     private final String TEST_VALUE_NAME = "col2";
+    private ClobUtils clobUtils;
     private JdbcCallableStatement callableStatement;
 
     private JdbcResultSet resultSetSpy;
@@ -40,8 +50,10 @@ public class JdbcCallableStatementTest{
     public void setup(){
         httpClient = mock(HttpClient.class);
         jdbcConnection = mock(JdbcConnection.class);
+        clobUtils = mock(ClobUtils.class);
 
         callableStatement = generateCallableStatement();
+
         resultSetSpy = mock(JdbcResultSet.class);
         callableStatement.resultSet = resultSetSpy;
     }
@@ -723,7 +735,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void verifyResultSetHandling() throws SQLException {
+    public void testVerifyResultSetHandling() throws SQLException {
 
         //GIVEN
         when(resultSetSpy.getRow()).thenReturn(0).thenReturn(1);
@@ -738,6 +750,40 @@ public class JdbcCallableStatementTest{
         verify(resultSetSpy, times(1)).next();
     }
 
+    @Test
+    public void testSetLimitedClobFromReader() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myClob";
+        final JdbcCallableStatement callableStatement = generateCallableStatementWithParameter(parameterName);
+
+        final long desiredLength = 13L;
+        when(clobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusClob expectedClob = mock(CitrusClob.class);
+        final StringReader stringReaderMock = mock(StringReader.class);
+        when(clobUtils.createClobFromReader(stringReaderMock, (int)desiredLength)).thenReturn(expectedClob);
+
+        //WHEN
+        callableStatement.setClob(parameterName, stringReaderMock, desiredLength);
+
+        //THEN
+        final Clob storedClob = (Clob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedClob);
+    }
+
+    @Test
+    public void TestNoopIfLengthExceedsInt() throws Exception {
+
+        //GIVEN
+        when(clobUtils.fitsInInt(anyLong())).thenReturn(false);
+
+        //WHEN
+        callableStatement.setClob("", mock(Reader.class), Long.MAX_VALUE);
+
+        //THEN
+        verify(clobUtils, never()).createClobFromReader(any(Reader.class), anyInt());
+    }
 
     @Test
     public void testToString(){
@@ -762,11 +808,11 @@ public class JdbcCallableStatementTest{
 
     private JdbcCallableStatement generateCallableStatement() {
         final String statement = "CALL myFunction(?,?)";
-        return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection);
+        return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection, clobUtils);
     }
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName) {
         final String statement = "CALL myFunction("+parameterName+",?)";
-        return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection);
+        return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, clobUtils);
     }
 
 }

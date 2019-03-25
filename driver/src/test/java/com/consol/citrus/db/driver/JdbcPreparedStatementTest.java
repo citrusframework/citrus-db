@@ -2,6 +2,7 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.utils.ClobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -11,13 +12,17 @@ import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.Reader;
 import java.io.StringReader;
 import java.sql.Clob;
 import java.sql.SQLException;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,16 +33,19 @@ public class JdbcPreparedStatementTest {
 
     private HttpClient httpClientMock = mock(HttpClient.class);
     private JdbcConnection jdbcConnectionMock = mock(JdbcConnection.class);
+    private ClobUtils clobUtils;
 
     private JdbcPreparedStatement jdbcPreparedStatement;
 
     @BeforeMethod
     public void setUp() {
+        clobUtils = PowerMockito.mock(ClobUtils.class);
         jdbcPreparedStatement = spy(new JdbcPreparedStatement(
                 httpClientMock,
                 "SELECT id, name FROM airports WHERE name = ?",
                 "url",
-                jdbcConnectionMock));
+                jdbcConnectionMock,
+                clobUtils));
     }
 
 
@@ -130,19 +138,34 @@ public class JdbcPreparedStatementTest {
     }
 
     @Test
-    public void setLimitedClobFromReader() throws Exception {
+    public void testSetLimitedClobFromReader() throws Exception {
 
         //GIVEN
-        final StringReader stringReader = new StringReader("Stay positive, always!");
-        final String expectedClobContent = "Stay positive";
+        final long desiredLength = 13L;
+        when(clobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusClob expectedClob = mock(CitrusClob.class);
+        final StringReader stringReaderMock = mock(StringReader.class);
+        when(clobUtils.createClobFromReader(stringReaderMock, (int)desiredLength)).thenReturn(expectedClob);
 
         //WHEN
-        jdbcPreparedStatement.setClob(5, stringReader, 13);
+        jdbcPreparedStatement.setClob(12, stringReaderMock, desiredLength);
 
         //THEN
-        final CitrusClob storedClob = (CitrusClob) jdbcPreparedStatement.getParameters().get("4");
-        final String clobContent = IOUtils.toString(storedClob.getCharacterStream());
-        assertEquals(clobContent, expectedClobContent);
+        verify(jdbcPreparedStatement).setParameter(12, expectedClob);
+    }
+
+    @Test
+    public void TestNoopIfLengthExceedsInt() throws Exception {
+
+        //GIVEN
+        PowerMockito.when(clobUtils.fitsInInt(anyLong())).thenReturn(false);
+
+        //WHEN
+        jdbcPreparedStatement.setClob(12, PowerMockito.mock(Reader.class), Long.MAX_VALUE);
+
+        //THEN
+        verify(clobUtils, never()).createClobFromReader(any(Reader.class), anyInt());
     }
 
     @Test

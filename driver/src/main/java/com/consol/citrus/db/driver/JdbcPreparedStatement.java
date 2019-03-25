@@ -66,11 +66,23 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     /** A list of parameter sets for batch execution purposes */
     private final List<Map<String, Object>> batchParameters = new LinkedList<>();
 
-    private final ClobUtils clobUtils = new ClobUtils();
+    private ClobUtils clobUtils = new ClobUtils();
 
-    public JdbcPreparedStatement(final HttpClient httpClient, final String preparedStatement, final String serverUrl, final JdbcConnection connection) {
+    public JdbcPreparedStatement(final HttpClient httpClient,
+                                 final String preparedStatement,
+                                 final String serverUrl,
+                                 final JdbcConnection connection) {
         super(httpClient, serverUrl, connection);
         this.preparedStatement = preparedStatement;
+    }
+
+    public JdbcPreparedStatement(final HttpClient httpClient,
+                                 final String preparedStatement,
+                                 final String serverUrl,
+                                 final JdbcConnection connection,
+                                 final ClobUtils clobUtils) {
+        this(httpClient, preparedStatement, serverUrl, connection);
+        this.clobUtils = clobUtils;
     }
 
     @Override
@@ -292,14 +304,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     @Override
     public void setClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
         if(clobUtils.fitsInInt(length)){
-            try {
-                final CitrusClob citrusClob = new CitrusClob();
-                final String desiredClobContent = IOUtils.toString(reader);
-                citrusClob.setString(1, desiredClobContent.substring(0, (int)length));
-                setParameter(parameterIndex, citrusClob);
-            } catch (final IOException e) {
-                throw new SQLException("Could not create Clob from reader", e);
-            }
+            final CitrusClob citrusClob = clobUtils.createClobFromReader(reader, (int) length);
+            setParameter(parameterIndex, citrusClob);
         }
     }
 

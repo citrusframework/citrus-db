@@ -86,7 +86,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testRegisterOutParameterByName() throws SQLException {
+    public void testRegisterOutParameterByName() {
 
         //GIVEN
         final String parameterName = "foo";
@@ -100,7 +100,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testRegisterOutParameterByNameWithScale() throws SQLException {
+    public void testRegisterOutParameterByNameWithScale() {
 
         //GIVEN
         final String parameterName = "foo";
@@ -114,7 +114,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testRegisterOutParameterByNameWithTypeName() throws SQLException {
+    public void testRegisterOutParameterByNameWithTypeName() {
 
         //GIVEN
         final String parameterName = "foo";
@@ -205,7 +205,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetUrlWithName() throws SQLException, MalformedURLException {
+    public void testSetUrlWithName() throws MalformedURLException {
 
         //GIVEN
         final String parameterName = "MyUrl";
@@ -220,7 +220,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetNullWithName() throws SQLException {
+    public void testSetNullWithName(){
 
         //GIVEN
         final String parameterName = "myNull";
@@ -234,7 +234,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetBooleanWithName() throws SQLException {
+    public void testSetBooleanWithName(){
 
         //GIVEN
         final String parameterName = "myBoolean";
@@ -248,7 +248,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetByteWithName() throws SQLException {
+    public void testSetByteWithName() {
 
         //GIVEN
         final String parameterName = "myByte";
@@ -263,7 +263,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetShortWithName() throws SQLException {
+    public void testSetShortWithName() {
 
         //GIVEN
         final String parameterName = "myShort";
@@ -278,7 +278,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetIntWithName() throws SQLException {
+    public void testSetIntWithName() {
 
         //GIVEN
         final String parameterName = "myInt";
@@ -293,7 +293,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetLongWithName() throws SQLException {
+    public void testSetLongWithName() {
 
         //GIVEN
         final String parameterName = "myLong";
@@ -308,7 +308,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetFloatWithName() throws SQLException {
+    public void testSetFloatWithName() {
 
         //GIVEN
         final String parameterName = "myFloat";
@@ -323,7 +323,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetDoubleWithName() throws SQLException {
+    public void testSetDoubleWithName() {
 
         //GIVEN
         final String parameterName = "myDouble";
@@ -338,7 +338,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetBigDecimalWithName() throws SQLException {
+    public void testSetBigDecimalWithName() {
 
         //GIVEN
         final String parameterName = "myBigDecimal";
@@ -353,7 +353,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetStringWithName() throws SQLException {
+    public void testSetStringWithName() {
 
         //GIVEN
         final String parameterName = "myString";
@@ -367,7 +367,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetBytesWithName() throws SQLException {
+    public void testSetBytesWithName() {
 
         //GIVEN
         final String parameterName = "myBytes";
@@ -382,7 +382,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetDateWithName() throws SQLException {
+    public void testSetDateWithName() {
 
         //GIVEN
         final String parameterName = "myDate";
@@ -397,7 +397,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetTimeWithName() throws SQLException {
+    public void testSetTimeWithName() {
 
         //GIVEN
         final String parameterName = "myTime";
@@ -412,7 +412,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetTimeStampWithName() throws SQLException {
+    public void testSetTimeStampWithName() {
 
         //GIVEN
         final String parameterName = "myTimeStamp";
@@ -427,7 +427,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetStringByIndex() throws SQLException {
+    public void testGetStringByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getString(TEST_VALUE_INDEX);
@@ -437,7 +437,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetBooleanByIndex() throws SQLException {
+    public void testGetBooleanByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getBoolean(TEST_VALUE_INDEX);
@@ -447,7 +447,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetByteByIndex() throws SQLException {
+    public void testGetByteByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getByte(TEST_VALUE_INDEX);
@@ -457,7 +457,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetBytesByIndex() throws SQLException {
+    public void testGetBytesByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getBytes(TEST_VALUE_INDEX);
@@ -467,7 +467,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetShortByIndex() throws SQLException {
+    public void testGetShortByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getShort(TEST_VALUE_INDEX);
@@ -477,7 +477,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetIntByIndex() throws SQLException {
+    public void testGetIntByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getInt(TEST_VALUE_INDEX);
@@ -487,7 +487,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetLongByIndex() throws SQLException {
+    public void testGetLongByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getLong(TEST_VALUE_INDEX);
@@ -497,7 +497,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetFloatByIndex() throws SQLException {
+    public void testGetFloatByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getFloat(TEST_VALUE_INDEX);
@@ -507,7 +507,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetDoubleByIndex() throws SQLException {
+    public void testGetDoubleByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getDouble(TEST_VALUE_INDEX);
@@ -517,7 +517,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetBigDecimalByIndexWithScale() throws Exception {
+    public void testGetBigDecimalByIndexWithScale() throws Exception {
 
         //GIVEN
         final BigDecimal bigDecimalMock = mock(BigDecimal.class);
@@ -532,7 +532,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetStringByName() throws SQLException {
+    public void testGetStringByName() throws SQLException {
 
         //WHEN
         callableStatement.getString(TEST_VALUE_NAME);
@@ -542,7 +542,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetBooleanByName() throws SQLException {
+    public void testGetBooleanByName() throws SQLException {
 
         //WHEN
         callableStatement.getBoolean(TEST_VALUE_NAME);
@@ -552,7 +552,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetByteByName() throws SQLException {
+    public void testGetByteByName() throws SQLException {
 
         //WHEN
         callableStatement.getByte(TEST_VALUE_NAME);
@@ -562,7 +562,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetShortByName() throws SQLException {
+    public void testGetShortByName() throws SQLException {
 
         //WHEN
         callableStatement.getShort(TEST_VALUE_NAME);
@@ -572,7 +572,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetIntByName() throws SQLException {
+    public void testGetIntByName() throws SQLException {
 
         //WHEN
         callableStatement.getInt(TEST_VALUE_NAME);
@@ -582,7 +582,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetLongByName() throws SQLException {
+    public void testGetLongByName() throws SQLException {
 
         //WHEN
         callableStatement.getLong(TEST_VALUE_NAME);
@@ -592,7 +592,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetFloatByName() throws SQLException {
+    public void testGetFloatByName() throws SQLException {
 
         //WHEN
         callableStatement.getFloat(TEST_VALUE_NAME);
@@ -602,7 +602,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetDoubleByName() throws SQLException {
+    public void testGetDoubleByName() throws SQLException {
 
         //WHEN
         callableStatement.getDouble(TEST_VALUE_NAME);
@@ -612,7 +612,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetBytesByName() throws SQLException {
+    public void testGetBytesByName() throws SQLException {
 
         //WHEN
         callableStatement.getBytes(TEST_VALUE_NAME);
@@ -622,7 +622,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetObjectByName() throws SQLException {
+    public void testGetObjectByName() throws SQLException {
 
         //WHEN
         callableStatement.getObject(TEST_VALUE_NAME);
@@ -632,7 +632,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetBigDecimalByName() throws SQLException {
+    public void testGetBigDecimalByName() throws SQLException {
 
         //WHEN
         callableStatement.getBigDecimal(TEST_VALUE_NAME);
@@ -642,7 +642,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testDelegateWasNull() throws SQLException {
+    public void testDelegateWasNull() throws SQLException {
 
 
         //WHEN
@@ -653,7 +653,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetDateByIndex() throws SQLException {
+    public void testGetDateByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getDate(TEST_VALUE_INDEX);
@@ -663,7 +663,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetTimeByIndex() throws SQLException {
+    public void testGetTimeByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getTime(TEST_VALUE_INDEX);
@@ -673,7 +673,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetTimestampByIndex() throws SQLException {
+    public void testGetTimestampByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getTimestamp(TEST_VALUE_INDEX);
@@ -683,7 +683,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetObjectByIndex() throws SQLException {
+    public void testGetObjectByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getObject(TEST_VALUE_INDEX);
@@ -693,7 +693,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetDateByName() throws SQLException {
+    public void testGetDateByName() throws SQLException {
 
         //WHEN
         callableStatement.getDate(TEST_VALUE_NAME);
@@ -703,7 +703,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetTimeByName() throws SQLException {
+    public void testGetTimeByName() throws SQLException {
 
         //WHEN
         callableStatement.getTime(TEST_VALUE_NAME);
@@ -713,7 +713,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetTimestampByName() throws SQLException {
+    public void testGetTimestampByName() throws SQLException {
 
         //WHEN
         callableStatement.getTimestamp(TEST_VALUE_NAME);
@@ -723,7 +723,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void verifyResultSetHandling() throws SQLException {
+    public void verifyResultSetHandling() throws SQLException {
 
         //GIVEN
         when(resultSetSpy.getRow()).thenReturn(0).thenReturn(1);
@@ -737,6 +737,7 @@ public class JdbcCallableStatementTest{
         verify(resultSetSpy, times(2)).getRow();
         verify(resultSetSpy, times(1)).next();
     }
+
 
     @Test
     public void testToString(){

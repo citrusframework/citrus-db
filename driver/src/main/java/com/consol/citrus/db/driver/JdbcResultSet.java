@@ -861,9 +861,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     public Clob getClob(final int i) throws SQLException {
         final String string = getString(i);
-        final CitrusClob citrusClob = new CitrusClob();
-        citrusClob.setString(1, string);
-        return citrusClob;
+        return createClob(string);
     }
 
     public Array getArray(final int i) throws SQLException {
@@ -883,14 +881,22 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     public Clob getClob(final String colName) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getClob'");
+        final String string = getString(colName);
+        return createClob(string);
     }
+
     public Array getArray(final String colName) throws SQLException {
         throw new SQLException("Not supported JDBC result set function 'getArray'");
     }
 
     private boolean rowModified() {
         return !dataSet.getRows().isEmpty();
+    }
+
+    private CitrusClob createClob(final String clobContent) {
+        final CitrusClob citrusClob = new CitrusClob();
+        citrusClob.setString(1, clobContent);
+        return citrusClob;
     }
 
     @Override

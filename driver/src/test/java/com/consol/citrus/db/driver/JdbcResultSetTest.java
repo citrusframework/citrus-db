@@ -738,6 +738,23 @@ public class JdbcResultSetTest {
     }
 
     @Test
+    void testGetClobByColumn() throws SQLException, IOException {
+
+        //GIVEN
+        final String expectedText = "nuqneh";
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
+        resultSet.next();
+
+        //WHEN
+        final Clob clob = resultSet.getClob(TEST_VALUE_NAME);
+
+        //THEN
+        final String text = IOUtils.toString(clob.getCharacterStream());
+        assertEquals(text, expectedText);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, String.class);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier.forClass(JdbcResultSet.class).verify();
     }

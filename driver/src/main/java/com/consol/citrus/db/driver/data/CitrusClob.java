@@ -155,9 +155,7 @@ public class CitrusClob implements Clob {
 
     @Override
     public String toString() {
-        return "CitrusClob{" +
-                "stringBuilder=" + stringBuilder +
-                '}';
+        return stringBuilder.toString();
     }
 
     @Override

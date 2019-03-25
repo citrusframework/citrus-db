@@ -1,6 +1,5 @@
 package com.consol.citrus.db.driver.data;
 
-import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.commons.io.IOUtils;
 import org.testng.annotations.BeforeMethod;
@@ -346,10 +345,17 @@ public class CitrusClobTest {
 
     @Test
     public void testToString(){
-        ToStringVerifier
-                .forClass(CitrusClob.class)
-                .withIgnoredFields("clobUtils")//stateless
-                .verify();
+
+        //GIVEN
+        final String expectedClobContent = "Beam Me Up, Scotty";
+        final CitrusClob citrusClob = new CitrusClob();
+        citrusClob.setString(1, expectedClobContent);
+
+        //WHEN
+        final String clobContent = citrusClob.toString();
+
+        //THEN
+        assertEquals(clobContent, expectedClobContent);
     }
 
     private CitrusClob createClobNeedle() {

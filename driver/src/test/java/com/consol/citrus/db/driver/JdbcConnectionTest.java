@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -30,6 +31,7 @@ import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -338,7 +340,7 @@ public class JdbcConnectionTest {
     }
 
     @Test
-    public void testCreateClb() {
+    public void testCreateClob() {
 
         //GIVEN
         final Clob expectedClob = new CitrusClob();
@@ -348,6 +350,19 @@ public class JdbcConnectionTest {
 
         //THEN
         assertEquals(clob, expectedClob);
+    }
+
+    @Test
+    public void testCreateBlob() {
+
+        //GIVEN
+        final Blob expectedBlob = new CitrusBlob();
+
+        //WHEN
+        final Blob blob = jdbcConnection.createBlob();
+
+        //THEN
+        assertEquals(blob, expectedBlob);
     }
 
     @Test

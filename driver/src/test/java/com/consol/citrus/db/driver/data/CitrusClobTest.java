@@ -339,7 +339,7 @@ public class CitrusClobTest {
         EqualsVerifier
                 .forClass(CitrusClob.class)
                 .withNonnullFields("stringBuilder")
-                .withIgnoredFields("clobUtils")//stateless
+                .withIgnoredFields("lobUtils")//stateless
                 .verify();
     }
 

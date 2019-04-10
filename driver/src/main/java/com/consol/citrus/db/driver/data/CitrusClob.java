@@ -1,6 +1,6 @@
 package com.consol.citrus.db.driver.data;
 
-import com.consol.citrus.db.driver.utils.ClobUtils;
+import com.consol.citrus.db.driver.utils.LobUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -23,7 +23,7 @@ import static java.lang.Math.toIntExact;
 public class CitrusClob implements Clob {
 
     private final StringBuilder stringBuilder = new StringBuilder();
-    private final ClobUtils clobUtils = new ClobUtils();
+    private final LobUtils lobUtils = new LobUtils();
 
     @Override
     public long length() {
@@ -32,8 +32,8 @@ public class CitrusClob implements Clob {
 
     @Override
     public String getSubString(final long pos, final int length) {
-        final long longOffset = applyOffset(pos);
-        if(clobUtils.fitsInInt(longOffset)){
+        final long longOffset = lobUtils.applyOffset(pos);
+        if(lobUtils.fitsInInt(longOffset)){
             final int offset = toIntExact(longOffset);
             return stringBuilder.substring(offset, offset + length);
         }
@@ -53,7 +53,7 @@ public class CitrusClob implements Clob {
 
     @Override
     public long position(final String searchstr, final long start) {
-        if(clobUtils.fitsInInt(start)){
+        if(lobUtils.fitsInInt(start)){
             return stringBuilder.indexOf(searchstr, (int)start);
         }
         return -1;
@@ -62,7 +62,7 @@ public class CitrusClob implements Clob {
     @Override
     public long position(final Clob searchstr, final long start) throws SQLException {
         final long clobLength = searchstr.length();
-        if(clobUtils.fitsInInt(clobLength)){
+        if(lobUtils.fitsInInt(clobLength)){
             final String subString = searchstr.getSubString(1, (int)clobLength);
             return position(subString, start);
         }
@@ -76,12 +76,12 @@ public class CitrusClob implements Clob {
 
     @Override
     public int setString(final long pos, final String str, final int offset, final int len) {
-        final long positionWithOffset = applyOffset(pos);
-        if(clobUtils.fitsInInt(positionWithOffset)){
+        final long positionWithOffset = lobUtils.applyOffset(pos);
+        if(lobUtils.fitsInInt(positionWithOffset)){
             return setContent(stringBuilder, (int) positionWithOffset, str, offset, len);
-        }else {
-            return 0;
         }
+
+        return 0;
     }
 
     @Override
@@ -123,7 +123,7 @@ public class CitrusClob implements Clob {
 
     @Override
     public void truncate(final long len) {
-        if(clobUtils.fitsInInt(len)){
+        if(lobUtils.fitsInInt(len)){
             stringBuilder.delete((int)len, stringBuilder.length());
         }
     }
@@ -143,8 +143,8 @@ public class CitrusClob implements Clob {
             throw new SQLException("CLOB references exceeds actual CLOB size");
         }
 
-        final long posWithOffset = applyOffset(pos);
-        if(clobUtils.fitsInInt(posWithOffset + length)){
+        final long posWithOffset = lobUtils.applyOffset(pos);
+        if(lobUtils.fitsInInt(posWithOffset + length)){
             final int intPos = (int) posWithOffset;
             final String substring = stringBuilder.substring(intPos, intPos + (int)length);
             return new StringReader(substring);
@@ -169,10 +169,6 @@ public class CitrusClob implements Clob {
     @Override
     public final int hashCode() {
         return Objects.hash(stringBuilder);
-    }
-
-    private long applyOffset(final long pos) {
-        return pos - 1;
     }
 
     /**

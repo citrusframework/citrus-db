@@ -1,5 +1,6 @@
 package com.consol.citrus.db.driver.data;
 
+import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.InputStream;
@@ -10,6 +11,7 @@ import java.util.Arrays;
 public class CitrusBlob implements Blob {
 
     private byte[] content = new byte[0];
+    private final LobUtils lobUtils = new LobUtils();
 
     @Override
     public long length() {
@@ -38,15 +40,12 @@ public class CitrusBlob implements Blob {
 
     @Override
     public int setBytes(final long pos, final byte[] bytes) {
-        //todo: improve implementation, see CitrusClob
-        if(content.length <= pos + bytes.length){
-            final byte[] untouchedContent = Arrays.copyOfRange(content,0, (int)pos-1);
-            content = ArrayUtils.addAll(untouchedContent, bytes);
-        }else{
-            content = ArrayUtils.insert((int)pos-1, content, bytes);
+        final long positionWithOffset = lobUtils.applyOffset(pos);
+        if(lobUtils.fitsInInt(positionWithOffset)){
+            return setContent(content, (int)positionWithOffset, bytes, 0, bytes.length);
         }
 
-        return bytes.length;
+        return 0;
     }
 
     @Override
@@ -90,5 +89,33 @@ public class CitrusBlob implements Blob {
     @Override
     public String toString() {
         return Arrays.toString(content);
+    }
+
+    /**
+     * Alters the content of this @{@link CitrusBlob} to contain the given bytes.
+     * If the size of the altered bytes exceeds the current capacity, the capacity is automatically extended to the
+     * required size.
+     * @param byteContent The byte content to alter
+     * @param position The start position for altering the content. Starts at 0.
+     * @param bytesToSet The bytes to set the content from.
+     * @param offset  the index of the first character of {@code bytesToSet} to be inserted. Starting at 0.
+     * @param length The number of bytes to set.
+     * @return The number of the bytes that have been set
+     */
+    private int setContent(final byte[] byteContent,
+                           final int position,
+                           final byte[] bytesToSet,
+                           final int offset,
+                           final int length) {
+        final boolean expandsCurrentContent = position + length > byteContent.length;
+
+        if(expandsCurrentContent){
+            final byte[] untouchedContent = Arrays.copyOfRange(content,0, position);
+            content = ArrayUtils.addAll(untouchedContent, bytesToSet);
+        }else{
+            content = ArrayUtils.insert(position, content, bytesToSet);
+        }
+
+        return length;
     }
 }

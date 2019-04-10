@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.SQLException;
 
-public class ClobUtils {
+public class LobUtils {
 
     public boolean fitsInInt(final long value) {
         return (int)value == value;
@@ -27,6 +27,10 @@ public class ClobUtils {
         } catch (final IOException e) {
             throw new SQLException("Could not create Clob from reader", e);
         }
+    }
+
+    public long applyOffset(final long pos) {
+        return pos - 1;
     }
 
     private CitrusClob createClob(final int length, final String desiredClobContent) {

@@ -2,7 +2,7 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.utils.ClobUtils;
+import com.consol.citrus.db.driver.utils.LobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -32,19 +32,19 @@ public class JdbcPreparedStatementTest {
 
     private HttpClient httpClientMock = mock(HttpClient.class);
     private JdbcConnection jdbcConnectionMock = mock(JdbcConnection.class);
-    private ClobUtils clobUtils;
+    private LobUtils lobUtils;
 
     private JdbcPreparedStatement jdbcPreparedStatement;
 
     @BeforeMethod
     public void setUp() {
-        clobUtils = PowerMockito.mock(ClobUtils.class);
+        lobUtils = PowerMockito.mock(LobUtils.class);
         jdbcPreparedStatement = spy(new JdbcPreparedStatement(
                 httpClientMock,
                 "SELECT id, name FROM airports WHERE name = ?",
                 "url",
                 jdbcConnectionMock,
-                clobUtils));
+                lobUtils));
     }
 
 
@@ -141,11 +141,11 @@ public class JdbcPreparedStatementTest {
 
         //GIVEN
         final long desiredLength = 13L;
-        when(clobUtils.fitsInInt(desiredLength)).thenReturn(true);
+        when(lobUtils.fitsInInt(desiredLength)).thenReturn(true);
 
         final CitrusClob expectedClob = mock(CitrusClob.class);
         final StringReader stringReaderMock = mock(StringReader.class);
-        when(clobUtils.createClobFromReader(stringReaderMock, (int)desiredLength)).thenReturn(expectedClob);
+        when(lobUtils.createClobFromReader(stringReaderMock, (int)desiredLength)).thenReturn(expectedClob);
 
         //WHEN
         jdbcPreparedStatement.setClob(12, stringReaderMock, desiredLength);
@@ -158,13 +158,13 @@ public class JdbcPreparedStatementTest {
     public void TestNoopIfLengthExceedsInt() throws Exception {
 
         //GIVEN
-        PowerMockito.when(clobUtils.fitsInInt(anyLong())).thenReturn(false);
+        PowerMockito.when(lobUtils.fitsInInt(anyLong())).thenReturn(false);
 
         //WHEN
         jdbcPreparedStatement.setClob(12, PowerMockito.mock(Reader.class), Long.MAX_VALUE);
 
         //THEN
-        verify(clobUtils, never()).createClobFromReader(any(Reader.class), anyInt());
+        verify(lobUtils, never()).createClobFromReader(any(Reader.class), anyInt());
     }
 
     @Test
@@ -173,7 +173,7 @@ public class JdbcPreparedStatementTest {
         //GIVEN
         final Reader readerMock = mock(Reader.class);
         final CitrusClob citrusClobMock = mock(CitrusClob.class);
-        when(clobUtils.createClobFromReader(readerMock, -1)).thenReturn(citrusClobMock);
+        when(lobUtils.createClobFromReader(readerMock, -1)).thenReturn(citrusClobMock);
 
         //WHEN
         jdbcPreparedStatement.setClob(5, readerMock);
@@ -186,7 +186,7 @@ public class JdbcPreparedStatementTest {
     public void testToString(){
         ToStringVerifier
                 .forClass(JdbcPreparedStatement.class)
-                .withIgnoredFields("clobUtils")//stateless
+                .withIgnoredFields("lobUtils")//stateless
                 .verify();
     }
 
@@ -200,7 +200,7 @@ public class JdbcPreparedStatementTest {
                 .withRedefinedSuperclass()
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
-                .withIgnoredFields("clobUtils")//stateless
+                .withIgnoredFields("lobUtils")//stateless
                 .verify();
     }
 }

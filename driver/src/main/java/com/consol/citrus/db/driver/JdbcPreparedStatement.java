@@ -17,7 +17,7 @@
 package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.CitrusClob;
-import com.consol.citrus.db.driver.utils.ClobUtils;
+import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.client.HttpClient;
 
@@ -64,7 +64,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     /** A list of parameter sets for batch execution purposes */
     private final List<Map<String, Object>> batchParameters = new LinkedList<>();
 
-    private ClobUtils clobUtils = new ClobUtils();
+    private LobUtils lobUtils = new LobUtils();
 
     public JdbcPreparedStatement(final HttpClient httpClient,
                                  final String preparedStatement,
@@ -78,9 +78,9 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
                                  final String preparedStatement,
                                  final String serverUrl,
                                  final JdbcConnection connection,
-                                 final ClobUtils clobUtils) {
+                                 final LobUtils lobUtils) {
         this(httpClient, preparedStatement, serverUrl, connection);
-        this.clobUtils = clobUtils;
+        this.lobUtils = lobUtils;
     }
 
     @Override
@@ -301,8 +301,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setClob(final int parameterIndex, final Reader reader, final long length) throws SQLException {
-        if(clobUtils.fitsInInt(length)){
-            final CitrusClob citrusClob = clobUtils.createClobFromReader(reader, (int) length);
+        if(lobUtils.fitsInInt(length)){
+            final CitrusClob citrusClob = lobUtils.createClobFromReader(reader, (int) length);
             setParameter(parameterIndex, citrusClob);
         }
     }
@@ -364,7 +364,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setClob(final int parameterIndex, final Reader reader) throws SQLException {
-        final CitrusClob citrusClob = clobUtils.createClobFromReader(reader, -1);
+        final CitrusClob citrusClob = lobUtils.createClobFromReader(reader, -1);
         setParameter(parameterIndex, citrusClob);
     }
 

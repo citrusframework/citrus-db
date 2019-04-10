@@ -15,6 +15,7 @@ public class CitrusBlobTest {
         EqualsVerifier
                 .forClass(CitrusBlob.class)
                 .suppress(Warning.NONFINAL_FIELDS) //Blob content has to be mutable
+                .withIgnoredFields("lobUtils") //Stateless
                 .verify();
     }
 

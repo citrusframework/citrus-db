@@ -17,7 +17,7 @@
 package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.CitrusClob;
-import com.consol.citrus.db.driver.utils.ClobUtils;
+import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.http.client.HttpClient;
 
 import java.io.InputStream;
@@ -44,7 +44,7 @@ import java.util.Map;
 
 public final class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
 
-    private ClobUtils clobUtils = new ClobUtils();
+    private LobUtils lobUtils = new LobUtils();
 
     public JdbcCallableStatement(final HttpClient httpClient,
                                  final String callableStatement,
@@ -57,9 +57,9 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
                           final String callableStatement,
                           final String serverUrl,
                           final JdbcConnection connection,
-                          final ClobUtils clobUtils) {
+                          final LobUtils lobUtils) {
         this(httpClient, callableStatement, serverUrl, connection);
-        this.clobUtils = clobUtils;
+        this.lobUtils = lobUtils;
     }
 
     @Override
@@ -538,8 +538,8 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setClob(final String parameterName, final Reader reader, final long length) throws SQLException {
-        if(clobUtils.fitsInInt(length)){
-            final CitrusClob clobFromReader = clobUtils.createClobFromReader(reader, (int) length);
+        if(lobUtils.fitsInInt(length)){
+            final CitrusClob clobFromReader = lobUtils.createClobFromReader(reader, (int) length);
             setParameter(parameterName, clobFromReader);
         }
     }
@@ -667,7 +667,7 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setClob(final String parameterName, final Reader reader) throws SQLException {
-        final CitrusClob citrusClob = clobUtils.createClobFromReader(reader, -1);
+        final CitrusClob citrusClob = lobUtils.createClobFromReader(reader, -1);
         setParameter(parameterName, citrusClob);
     }
 

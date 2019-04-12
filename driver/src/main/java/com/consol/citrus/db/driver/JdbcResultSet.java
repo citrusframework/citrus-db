@@ -61,7 +61,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     /**
      * Constructor using remote result set.
      */
-    public JdbcResultSet(final DataSet dataSet, final JdbcStatement statement) {
+    JdbcResultSet(final DataSet dataSet, final JdbcStatement statement) {
         this.dataSet = dataSet;
         this.statement = statement;
     }

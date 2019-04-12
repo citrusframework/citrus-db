@@ -469,9 +469,9 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public Clob getClob(final String parameterName) throws SQLException {
-        notSupported("getClob(String parameterName)");
-        return null;
+    public Clob getClob(final String parameterName) {
+        prepareResultSet();
+        return resultSet.getClob(parameterName);
     }
 
     @Override

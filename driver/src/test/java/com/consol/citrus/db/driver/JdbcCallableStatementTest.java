@@ -846,7 +846,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testGetClobByIndex() throws Exception {
+    public void testGetClobByIndex() {
 
         //WHEN
         callableStatement.getClob(TEST_VALUE_INDEX);
@@ -854,6 +854,17 @@ public class JdbcCallableStatementTest{
         //THEN
         verify(resultSetSpy).next();
         verify(resultSetSpy).getClob(TEST_VALUE_INDEX);
+    }
+
+    @Test
+    public void testGetClobByName() {
+
+        //WHEN
+        callableStatement.getClob(TEST_VALUE_NAME);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getClob(TEST_VALUE_NAME);
     }
 
     @Test

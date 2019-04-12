@@ -2,8 +2,11 @@ package com.consol.citrus.db.driver.data;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
@@ -80,6 +83,20 @@ public class CitrusBlobTest {
         final String blobString = new String(citrusBlob.getBytes(1, (int)citrusBlob.length()));
         assertEquals(blobString, new String(expectedBlobContent));
         assertEquals(writtenBytes, 2);
+    }
+
+    @Test
+    public void testGetBinaryStream() throws IOException {
+
+        //GIVEN
+        citrusBlob.setBytes(1, sampleBytes);
+
+        //WHEN
+        final InputStream binaryStream = citrusBlob.getBinaryStream();
+
+        //THEN
+        final byte[] blobContent = IOUtils.toByteArray(binaryStream);
+        assertEquals(blobContent, sampleBytes);
     }
 
 }

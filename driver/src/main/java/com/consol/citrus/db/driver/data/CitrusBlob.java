@@ -3,6 +3,7 @@ package com.consol.citrus.db.driver.data;
 import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
@@ -30,7 +31,7 @@ public class CitrusBlob implements Blob {
 
     @Override
     public InputStream getBinaryStream() {
-        return null;
+        return new ByteArrayInputStream(content);
     }
 
     @Override

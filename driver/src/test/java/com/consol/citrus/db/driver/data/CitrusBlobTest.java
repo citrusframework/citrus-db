@@ -99,4 +99,19 @@ public class CitrusBlobTest {
         assertEquals(blobContent, sampleBytes);
     }
 
+    @Test
+    public void testTruncate() throws IOException {
+
+        //GIVEN
+        citrusBlob.setBytes(1, sampleBytes);
+        final byte[] expectedBlobContent = "Beam Me Up".getBytes();
+
+        //WHEN
+        citrusBlob.truncate(10);
+
+        //THEN
+        final InputStream binaryStream = citrusBlob.getBinaryStream();
+        final byte[] blobContent = IOUtils.toByteArray(binaryStream);
+        assertEquals(blobContent, expectedBlobContent);
+    }
 }

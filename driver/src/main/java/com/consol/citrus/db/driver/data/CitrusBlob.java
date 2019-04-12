@@ -71,7 +71,9 @@ public class CitrusBlob implements Blob {
 
     @Override
     public void truncate(final long len) {
-
+        if(lobUtils.fitsInInt(len)){
+            content = ArrayUtils.subarray(content, 0, (int)len);
+        }
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.consol.citrus.db.driver.data;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -113,5 +114,20 @@ public class CitrusBlobTest {
         final InputStream binaryStream = citrusBlob.getBinaryStream();
         final byte[] blobContent = IOUtils.toByteArray(binaryStream);
         assertEquals(blobContent, expectedBlobContent);
+    }
+
+    @Test
+    public void testFree() throws IOException {
+
+        //GIVEN
+        citrusBlob.setBytes(1, sampleBytes);
+
+        //WHEN
+        citrusBlob.free();
+
+        //THEN
+        final InputStream binaryStream = citrusBlob.getBinaryStream();
+        final byte[] blobContent = IOUtils.toByteArray(binaryStream);
+        assertEquals(blobContent, ArrayUtils.EMPTY_BYTE_ARRAY);
     }
 }

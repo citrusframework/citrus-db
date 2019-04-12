@@ -78,7 +78,7 @@ public class CitrusBlob implements Blob {
 
     @Override
     public void free() {
-
+        content = ArrayUtils.EMPTY_BYTE_ARRAY;
     }
 
     @Override

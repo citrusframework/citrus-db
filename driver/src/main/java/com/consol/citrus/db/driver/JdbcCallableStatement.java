@@ -181,8 +181,8 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public Blob getBlob(final int parameterIndex) throws SQLException {
-        notSupported("getBlob(int parameterIndex)");
-        return null;
+        prepareResultSet();
+        return resultSet.getBlob(parameterIndex);
     }
 
     @Override
@@ -464,8 +464,8 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public Blob getBlob(final String parameterName) throws SQLException {
-        notSupported("getBlob(String parameterName)");
-        return null;
+        prepareResultSet();
+        return resultSet.getBlob(parameterName);
     }
 
     @Override

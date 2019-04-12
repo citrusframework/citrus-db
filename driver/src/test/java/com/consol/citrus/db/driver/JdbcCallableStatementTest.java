@@ -868,6 +868,28 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
+    public void testGetBlobByIndex() throws SQLException {
+
+        //WHEN
+        callableStatement.getBlob(TEST_VALUE_INDEX);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getBlob(TEST_VALUE_INDEX);
+    }
+
+    @Test
+    public void testGetBlobByName() throws SQLException  {
+
+        //WHEN
+        callableStatement.getBlob(TEST_VALUE_NAME);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getBlob(TEST_VALUE_NAME);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier
                 .forClass(JdbcCallableStatement.class)

@@ -180,7 +180,7 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public Blob getBlob(final int parameterIndex) throws SQLException {
+    public Blob getBlob(final int parameterIndex) {
         prepareResultSet();
         return resultSet.getBlob(parameterIndex);
     }

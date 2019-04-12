@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
@@ -855,8 +856,9 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getRef'");
     }
 
-    public Blob getBlob(final int i) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getBlob'");
+    public Blob getBlob(final int i) {
+        final String string = getString(i);
+        return createBlob(string);
     }
 
     public Clob getClob(final int i) {
@@ -876,8 +878,9 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getRef'");
     }
 
-    public Blob getBlob(final String colName) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getBlob'");
+    public Blob getBlob(final String colName) {
+        final String string = getString(colName);
+        return createBlob(string);
     }
 
     public Clob getClob(final String colName) {
@@ -897,6 +900,12 @@ public class JdbcResultSet implements java.sql.ResultSet {
         final CitrusClob citrusClob = new CitrusClob();
         citrusClob.setString(1, clobContent);
         return citrusClob;
+    }
+
+    private Blob createBlob(final String blobContent) {
+        final CitrusBlob citrusBlob = new CitrusBlob();
+        citrusBlob.setBytes(1, blobContent.getBytes());
+        return citrusBlob;
     }
 
     @Override

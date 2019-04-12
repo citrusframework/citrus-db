@@ -868,7 +868,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testGetBlobByIndex() throws SQLException {
+    public void testGetBlobByIndex() {
 
         //WHEN
         callableStatement.getBlob(TEST_VALUE_INDEX);

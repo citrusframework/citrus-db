@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -230,8 +231,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setBlob(final int parameterIndex, final Blob x) throws SQLException {
-        throw new SQLException("Not supported JDBC prepared statement function 'setBlob'");
+    public void setBlob(final int parameterIndex, final Blob x) {
+        setParameter(parameterIndex, x);
     }
 
     @Override
@@ -309,7 +310,10 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setBlob(final int parameterIndex, final InputStream inputStream, final long length) throws SQLException {
-        throw new SQLException("Not supported JDBC prepared statement function 'setBlob'");
+        if(lobUtils.fitsInInt(length)){
+            final CitrusBlob citrusBlob = lobUtils.createBlobFromInputStream(inputStream, (int) length);
+            setParameter(parameterIndex, citrusBlob);
+        }
     }
 
     @Override
@@ -370,7 +374,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setBlob(final int parameterIndex, final InputStream inputStream) throws SQLException {
-        throw new SQLException("Not supported JDBC prepared statement function 'setBlob'");
+        final CitrusBlob citrusClob = lobUtils.createBlobFromInputStream(inputStream, -1);
+        setParameter(parameterIndex, citrusClob);
     }
 
     @Override

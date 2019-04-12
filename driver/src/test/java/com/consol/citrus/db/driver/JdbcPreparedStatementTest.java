@@ -1,5 +1,6 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.utils.LobUtils;
@@ -11,8 +12,10 @@ import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
 
@@ -180,6 +183,52 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         verify(jdbcPreparedStatement).setParameter(5, citrusClobMock);
+    }
+
+    @Test
+    public void testSetBlobWithParameterIndexAndClob() {
+
+        //GIVEN
+        final Blob blob = mock(Blob.class);
+
+        //WHEN
+        jdbcPreparedStatement.setBlob(5, blob);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(5, blob);
+    }
+
+    @Test
+    public void testSetLimitedBlobFromInputStream() throws Exception {
+
+        //GIVEN
+        final long desiredLength = 13L;
+        when(lobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusBlob expectedBlob = mock(CitrusBlob.class);
+        final InputStream inputStreamMock = mock(InputStream.class);
+        when(lobUtils.createBlobFromInputStream(inputStreamMock, (int)desiredLength)).thenReturn(expectedBlob);
+
+        //WHEN
+        jdbcPreparedStatement.setBlob(12, inputStreamMock, desiredLength);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(12, expectedBlob);
+    }
+
+    @Test
+    public void setBlobFromInputStream() throws Exception {
+
+        //GIVEN
+        final InputStream inputStreamMock = mock(InputStream.class);
+        final CitrusBlob citrusBlobMock = mock(CitrusBlob.class);
+        when(lobUtils.createBlobFromInputStream(inputStreamMock, -1)).thenReturn(citrusBlobMock);
+
+        //WHEN
+        jdbcPreparedStatement.setBlob(5, inputStreamMock);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(5, citrusBlobMock);
     }
 
     @Test

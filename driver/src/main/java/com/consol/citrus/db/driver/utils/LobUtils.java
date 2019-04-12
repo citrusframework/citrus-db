@@ -43,7 +43,7 @@ public class LobUtils {
         try{
             return createBlob(length, IOUtils.toByteArray(inputStream));
         } catch (final IOException e) {
-            throw new SQLException("Could not create Clob from reader", e);
+            throw new SQLException("Could not create Blob from inputStream", e);
         }
     }
 

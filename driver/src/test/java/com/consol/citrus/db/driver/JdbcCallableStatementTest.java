@@ -446,6 +446,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getString(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getString(TEST_VALUE_INDEX);
     }
 
@@ -456,6 +457,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getBoolean(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBoolean(TEST_VALUE_INDEX);
     }
 
@@ -466,6 +468,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getByte(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getByte(TEST_VALUE_INDEX);
     }
 
@@ -476,6 +479,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getBytes(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBytes(TEST_VALUE_INDEX);
     }
 
@@ -486,6 +490,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getShort(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getShort(TEST_VALUE_INDEX);
     }
 
@@ -496,6 +501,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getInt(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getInt(TEST_VALUE_INDEX);
     }
 
@@ -506,6 +512,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getLong(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getLong(TEST_VALUE_INDEX);
     }
 
@@ -516,6 +523,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getFloat(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getFloat(TEST_VALUE_INDEX);
     }
 
@@ -526,6 +534,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getDouble(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDouble(TEST_VALUE_INDEX);
     }
 
@@ -540,6 +549,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getBigDecimal(TEST_VALUE_INDEX, 2);
 
         //THEN
+        verify(resultSetSpy).next();
         //noinspection ResultOfMethodCallIgnored
         verify(bigDecimalMock).setScale(2, RoundingMode.HALF_UP);
     }
@@ -551,6 +561,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getString(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getString(TEST_VALUE_NAME);
     }
 
@@ -561,6 +572,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getBoolean(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBoolean(TEST_VALUE_NAME);
     }
 
@@ -581,6 +593,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getShort(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getShort(TEST_VALUE_NAME);
     }
 
@@ -591,6 +604,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getInt(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getInt(TEST_VALUE_NAME);
     }
 
@@ -601,6 +615,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getLong(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getLong(TEST_VALUE_NAME);
     }
 
@@ -611,6 +626,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getFloat(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getFloat(TEST_VALUE_NAME);
     }
 
@@ -621,6 +637,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getDouble(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDouble(TEST_VALUE_NAME);
     }
 
@@ -631,6 +648,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getBytes(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBytes(TEST_VALUE_NAME);
     }
 
@@ -641,6 +659,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getObject(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getObject(TEST_VALUE_NAME);
     }
 
@@ -651,6 +670,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getBigDecimal(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBigDecimal(TEST_VALUE_NAME);
     }
 
@@ -672,6 +692,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getDate(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDate(TEST_VALUE_INDEX);
     }
 
@@ -682,6 +703,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getTime(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTime(TEST_VALUE_INDEX);
     }
 
@@ -692,6 +714,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getTimestamp(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTimestamp(TEST_VALUE_INDEX);
     }
 
@@ -702,6 +725,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getObject(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getObject(TEST_VALUE_INDEX);
     }
 
@@ -712,6 +736,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getDate(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDate(TEST_VALUE_NAME);
     }
 
@@ -722,6 +747,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getTime(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTime(TEST_VALUE_NAME);
     }
 
@@ -732,6 +758,7 @@ public class JdbcCallableStatementTest{
         callableStatement.getTimestamp(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTimestamp(TEST_VALUE_NAME);
     }
 
@@ -774,7 +801,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void TestNoopIfLengthExceedsInt() throws Exception {
+    public void testNoopIfLengthExceedsInt() throws Exception {
 
         //GIVEN
         when(lobUtils.fitsInInt(anyLong())).thenReturn(false);
@@ -787,7 +814,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetClob() throws Exception {
+    public void testSetClob() {
 
         //GIVEN
         final String parameterName = "myClob";
@@ -802,7 +829,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void setClobFromReader() throws Exception {
+    public void testSetClobFromReader() throws Exception {
 
         //GIVEN
         final String parameterName = "myClob";
@@ -816,6 +843,17 @@ public class JdbcCallableStatementTest{
         //THEN
         final CitrusClob storedClob = (CitrusClob) callableStatement.getParameters().get(parameterName);
         assertEquals(storedClob, expectedClob);
+    }
+
+    @Test
+    public void testGetClobByIndex() throws Exception {
+
+        //WHEN
+        callableStatement.getClob(TEST_VALUE_INDEX);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getClob(TEST_VALUE_INDEX);
     }
 
     @Test

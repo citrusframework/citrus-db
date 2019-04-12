@@ -186,9 +186,9 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public Clob getClob(final int parameterIndex) throws SQLException {
-        notSupported("getClob(int parameterIndex)");
-        return null;
+    public Clob getClob(final int parameterIndex) {
+        prepareResultSet();
+        return resultSet.getClob(parameterIndex);
     }
 
     @Override
@@ -626,7 +626,7 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public void setClob(final String parameterName, final Clob x) throws SQLException {
+    public void setClob(final String parameterName, final Clob x) {
         setParameter(parameterName, x);
     }
 
@@ -731,7 +731,7 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
         setParameter(parameterName, "?");
     }
 
-    private void prepareResultSet() throws SQLException {
+    private void prepareResultSet() {
         if(resultSet.getRow() == 0){
             resultSet.next();
         }

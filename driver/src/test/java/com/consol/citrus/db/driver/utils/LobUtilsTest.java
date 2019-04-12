@@ -1,10 +1,14 @@
 package com.consol.citrus.db.driver.utils;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import org.apache.commons.io.IOUtils;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.sql.SQLException;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -71,7 +75,7 @@ public class LobUtilsTest {
     }
 
     @Test
-    public void testApplyOffset() throws Exception {
+    public void testApplyOffset() {
 
         //GIVEN
         final long position = 1;
@@ -82,5 +86,35 @@ public class LobUtilsTest {
 
         //THEN
         assertEquals(positionWithOffset, expectedPosition);
+    }
+
+    @Test
+    public void testSetUnlimitedBlobFromReader() throws IOException, SQLException {
+
+        //GIVEN
+        final String expectedClobContent = "Stay positive, always!";
+        final InputStream inputStream = IOUtils.toInputStream(expectedClobContent, "UTF8");
+
+        //WHEN
+        final CitrusBlob clobFromReader = lobUtils.createBlobFromInputStream(inputStream, -1);
+
+        //THEN
+        final String clobContent = IOUtils.toString(clobFromReader.getBinaryStream(), "UTF8");
+        assertEquals(clobContent, expectedClobContent);
+    }
+
+    @Test
+    public void testSetLimitedBlobFromReader() throws Exception {
+
+        //GIVEN
+        final InputStream inputStream = IOUtils.toInputStream("Stay positive, always!", "UTF8");
+        final String expectedClobContent = "Stay positive";
+
+        //WHEN
+        final CitrusBlob blobFromInputStream = lobUtils.createBlobFromInputStream(inputStream, 13);
+
+        //THEN
+        final String clobContent = IOUtils.toString(blobFromInputStream.getBinaryStream(), "UTF8");
+        assertEquals(clobContent, expectedClobContent);
     }
 }

@@ -16,6 +16,7 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.http.client.HttpClient;
@@ -546,7 +547,10 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setBlob(final String parameterName, final InputStream inputStream, final long length) throws SQLException {
-        notSupported("setBlob(String parameterName, InputStream inputStream, long length)");
+        if(lobUtils.fitsInInt(length)){
+            final CitrusBlob blobFromInputStream = lobUtils.createBlobFromInputStream(inputStream, (int) length);
+            setParameter(parameterName, blobFromInputStream);
+        }
     }
 
     @Override
@@ -621,8 +625,8 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public void setBlob(final String parameterName, final Blob x) throws SQLException {
-        notSupported("setBlob(String parameterName,  Blob x)");
+    public void setBlob(final String parameterName, final Blob x) {
+        setParameter(parameterName, x);
     }
 
     @Override
@@ -673,7 +677,8 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setBlob(final String parameterName, final InputStream inputStream) throws SQLException {
-        notSupported("setBlob(String parameterName, InputStream inputStream)");
+        final CitrusBlob citrusBlob = lobUtils.createBlobFromInputStream(inputStream, -1);
+        setParameter(parameterName, citrusBlob);
     }
 
     @Override

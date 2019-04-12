@@ -1,5 +1,6 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.utils.LobUtils;
@@ -11,12 +12,14 @@ import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.JDBCType;
@@ -887,6 +890,60 @@ public class JdbcCallableStatementTest{
         //THEN
         verify(resultSetSpy).next();
         verify(resultSetSpy).getBlob(TEST_VALUE_NAME);
+    }
+
+    @Test
+    public void testSetBlob() {
+
+        //GIVEN
+        final String parameterName = "myBlob";
+        final CitrusBlob expectedBlob = mock(CitrusBlob.class);
+
+        //WHEN
+        callableStatement.setBlob(parameterName, expectedBlob);
+
+        //THEN
+        final CitrusBlob storedBlob = (CitrusBlob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedBlob, expectedBlob);
+    }
+
+    @Test
+    public void testSetLimitedBlobFromStreamByName() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myBlob";
+        final JdbcCallableStatement callableStatement = generateCallableStatementWithParameter(parameterName);
+        final InputStream inputStreamMock = mock(InputStream.class);
+
+        final long desiredLength = 13L;
+        when(lobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusBlob expectedBlob = mock(CitrusBlob.class);
+        when(lobUtils.createBlobFromInputStream(inputStreamMock, (int)desiredLength)).thenReturn(expectedBlob);
+
+        //WHEN
+        callableStatement.setBlob(parameterName, inputStreamMock, desiredLength);
+
+        //THEN
+        final Blob storedClob = (Blob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedBlob);
+    }
+
+    @Test
+    public void testSetBlobFromInputStream() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myBlob";
+        final InputStream inputStreamMock = Mockito.mock(InputStream.class);
+        final CitrusBlob expectedBlob = Mockito.mock(CitrusBlob.class);
+        Mockito.when(lobUtils.createBlobFromInputStream(inputStreamMock, -1)).thenReturn(expectedBlob);
+
+        //WHEN
+        callableStatement.setBlob(parameterName, inputStreamMock);
+
+        //THEN
+        final CitrusBlob storedClob = (CitrusBlob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedBlob);
     }
 
     @Test

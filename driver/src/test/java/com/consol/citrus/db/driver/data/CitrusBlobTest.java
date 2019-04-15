@@ -9,6 +9,8 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Blob;
+import java.sql.SQLException;
 
 import static org.testng.Assert.assertEquals;
 
@@ -136,6 +138,21 @@ public class CitrusBlobTest {
 
         //GIVEN
         final byte[] pattern = "Me Up".getBytes();
+        citrusBlob.setBytes(1, sampleBytes);
+
+        //WHEN
+        final long position = citrusBlob.position(pattern, 1);
+
+        //THEN
+        assertEquals(position, 6);
+    }
+
+    @Test
+    public void testPositionWithBlobPattern() throws SQLException {
+
+        //GIVEN
+        final Blob pattern = new CitrusBlob();
+        pattern.setBytes(1, "Me Up".getBytes());
         citrusBlob.setBytes(1, sampleBytes);
 
         //WHEN

@@ -2,12 +2,15 @@ package com.consol.citrus.db.driver.data;
 
 import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 public class CitrusBlob implements Blob {
@@ -39,21 +42,22 @@ public class CitrusBlob implements Blob {
     public long position(final byte[] pattern, final long start) {
         if(lobUtils.fitsInInt(start)){
             final int intStart = (int)start;
-            for(int position = intStart - 1; position < content.length;  position++){
-                if(content[position] == pattern[0]){
-                    final byte[] subarray = ArrayUtils.subarray(content, position, position + pattern.length);
-                    if(Arrays.equals(subarray, pattern)){
-                        return (long) position + 1;
-                    }
-                }
-            }
+            return findPositionInBlobContent(pattern, intStart);
         }
         return -1;
     }
 
     @Override
-    public long position(final Blob pattern, final long start) {
-        return 0;
+    public long position(final Blob pattern, final long start) throws SQLException {
+        if(lobUtils.fitsInInt(start)) {
+            final int intStart = (int) start;
+            try {
+                return findPositionInBlobContent(IOUtils.toByteArray(pattern.getBinaryStream()), intStart);
+            } catch (final IOException e) {
+                throw new SQLException(e);
+            }
+        }
+        return -1;
     }
 
     @Override
@@ -114,6 +118,18 @@ public class CitrusBlob implements Blob {
     @Override
     public String toString() {
         return Base64.encodeBase64String(content);
+    }
+
+    private long findPositionInBlobContent(final byte[] pattern, final int start) {
+        for(int position = start - 1; position < content.length;  position++){
+            if(content[position] == pattern[0]){
+                final byte[] subarray = ArrayUtils.subarray(content, position, position + pattern.length);
+                if(Arrays.equals(subarray, pattern)){
+                    return (long) position + 1;
+                }
+            }
+        }
+        return -1;
     }
 
     /**

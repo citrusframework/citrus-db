@@ -1,6 +1,7 @@
 package com.consol.citrus.db.driver.data;
 
 import com.consol.citrus.db.driver.utils.LobUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.ByteArrayInputStream;
@@ -101,7 +102,7 @@ public class CitrusBlob implements Blob {
 
     @Override
     public String toString() {
-        return Arrays.toString(content);
+        return Base64.encodeBase64String(content);
     }
 
     /**

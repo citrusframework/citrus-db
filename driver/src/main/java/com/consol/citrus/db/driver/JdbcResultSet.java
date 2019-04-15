@@ -20,6 +20,7 @@ import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -904,7 +905,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     private Blob createBlob(final String blobContent) {
         final CitrusBlob citrusBlob = new CitrusBlob();
-        citrusBlob.setBytes(1, blobContent.getBytes());
+        citrusBlob.setBytes(1, Base64.decodeBase64(blobContent.getBytes()));
         return citrusBlob;
     }
 

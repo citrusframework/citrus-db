@@ -2,13 +2,13 @@ package com.consol.citrus.db.driver.data;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 
 import static org.testng.Assert.assertEquals;
 
@@ -37,7 +37,7 @@ public class CitrusBlobTest {
         final String clobContent = citrusBlob.toString();
 
         //THEN
-        assertEquals(clobContent, Arrays.toString(sampleBytes));
+        assertEquals(clobContent, Base64.encodeBase64String(sampleBytes));
     }
 
     @Test

@@ -37,7 +37,18 @@ public class CitrusBlob implements Blob {
 
     @Override
     public long position(final byte[] pattern, final long start) {
-        return 0;
+        if(lobUtils.fitsInInt(start)){
+            final int intStart = (int)start;
+            for(int position = intStart - 1; position < content.length;  position++){
+                if(content[position] == pattern[0]){
+                    final byte[] subarray = ArrayUtils.subarray(content, position, position + pattern.length);
+                    if(Arrays.equals(subarray, pattern)){
+                        return (long) position + 1;
+                    }
+                }
+            }
+        }
+        return -1;
     }
 
     @Override

@@ -130,4 +130,18 @@ public class CitrusBlobTest {
         final byte[] blobContent = IOUtils.toByteArray(binaryStream);
         assertEquals(blobContent, ArrayUtils.EMPTY_BYTE_ARRAY);
     }
+
+    @Test
+    public void testPositionWithBytePattern() {
+
+        //GIVEN
+        final byte[] pattern = "Me Up".getBytes();
+        citrusBlob.setBytes(1, sampleBytes);
+
+        //WHEN
+        final long position = citrusBlob.position(pattern, 1);
+
+        //THEN
+        assertEquals(position, 6);
+    }
 }

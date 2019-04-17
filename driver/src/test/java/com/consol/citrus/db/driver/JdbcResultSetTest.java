@@ -4,10 +4,10 @@ import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetBuilder;
 import com.jparams.verifier.tostring.ToStringVerifier;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -761,7 +761,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        final JdbcResultSet resultSet = generateResultSet(Base64.encode(expectedText.getBytes()));
+        final JdbcResultSet resultSet = generateResultSet(Base64.encodeBase64String(expectedText.getBytes()));
         resultSet.next();
 
         //WHEN
@@ -778,7 +778,7 @@ public class JdbcResultSetTest {
 
         //GIVEN
         final String expectedText = "nuqneh";
-        final JdbcResultSet resultSet = generateResultSet(Base64.encode(expectedText.getBytes()));
+        final JdbcResultSet resultSet = generateResultSet(Base64.encodeBase64String(expectedText.getBytes()));
         resultSet.next();
 
         //WHEN

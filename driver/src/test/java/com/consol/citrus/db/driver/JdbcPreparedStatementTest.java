@@ -33,8 +33,8 @@ import static org.testng.Assert.assertEquals;
 @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class JdbcPreparedStatementTest {
 
-    private HttpClient httpClientMock = mock(HttpClient.class);
-    private JdbcConnection jdbcConnectionMock = mock(JdbcConnection.class);
+    private final HttpClient httpClientMock = mock(HttpClient.class);
+    private final JdbcConnection jdbcConnectionMock = mock(JdbcConnection.class);
     private LobUtils lobUtils;
 
     private JdbcPreparedStatement jdbcPreparedStatement;

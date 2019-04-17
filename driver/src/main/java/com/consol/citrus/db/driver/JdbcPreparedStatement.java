@@ -51,9 +51,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-/**
- * @author Christoph Deppisch
- */
+
 public class JdbcPreparedStatement extends JdbcStatement implements PreparedStatement {
 
     /** The prepared statement to be executed */
@@ -67,19 +65,19 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     private LobUtils lobUtils = new LobUtils();
 
-    public JdbcPreparedStatement(final HttpClient httpClient,
-                                 final String preparedStatement,
-                                 final String serverUrl,
-                                 final JdbcConnection connection) {
+    JdbcPreparedStatement(final HttpClient httpClient,
+                          final String preparedStatement,
+                          final String serverUrl,
+                          final JdbcConnection connection) {
         super(httpClient, serverUrl, connection);
         this.preparedStatement = preparedStatement;
     }
 
-    public JdbcPreparedStatement(final HttpClient httpClient,
-                                 final String preparedStatement,
-                                 final String serverUrl,
-                                 final JdbcConnection connection,
-                                 final LobUtils lobUtils) {
+    JdbcPreparedStatement(final HttpClient httpClient,
+                          final String preparedStatement,
+                          final String serverUrl,
+                          final JdbcConnection connection,
+                          final LobUtils lobUtils) {
         this(httpClient, preparedStatement, serverUrl, connection);
         this.lobUtils = lobUtils;
     }
@@ -95,102 +93,102 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setNull(final int parameterIndex, final int sqlType) throws SQLException {
+    public void setNull(final int parameterIndex, final int sqlType) {
         setParameter(parameterIndex, null);
     }
 
     @Override
-    public void setBoolean(final int parameterIndex, final boolean x) throws SQLException {
+    public void setBoolean(final int parameterIndex, final boolean x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setByte(final int parameterIndex, final byte x) throws SQLException {
+    public void setByte(final int parameterIndex, final byte x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setShort(final int parameterIndex, final short x) throws SQLException {
+    public void setShort(final int parameterIndex, final short x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setInt(final int parameterIndex, final int x) throws SQLException {
+    public void setInt(final int parameterIndex, final int x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setLong(final int parameterIndex, final long x) throws SQLException {
+    public void setLong(final int parameterIndex, final long x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setFloat(final int parameterIndex, final float x) throws SQLException {
+    public void setFloat(final int parameterIndex, final float x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setDouble(final int parameterIndex, final double x) throws SQLException {
+    public void setDouble(final int parameterIndex, final double x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setBigDecimal(final int parameterIndex, final BigDecimal x) throws SQLException {
+    public void setBigDecimal(final int parameterIndex, final BigDecimal x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setString(final int parameterIndex, final String x) throws SQLException {
+    public void setString(final int parameterIndex, final String x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setBytes(final int parameterIndex, final byte[] x) throws SQLException {
+    public void setBytes(final int parameterIndex, final byte[] x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setDate(final int parameterIndex, final Date x) throws SQLException {
+    public void setDate(final int parameterIndex, final Date x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setTime(final int parameterIndex, final Time x) throws SQLException {
+    public void setTime(final int parameterIndex, final Time x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setTimestamp(final int parameterIndex, final Timestamp x) throws SQLException {
+    public void setTimestamp(final int parameterIndex, final Timestamp x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setAsciiStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
+    public void setAsciiStream(final int parameterIndex, final InputStream x, final int length) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setUnicodeStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
+    public void setUnicodeStream(final int parameterIndex, final InputStream x, final int length) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setBinaryStream(final int parameterIndex, final InputStream x, final int length) throws SQLException {
+    public void setBinaryStream(final int parameterIndex, final InputStream x, final int length) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void clearParameters() throws SQLException {
+    public void clearParameters() {
         parameters.clear();
     }
 
     @Override
-    public void setObject(final int parameterIndex, final Object x, final int targetSqlType) throws SQLException {
+    public void setObject(final int parameterIndex, final Object x, final int targetSqlType) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setObject(final int parameterIndex, final Object x) throws SQLException {
+    public void setObject(final int parameterIndex, final Object x) {
         setParameter(parameterIndex, x);
     }
 
@@ -246,47 +244,47 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public ResultSetMetaData getMetaData() throws SQLException {
+    public ResultSetMetaData getMetaData() {
         return resultSet.getMetaData();
     }
 
     @Override
-    public void setDate(final int parameterIndex, final Date x, final Calendar cal) throws SQLException {
+    public void setDate(final int parameterIndex, final Date x, final Calendar cal) {
         setParameter(parameterIndex, x.toString());
     }
 
     @Override
-    public void setTime(final int parameterIndex, final Time x, final Calendar cal) throws SQLException {
+    public void setTime(final int parameterIndex, final Time x, final Calendar cal) {
         setParameter(parameterIndex, x.getTime());
     }
 
     @Override
-    public void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) throws SQLException {
+    public void setTimestamp(final int parameterIndex, final Timestamp x, final Calendar cal) {
         setParameter(parameterIndex, x.getTime());
     }
 
     @Override
-    public void setNull(final int parameterIndex, final int sqlType, final String typeName) throws SQLException {
+    public void setNull(final int parameterIndex, final int sqlType, final String typeName) {
         setParameter(parameterIndex, null);
     }
 
     @Override
-    public void setURL(final int parameterIndex, final URL x) throws SQLException {
+    public void setURL(final int parameterIndex, final URL x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public ParameterMetaData getParameterMetaData() throws SQLException {
+    public ParameterMetaData getParameterMetaData() {
         return null;
     }
 
     @Override
-    public void setRowId(final int parameterIndex, final RowId x) throws SQLException {
+    public void setRowId(final int parameterIndex, final RowId x) {
         setParameter(parameterIndex, x);
     }
 
     @Override
-    public void setNString(final int parameterIndex, final String x) throws SQLException {
+    public void setNString(final int parameterIndex, final String x) {
         setParameter(parameterIndex, x);
     }
 
@@ -327,7 +325,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setObject(final int parameterIndex, final Object x, final int targetSqlType, final int scaleOrLength) throws SQLException {
+    public void setObject(final int parameterIndex, final Object x, final int targetSqlType, final int scaleOrLength) {
         setParameter(parameterIndex, x);
     }
 

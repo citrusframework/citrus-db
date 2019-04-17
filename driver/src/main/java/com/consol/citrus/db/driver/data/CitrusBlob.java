@@ -61,6 +61,21 @@ public class CitrusBlob implements Blob {
     }
 
     @Override
+    public OutputStream setBinaryStream(final long pos) {
+        if(lobUtils.fitsInInt(pos)){
+            return new OutputStream() {
+                int index = (int) lobUtils.applyOffset(pos);
+
+                @Override
+                public void write(final int byteToWrite) {
+                    content[index++] = (byte) byteToWrite;
+                }
+            };
+        }
+        return null;
+    }
+
+    @Override
     public int setBytes(final long pos, final byte[] bytes) {
         final long positionWithOffset = lobUtils.applyOffset(pos);
         if(lobUtils.fitsInInt(positionWithOffset)){
@@ -78,11 +93,6 @@ public class CitrusBlob implements Blob {
         }
 
         return 0;
-    }
-
-    @Override
-    public OutputStream setBinaryStream(final long pos) {
-        return null;
     }
 
     @Override

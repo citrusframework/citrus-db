@@ -9,6 +9,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.sql.Blob;
 import java.sql.SQLException;
 
@@ -174,5 +175,21 @@ public class CitrusBlobTest {
 
         //THEN
         assertEquals(IOUtils.toByteArray(limitedBinarySteam), expectedStreamContent);
+    }
+
+    @Test
+    public void testSetBinaryStream() throws IOException {
+
+        //GIVEN
+        final byte[] expectedBlobContent = "Beam us Up, Scotty".getBytes();
+        citrusBlob.setBytes(1, sampleBytes);
+
+        //WHEN
+        final OutputStream blobOutputStream = citrusBlob.setBinaryStream(6);
+        blobOutputStream.write("us".getBytes());
+
+        //THEN
+        final InputStream blobContent = citrusBlob.getBinaryStream();
+        assertEquals(IOUtils.toByteArray(blobContent), expectedBlobContent);
     }
 }

@@ -161,4 +161,18 @@ public class CitrusBlobTest {
         //THEN
         assertEquals(position, 6);
     }
+
+    @Test
+    public void testGetLimitedBinaryStream() throws IOException {
+
+        //GIVEN
+        final byte[] expectedStreamContent = "Me Up".getBytes();
+        citrusBlob.setBytes(1, sampleBytes);
+
+        //WHEN
+        final InputStream limitedBinarySteam = citrusBlob.getBinaryStream(6, 5);
+
+        //THEN
+        assertEquals(IOUtils.toByteArray(limitedBinarySteam), expectedStreamContent);
+    }
 }

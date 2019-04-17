@@ -99,7 +99,13 @@ public class CitrusBlob implements Blob {
 
     @Override
     public InputStream getBinaryStream(final long pos, final long length) {
-        return null;
+        if(lobUtils.fitsInInt(pos) && lobUtils.fitsInInt(length)){
+            final int intPosWithOffset = (int) lobUtils.applyOffset(pos);
+            final int endIndex = intPosWithOffset + (int) length;
+            final byte[] subarray = ArrayUtils.subarray(content, intPosWithOffset, endIndex);
+            return new ByteArrayInputStream(subarray);
+        }
+        return new ByteArrayInputStream(ArrayUtils.EMPTY_BYTE_ARRAY);
     }
 
     @Override

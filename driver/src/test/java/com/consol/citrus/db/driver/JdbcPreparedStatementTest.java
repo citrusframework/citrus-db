@@ -93,6 +93,21 @@ public class JdbcPreparedStatementTest {
     }
 
     @Test
+    public void testParameterOrderIsPreserved(){
+
+        //GIVEN
+
+        //WHEN
+        jdbcPreparedStatement.setParameter(2, 42);
+        jdbcPreparedStatement.setParameter(1, 2);
+
+        //THEN
+        assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get("0"), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get("1"), 42);
+    }
+
+    @Test
     public void textExecuteBatchedPreparedStatements() throws SQLException {
 
         //GIVEN

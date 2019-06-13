@@ -18,6 +18,8 @@ import java.io.StringReader;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -244,6 +246,20 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         verify(jdbcPreparedStatement).setParameter(5, citrusBlobMock);
+    }
+
+    @Test
+    public void testParametersAreOrderedCorrectly() {
+
+        //GIVEN
+        final List<String> expectedParameter = Arrays.asList("foo", "bar");
+
+        //WHEN
+        jdbcPreparedStatement.setString(3,"foo");
+        jdbcPreparedStatement.setString(11, "bar");
+
+        //THEN
+        assertEquals(jdbcPreparedStatement.getParameters().values(), expectedParameter);
     }
 
     @Test

@@ -27,6 +27,8 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -947,6 +949,82 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
+    public void testIndexedParametersAreOrderedCorrectly() throws SQLException {
+
+        //GIVEN
+        final JdbcCallableStatement callableStatement = generateCallableStatement();
+        callableStatement.registerOutParameter(3, Types.VARCHAR);
+        callableStatement.registerOutParameter(11, Types.VARCHAR);
+        final List<String> expectedParameter = Arrays.asList("foo", "bar");
+
+        //WHEN
+        callableStatement.setString(3,"foo");
+        callableStatement.setString(11, "bar");
+
+        //THEN
+        assertEquals(callableStatement.getParameters().values(), expectedParameter);
+    }
+
+    @Test
+    public void testNamedParametersAreOrderedCorrectly() {
+
+        //GIVEN
+        final String parameter1 = "z-param";
+        final String parameter2 = "a-param";
+        final JdbcCallableStatement callableStatement =
+                generateCallableStatementWithParameter(parameter1, parameter2);
+        callableStatement.registerOutParameter(parameter1, Types.VARCHAR);
+        callableStatement.registerOutParameter(parameter2, Types.VARCHAR);
+        final String expectedStatement = "CALL myFunction(z-param=>?,a-param=>?) - (foo, bar)";
+
+        //WHEN
+        callableStatement.setString(parameter1,"foo");
+        callableStatement.setString(parameter2,"bar");
+
+        //THEN
+        assertEquals(callableStatement.composeStatement(), expectedStatement);
+
+    }
+
+    @Test
+    public void testParametersMixedParametersAreOrderedCorrectly() throws SQLException {
+
+        //GIVEN
+        final String parameterName = "foo";
+        final JdbcCallableStatement callableStatement = generateCallableStatementWithParameter(parameterName);
+        callableStatement.registerOutParameter(2, Types.VARCHAR);
+        callableStatement.registerOutParameter(parameterName, Types.VARCHAR);
+
+        final String expectedStatement = "CALL myFunction(foo=>?,?) - (foobar, bar)";
+
+        //WHEN
+        callableStatement.setParameter(2, "bar");
+        callableStatement.setParameter(parameterName, "foobar");
+
+        //THEN
+        assertEquals(callableStatement.composeStatement(), expectedStatement);
+    }
+
+    @Test
+    public void testAnonymousNamedParametersAreOrderedCorrectly() {
+
+        //GIVEN
+        final String parameter1 = "z-param";
+        final String parameter2 = "a-param";
+        final JdbcCallableStatement callableStatement = generateCallableStatement();
+        callableStatement.registerOutParameter(parameter1, Types.VARCHAR);
+        callableStatement.registerOutParameter(parameter2, Types.VARCHAR);
+        final String expectedStatement = "CALL myFunction(?,?) - (foo, bar)";
+
+        //WHEN
+        callableStatement.setString(parameter1,"foo");
+        callableStatement.setString(parameter2, "bar");
+
+        //THEN
+        assertEquals(callableStatement.composeStatement(), expectedStatement);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier
                 .forClass(JdbcCallableStatement.class)
@@ -971,9 +1049,14 @@ public class JdbcCallableStatementTest{
         final String statement = "CALL myFunction(?,?)";
         return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection, lobUtils);
     }
+
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName) {
-        final String statement = "CALL myFunction("+parameterName+",?)";
+        final String statement = "CALL myFunction("+parameterName+"=>?,?)";
         return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, lobUtils);
     }
 
+    private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName, final String parameterNameTwo) {
+        final String statement = "CALL myFunction("+parameterName+"=>?,"+parameterNameTwo+"=>?)";
+        return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, lobUtils);
+    }
 }

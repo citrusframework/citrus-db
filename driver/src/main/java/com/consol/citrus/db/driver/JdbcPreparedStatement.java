@@ -389,7 +389,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
         parameters.put(parameterName, value);
     }
 
-    private String composeStatement() {
+    String composeStatement() {
         return composeStatement(parameters);
     }
 

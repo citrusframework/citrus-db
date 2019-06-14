@@ -171,7 +171,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setMaxFieldSize(final int max) throws SQLException {
+    public void setMaxFieldSize(final int max) {
         //currently not required
     }
 
@@ -181,12 +181,12 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setMaxRows(final int max) throws SQLException {
+    public void setMaxRows(final int max) {
         //currently not required
     }
 
     @Override
-    public void setEscapeProcessing(final boolean enable) throws SQLException {
+    public void setEscapeProcessing(final boolean enable) {
         //currently not required
     }
 
@@ -196,7 +196,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setQueryTimeout(final int seconds) throws SQLException {
+    public void setQueryTimeout(final int seconds) {
         //currently not required
     }
 
@@ -206,7 +206,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public SQLWarning getWarnings() throws SQLException {
+    public SQLWarning getWarnings() {
         return null;
     }
 
@@ -216,28 +216,28 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setCursorName(final String name) throws SQLException {
+    public void setCursorName(final String name) {
         //currently not required
     }
 
     @Override
-    public java.sql.ResultSet getResultSet() throws SQLException {
+    public java.sql.ResultSet getResultSet() {
         return resultSet;
     }
 
     @Override
-    public int getUpdateCount() throws SQLException {
+    public int getUpdateCount() {
         return updateCount;
     }
 
     @Override
-    public boolean getMoreResults() throws SQLException {
+    public boolean getMoreResults() {
         //Multiple results in one statement are currently not supported
         return false;
     }
 
     @Override
-    public void setFetchDirection(final int direction) throws SQLException {
+    public void setFetchDirection(final int direction) {
         //currently not required
     }
 
@@ -247,7 +247,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setFetchSize(final int rows) throws SQLException {
+    public void setFetchSize(final int rows) {
         //currently not required
     }
 
@@ -289,7 +289,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() {
         return connection;
     }
 
@@ -339,12 +339,12 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed() {
         return closed;
     }
 
     @Override
-    public void setPoolable(final boolean poolable) throws SQLException {
+    public void setPoolable(final boolean poolable) {
         //currently not required
     }
 
@@ -369,7 +369,7 @@ public class JdbcStatement implements Statement {
     }
 
     @Override
-    public void setLargeMaxRows(final long max) throws SQLException {
+    public void setLargeMaxRows(final long max) {
         //currently not required
     }
 
@@ -419,7 +419,7 @@ public class JdbcStatement implements Statement {
         return objectMapper.readValue(response.getEntity().getContent(), DatabaseResult.class);
     }
 
-    private void closeResultSet() throws SQLException {
+    private void closeResultSet() {
         if(resultSet != null){
             resultSet.close();
         }

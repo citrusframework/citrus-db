@@ -7,6 +7,7 @@ import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.HttpClient;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -17,6 +18,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -43,7 +46,7 @@ public class JdbcResultSetTest {
     private final String TEST_VALUE_NAME = "col2";
 
     @Test
-    public void testGetStringByIndex() throws SQLException {
+    public void testGetStringByIndex() {
         //GIVEN
         final String expectedString = "bar";
         final JdbcResultSet resultSet = generateResultSet(expectedString);
@@ -58,7 +61,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetStringByName() throws SQLException {
+    void testGetStringByName() {
 
         //GIVEN
         final String expectedString = "bar";
@@ -74,7 +77,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetFloatByIndex() throws SQLException {
+    void testGetFloatByIndex() {
 
         //GIVEN
         final float expectedFloat = 4.2F;
@@ -89,7 +92,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetFloatByName() throws SQLException {
+    void testGetFloatByName() {
 
         //GIVEN
         final float expectedFloat = 4.2F;
@@ -105,7 +108,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetIntByIndex() throws SQLException {
+    void testGetIntByIndex() {
 
         //GIVEN
         final int expectedInt = 42;
@@ -121,7 +124,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetIntByName() throws SQLException {
+    void testGetIntByName() {
 
         //GIVEN
         final int expectedInt = 42;
@@ -137,7 +140,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBooleanByIndex() throws SQLException {
+    void testGetBooleanByIndex() {
 
         //GIVEN
         final boolean expectedBoolean = true;
@@ -153,7 +156,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetByteByIndex() throws SQLException {
+    void testGetByteByIndex() {
 
         //GIVEN
         final byte expectedByte = 42;
@@ -169,7 +172,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetShortByIndex() throws SQLException {
+    void testGetShortByIndex() {
 
         //GIVEN
         final short expectedShort = 42;
@@ -185,7 +188,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetLongByIndex() throws SQLException {
+    void testGetLongByIndex() {
 
         //GIVEN
         final long expectedLong = 42L;
@@ -201,7 +204,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetDoubleByIndex() throws SQLException {
+    void testGetDoubleByIndex() {
 
         //GIVEN
         final double expectedDouble = 4.2;
@@ -217,7 +220,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBigDecimalByIndexWithScale() throws SQLException {
+    void testGetBigDecimalByIndexWithScale() {
 
         //GIVEN
         final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
@@ -233,7 +236,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBytesByIndex() throws SQLException {
+    void testGetBytesByIndex() {
 
         //GIVEN
         final byte[] expectedBytes = "nuqneh".getBytes();
@@ -249,7 +252,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetDateByIndex() throws SQLException {
+    void testGetDateByIndex() {
 
         //GIVEN
         final Date expectedDate = new Date(619912800000L);
@@ -265,7 +268,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetTimeByIndex() throws SQLException {
+    void testGetTimeByIndex() {
 
         //GIVEN
         final Time expectedTime = new Time(619912812345L);
@@ -281,7 +284,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetTimestampByIndex() throws SQLException {
+    void testGetTimestampByIndex() {
 
         //GIVEN
         final Timestamp expectedTimestamp = new Timestamp(619912812345L);
@@ -297,7 +300,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetAsciiStreamByIndex() throws SQLException, IOException {
+    void testGetAsciiStreamByIndex() throws IOException {
 
         //GIVEN
         final String expectedText = "nuqneh";
@@ -314,7 +317,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetUnicodeStreamByIndex() throws SQLException, IOException {
+    void testGetUnicodeStreamByIndex() throws IOException {
 
         //GIVEN
         final String expectedText = "nuqneh";
@@ -331,7 +334,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBinaryStreamByIndex() throws SQLException, IOException {
+    void testGetBinaryStreamByIndex() throws IOException {
 
         //GIVEN
         final byte[] expectedBytes = "nuqneh".getBytes();
@@ -348,7 +351,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetObjectByIndex() throws SQLException {
+    void testGetObjectByIndex() {
 
         //GIVEN
         final Object expectedObject = new Timestamp(619912812345L);
@@ -363,7 +366,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetObjectByName() throws SQLException {
+    void testGetObjectByName() {
 
         //GIVEN
         final Object expectedObject = new Timestamp(619912812345L);
@@ -378,7 +381,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBooleanByName() throws SQLException {
+    void testGetBooleanByName() {
 
         //GIVEN
         final boolean expectedBoolean = true;
@@ -394,7 +397,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetByteByName() throws SQLException {
+    void testGetByteByName() {
 
         //GIVEN
         final byte expectedByte = 42;
@@ -410,7 +413,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetShortByName() throws SQLException {
+    void testGetShortByName() {
 
         //GIVEN
         final short expectedShort = 42;
@@ -426,7 +429,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetLongByName() throws SQLException {
+    void testGetLongByName() {
 
         //GIVEN
         final long expectedLong = 42L;
@@ -442,7 +445,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetDoubleByName() throws SQLException {
+    void testGetDoubleByName() {
 
         //GIVEN
         final double expectedDouble = 4.2;
@@ -458,7 +461,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBigDecimalByNameWithScale() throws SQLException {
+    void testGetBigDecimalByNameWithScale() {
 
         //GIVEN
         final BigDecimal expectedBigDecimal = new BigDecimal(4.257);
@@ -474,7 +477,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBytesByName() throws SQLException {
+    void testGetBytesByName() {
 
         //GIVEN
         final byte[] expectedBytes = "Foobar".getBytes();
@@ -490,7 +493,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetDateByName() throws SQLException {
+    void testGetDateByName() {
 
         //GIVEN
         final Date expectedDate = new Date(619912800000L);
@@ -506,7 +509,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetTimeByName() throws SQLException {
+    void testGetTimeByName() {
 
         //GIVEN
         final Time expectedTime = new Time(619912812345L);
@@ -522,7 +525,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetTimestampByName() throws SQLException {
+    void testGetTimestampByName() {
 
         //GIVEN
         final Timestamp expectedTimestamp = new Timestamp(619912812345L);
@@ -538,7 +541,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetAsciiStreamByName() throws SQLException, IOException {
+    void testGetAsciiStreamByName() throws IOException {
 
         //GIVEN
         final String expectedText = "nuqneh";
@@ -555,7 +558,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetUnicodeStreamByName() throws SQLException, IOException {
+    void testGetUnicodeStreamByName() throws IOException {
 
         //GIVEN
         final String expectedText = "nuqneh";
@@ -572,7 +575,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetBinaryStreamByName() throws SQLException, IOException {
+    void testGetBinaryStreamByName() throws IOException {
 
         //GIVEN
         final byte[] expectedBytes = "nuqneh".getBytes();
@@ -589,7 +592,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetCharacterStreamByIndex() throws SQLException, IOException {
+    void testGetCharacterStreamByIndex() throws IOException {
 
         //GIVEN
         final String expectedText = "nuqneh";
@@ -606,7 +609,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetCharacterStreamByName() throws SQLException, IOException {
+    void testGetCharacterStreamByName() throws IOException {
 
         //GIVEN
         final String expectedText = "nuqneh";
@@ -623,7 +626,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testRowUpdated() throws SQLException {
+    void testRowUpdated() {
 
         //GIVEN
         final JdbcResultSet resultSet = generateResultSet();
@@ -636,7 +639,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testRowInserted() throws SQLException {
+    void testRowInserted() {
 
         //GIVEN
         final JdbcResultSet resultSet = generateResultSet();
@@ -649,7 +652,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testRowDeleted() throws SQLException {
+    void testRowDeleted() {
 
         //GIVEN
         final JdbcResultSet resultSet = generateResultSet();
@@ -662,7 +665,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testWasNullIsFalse() throws SQLException {
+    void testWasNullIsFalse() {
 
         //GIVEN
         final JdbcResultSet resultSet = generateResultSet();
@@ -677,7 +680,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testWasNullIsTrue() throws SQLException {
+    void testWasNullIsTrue() {
 
         //GIVEN
         final JdbcResultSet resultSet = generateResultSet();
@@ -692,7 +695,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testGetStatement() throws SQLException {
+    void testGetStatement() {
 
         //GIVEN
         final JdbcStatement expectedStatement = mock(JdbcStatement.class);
@@ -706,7 +709,7 @@ public class JdbcResultSetTest {
     }
 
     @Test
-    void testFindColumn() throws SQLException {
+    void testFindColumn() {
 
         //GIVEN
         final JdbcResultSet resultSet = generateResultSet();
@@ -717,6 +720,74 @@ public class JdbcResultSetTest {
 
         //THEN
         assertEquals(column, TEST_VALUE_INDEX_JDBC);
+    }
+
+    @Test
+    void testGetClobByIndex() throws SQLException, IOException {
+
+        //GIVEN
+        final String expectedText = "nuqneh";
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
+        resultSet.next();
+
+        //WHEN
+        final Clob clob = resultSet.getClob(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        final String text = IOUtils.toString(clob.getCharacterStream());
+        assertEquals(text, expectedText);
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, String.class);
+    }
+
+    @Test
+    void testGetClobByColumn() throws SQLException, IOException {
+
+        //GIVEN
+        final String expectedText = "nuqneh";
+        final JdbcResultSet resultSet = generateResultSet(expectedText);
+        resultSet.next();
+
+        //WHEN
+        final Clob clob = resultSet.getClob(TEST_VALUE_NAME);
+
+        //THEN
+        final String text = IOUtils.toString(clob.getCharacterStream());
+        assertEquals(text, expectedText);
+        verify(rowSpy).getValue(TEST_VALUE_NAME, String.class);
+    }
+
+    @Test
+    void testGetBlobByIndex() throws SQLException, IOException {
+
+        //GIVEN
+        final String expectedText = "nuqneh";
+        final JdbcResultSet resultSet = generateResultSet(Base64.encodeBase64String(expectedText.getBytes()));
+        resultSet.next();
+
+        //WHEN
+        final Blob clob = resultSet.getBlob(TEST_VALUE_INDEX_JDBC);
+
+        //THEN
+        final byte[] bytes = IOUtils.toByteArray(clob.getBinaryStream());
+        assertEquals(bytes, expectedText.getBytes());
+        verify(rowSpy).getValue(TEST_VALUE_INDEX_INTERNAL, String.class);
+    }
+
+    @Test
+    void testGetBlobByColumn() throws SQLException, IOException {
+
+        //GIVEN
+        final String expectedText = "nuqneh";
+        final JdbcResultSet resultSet = generateResultSet(Base64.encodeBase64String(expectedText.getBytes()));
+        resultSet.next();
+
+        //WHEN
+        final Blob clob = resultSet.getBlob(TEST_VALUE_NAME);
+
+        //THEN
+        final byte[] bytes = IOUtils.toByteArray(clob.getBinaryStream());
+        assertEquals(bytes, expectedText.getBytes());
+        verify(rowSpy).getValue(TEST_VALUE_NAME, String.class);
     }
 
     @Test
@@ -735,19 +806,19 @@ public class JdbcResultSetTest {
                 .verify();
     }
 
-    private JdbcResultSet generateResultSet(final Object testValue) throws SQLException {
+    private JdbcResultSet generateResultSet(final Object testValue) {
         return new JdbcResultSet(generateTestDataSet(testValue), null);
     }
 
-    private JdbcResultSet generateResultSet() throws SQLException {
+    private JdbcResultSet generateResultSet() {
         return new JdbcResultSet(generateTestDataSet(), null);
     }
 
-    private DataSet generateTestDataSet() throws SQLException {
+    private DataSet generateTestDataSet() {
         return generateTestDataSet(null);
     }
 
-    private DataSet generateTestDataSet(final Object testValue) throws SQLException {
+    private DataSet generateTestDataSet(final Object testValue) {
         final SortedMap<String, Object> testData = new TreeMap<>();
         testData.put("col1", "dummyValue");
         testData.put("col2", testValue);

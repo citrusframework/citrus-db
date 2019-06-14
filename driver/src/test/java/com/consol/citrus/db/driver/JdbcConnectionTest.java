@@ -16,6 +16,8 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
+import com.consol.citrus.db.driver.data.CitrusClob;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -29,6 +31,8 @@ import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -36,8 +40,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
+import static org.testng.Assert.assertEquals;
 
-@SuppressWarnings("SqlNoDataSourceInspection")
+@SuppressWarnings({"SqlNoDataSourceInspection", "SqlDialectInspection"})
 public class JdbcConnectionTest {
 
     private final HttpClient httpClient = mock(HttpClient.class);
@@ -71,7 +76,7 @@ public class JdbcConnectionTest {
         final Statement statement = jdbcConnection.createStatement();
 
         //THEN
-        Assert.assertEquals(statement, expectedStatement);
+        assertEquals(statement, expectedStatement);
     }
 
     @Test(expectedExceptions = SQLException.class)
@@ -185,7 +190,7 @@ public class JdbcConnectionTest {
         when(httpEntity.getContent()).thenReturn(new ByteArrayInputStream(transactionState.getBytes()));
 
         //WHEN
-        final Boolean isAutoCommit = jdbcConnection.getAutoCommit();
+        final boolean isAutoCommit = jdbcConnection.getAutoCommit();
 
         //THEN
         Assert.assertFalse(isAutoCommit);
@@ -305,7 +310,7 @@ public class JdbcConnectionTest {
         final Statement statement = jdbcConnection.prepareStatement(sql);
 
         //THEN
-        Assert.assertEquals(statement, expectedStatement);
+        assertEquals(statement, expectedStatement);
     }
 
     @Test(expectedExceptions = SQLException.class)
@@ -332,6 +337,32 @@ public class JdbcConnectionTest {
 
         //THEN
         //Exception is thrown
+    }
+
+    @Test
+    public void testCreateClob() {
+
+        //GIVEN
+        final Clob expectedClob = new CitrusClob();
+
+        //WHEN
+        final Clob clob = jdbcConnection.createClob();
+
+        //THEN
+        assertEquals(clob, expectedClob);
+    }
+
+    @Test
+    public void testCreateBlob() {
+
+        //GIVEN
+        final Blob expectedBlob = new CitrusBlob();
+
+        //WHEN
+        final Blob blob = jdbcConnection.createBlob();
+
+        //THEN
+        assertEquals(blob, expectedBlob);
     }
 
     @Test

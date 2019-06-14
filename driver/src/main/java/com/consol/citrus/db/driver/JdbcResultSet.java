@@ -16,8 +16,11 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
+import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -60,163 +63,163 @@ public class JdbcResultSet implements java.sql.ResultSet {
     /**
      * Constructor using remote result set.
      */
-    public JdbcResultSet(final DataSet dataSet, final JdbcStatement statement) {
+    JdbcResultSet(final DataSet dataSet, final JdbcStatement statement) {
         this.dataSet = dataSet;
         this.statement = statement;
     }
 
     @Override
-    public boolean next() throws SQLException {
+    public boolean next() {
         row = dataSet.getNextRow();
         return row != null;
     }
 
     @Override
-    public void close()	throws SQLException {
+    public void close() {
         closed = true;
     }
 
-    public String getString(final int columnIndex) throws SQLException {
+    public String getString(final int columnIndex) {
         return (String) row.getValue(columnIndex-1, String.class);
     }
 
-    public String getString(final String columnName) throws SQLException {
+    public String getString(final String columnName) {
         return (String) row.getValue(columnName, String.class);
     }
 
-    public float getFloat(final int columnIndex) throws SQLException {
+    public float getFloat(final int columnIndex) {
         return (float) row.getValue(columnIndex-1, float.class);
     }
 
-    public float getFloat(final String columnName) throws SQLException {
+    public float getFloat(final String columnName) {
         return (float) row.getValue(columnName, float.class);
     }
 
-    public int getInt(final int columnIndex) throws SQLException {
+    public int getInt(final int columnIndex) {
         return (int) row.getValue(columnIndex-1, int.class);
     }
 
-    public int getInt(final String columnName) throws SQLException {
+    public int getInt(final String columnName) {
         return (int) row.getValue(columnName, int.class);
     }
 
-    public boolean getBoolean(final int columnIndex) throws SQLException {
+    public boolean getBoolean(final int columnIndex) {
         return (boolean) row.getValue(columnIndex-1, boolean.class);
     }
 
-    public byte getByte(final int columnIndex) throws SQLException {
+    public byte getByte(final int columnIndex) {
         return (byte) row.getValue(columnIndex-1, byte.class);
     }
 
-    public short getShort(final int columnIndex) throws SQLException {
+    public short getShort(final int columnIndex) {
         return (short) row.getValue(columnIndex-1, short.class);
     }
 
-    public long getLong(final int columnIndex) throws SQLException {
+    public long getLong(final int columnIndex) {
         return (long) row.getValue(columnIndex-1, long.class);
     }
 
-    public double getDouble(final int columnIndex) throws SQLException {
+    public double getDouble(final int columnIndex) {
         return (double) row.getValue(columnIndex-1, double.class);
     }
 
-    public BigDecimal getBigDecimal(final int columnIndex, final int scale) throws SQLException {
+    public BigDecimal getBigDecimal(final int columnIndex, final int scale) {
         return getBigDecimal(columnIndex).setScale(scale, RoundingMode.HALF_UP);
     }
 
-    public byte[] getBytes(final int columnIndex) throws SQLException {
+    public byte[] getBytes(final int columnIndex) {
         return (byte[]) row.getValue(columnIndex-1, byte[].class);
     }
 
-    public Date getDate(final int columnIndex) throws SQLException {
+    public Date getDate(final int columnIndex) {
         return (Date) row.getValue(columnIndex-1, Date.class);
     }
 
-    public Time getTime(final int columnIndex) throws SQLException {
+    public Time getTime(final int columnIndex) {
         return (Time) row.getValue(columnIndex-1, Time.class);
     }
 
-    public Timestamp getTimestamp(final int columnIndex) throws SQLException {
+    public Timestamp getTimestamp(final int columnIndex) {
         return (Timestamp) row.getValue(columnIndex-1, Timestamp.class);
     }
 
-    public InputStream getAsciiStream(final int columnIndex) throws SQLException {
+    public InputStream getAsciiStream(final int columnIndex) {
         return new ByteArrayInputStream(getString(columnIndex).getBytes());
     }
 
-    public InputStream getUnicodeStream(final int columnIndex) throws SQLException {
+    public InputStream getUnicodeStream(final int columnIndex) {
         return new ByteArrayInputStream(getString(columnIndex).getBytes());
     }
 
-    public InputStream getBinaryStream(final int columnIndex) throws SQLException {
+    public InputStream getBinaryStream(final int columnIndex) {
         return new ByteArrayInputStream(getBytes(columnIndex));
     }
 
-    public Object getObject(final int columnIndex) throws SQLException {
+    public Object getObject(final int columnIndex) {
         return row.getValue(columnIndex-1);
     }
 
-    public BigDecimal getBigDecimal(final int columnIndex) throws SQLException {
+    public BigDecimal getBigDecimal(final int columnIndex) {
         return (BigDecimal) row.getValue(columnIndex-1, BigDecimal.class);
     }
 
-    public boolean getBoolean(final String columnName) throws SQLException {
+    public boolean getBoolean(final String columnName) {
         return (boolean) row.getValue(columnName, boolean.class);
     }
 
-    public byte getByte(final String columnName) throws SQLException {
+    public byte getByte(final String columnName) {
         return (byte) row.getValue(columnName, byte.class);
     }
 
-    public short getShort(final String columnName) throws SQLException {
+    public short getShort(final String columnName) {
         return (short) row.getValue(columnName, short.class);
     }
 
-    public long getLong(final String columnName) throws SQLException {
+    public long getLong(final String columnName) {
         return (long) row.getValue(columnName, long.class);
     }
 
-    public double getDouble(final String columnName) throws SQLException {
+    public double getDouble(final String columnName) {
         return (double) row.getValue(columnName, double.class);
     }
 
-    public BigDecimal getBigDecimal(final String columnName, final int scale) throws SQLException {
+    public BigDecimal getBigDecimal(final String columnName, final int scale) {
         return getBigDecimal(columnName).setScale(scale, RoundingMode.HALF_UP);
     }
 
-    public byte[] getBytes(final String columnName) throws SQLException {
+    public byte[] getBytes(final String columnName) {
         return (byte[]) row.getValue(columnName, byte[].class);
     }
 
-    public Date getDate(final String columnName) throws SQLException {
+    public Date getDate(final String columnName) {
         return (Date) row.getValue(columnName, Date.class);
     }
 
-    public Time getTime(final String columnName) throws SQLException {
+    public Time getTime(final String columnName) {
         return (Time) row.getValue(columnName, Time.class);
     }
 
-    public Timestamp getTimestamp(final String columnName) throws SQLException {
+    public Timestamp getTimestamp(final String columnName) {
         return (Timestamp) row.getValue(columnName, Timestamp.class);
     }
 
-    public Object getObject(final String columnName) throws SQLException {
+    public Object getObject(final String columnName) {
         return row.getValue(columnName);
     }
 
-    public BigDecimal getBigDecimal(final String columnName) throws SQLException {
+    public BigDecimal getBigDecimal(final String columnName) {
         return (BigDecimal) row.getValue(columnName, BigDecimal.class);
     }
 
-    public InputStream getAsciiStream(final String columnName) throws SQLException {
+    public InputStream getAsciiStream(final String columnName) {
         return new ByteArrayInputStream(getString(columnName).getBytes());
     }
 
-    public InputStream getUnicodeStream(final String columnName) throws SQLException {
+    public InputStream getUnicodeStream(final String columnName) {
         return new ByteArrayInputStream(getString(columnName).getBytes());
     }
 
-    public InputStream getBinaryStream(final String columnName) throws SQLException {
+    public InputStream getBinaryStream(final String columnName) {
         return new ByteArrayInputStream(getBytes(columnName));
     }
 
@@ -224,27 +227,27 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getWarnings'");
     }
 
-    public void clearWarnings() throws SQLException {
+    public void clearWarnings() {
         //currently not required
     }
 
-    public String getCursorName() throws SQLException {
+    public String getCursorName() {
         return "";
     }
 
-    public ResultSetMetaData getMetaData() throws SQLException {
+    public ResultSetMetaData getMetaData() {
         return new JdbcResultSetMetaData(dataSet);
     }
 
-    public int findColumn(final String columnName) throws SQLException {
+    public int findColumn(final String columnName) {
         return row.getColumns().indexOf(columnName)+1;
     }
 
-    public Reader getCharacterStream(final int columnIndex) throws SQLException {
+    public Reader getCharacterStream(final int columnIndex) {
         return new InputStreamReader(new ByteArrayInputStream(getString(columnIndex).getBytes()));
     }
 
-    public Reader getCharacterStream(final String columnName) throws SQLException {
+    public Reader getCharacterStream(final String columnName) {
         return new InputStreamReader(new ByteArrayInputStream(getString(columnName).getBytes()));
     }
 
@@ -264,11 +267,11 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'isLast'");
     }
 
-    public void beforeFirst() throws SQLException {
+    public void beforeFirst() {
         //currently not required
     }
 
-    public void afterLast() throws SQLException {
+    public void afterLast() {
         //currently not required
     }
 
@@ -280,7 +283,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'last'");
     }
 
-    public int getRow() throws SQLException {
+    public int getRow() {
         return dataSet.getCursor();
     }
 
@@ -296,7 +299,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'previous'");
     }
 
-    public void setFetchDirection(final int direction) throws SQLException {
+    public void setFetchDirection(final int direction) {
         //currently not required
     }
 
@@ -304,7 +307,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getFetchDirection'");
     }
 
-    public void setFetchSize(final int rows) throws SQLException {
+    public void setFetchSize(final int rows) {
         //currently not required
     }
 
@@ -320,191 +323,191 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getConcurrency'");
     }
 
-    public boolean rowUpdated() throws SQLException {
+    public boolean rowUpdated() {
         return rowModified();
     }
 
-    public boolean rowInserted() throws SQLException {
+    public boolean rowInserted() {
         return rowModified();
     }
 
-    public boolean rowDeleted() throws SQLException {
+    public boolean rowDeleted() {
         return rowModified();
     }
 
-    public void updateNull(final int columnIndex) throws SQLException {
+    public void updateNull(final int columnIndex) {
         //currently not required
     }
 
-    public void updateBoolean(final int columnIndex, final boolean x) throws SQLException {
+    public void updateBoolean(final int columnIndex, final boolean x) {
         //currently not required
     }
 
-    public void updateByte(final int columnIndex, final byte x) throws SQLException {
+    public void updateByte(final int columnIndex, final byte x) {
         //currently not required
     }
 
-    public void updateShort(final int columnIndex, final short x) throws SQLException {
+    public void updateShort(final int columnIndex, final short x) {
         //currently not required
     }
 
-    public void updateInt(final int columnIndex, final int x) throws SQLException {
+    public void updateInt(final int columnIndex, final int x) {
         //currently not required
     }
 
-    public void updateLong(final int columnIndex, final long x) throws SQLException {
+    public void updateLong(final int columnIndex, final long x) {
         //currently not required
     }
 
-    public void updateFloat(final int columnIndex, final float x) throws SQLException {
+    public void updateFloat(final int columnIndex, final float x) {
         //currently not required
     }
 
-    public void updateDouble(final int columnIndex, final double x) throws SQLException {
+    public void updateDouble(final int columnIndex, final double x) {
         //currently not required
     }
 
-    public void updateBigDecimal(final int columnIndex, final BigDecimal x) throws SQLException {
+    public void updateBigDecimal(final int columnIndex, final BigDecimal x) {
         //currently not required
     }
 
-    public void updateString(final int columnIndex, final String x) throws SQLException {
+    public void updateString(final int columnIndex, final String x) {
         //currently not required
     }
 
-    public void updateBytes(final int columnIndex, final byte[] x) throws SQLException {
+    public void updateBytes(final int columnIndex, final byte[] x) {
         //currently not required
     }
 
-    public void updateDate(final int columnIndex, final Date x) throws SQLException {
+    public void updateDate(final int columnIndex, final Date x) {
         //currently not required
     }
 
-    public void updateTime(final int columnIndex, final Time x) throws SQLException {
+    public void updateTime(final int columnIndex, final Time x) {
         //currently not required
     }
 
-    public void updateTimestamp(final int columnIndex, final Timestamp x) throws SQLException {
+    public void updateTimestamp(final int columnIndex, final Timestamp x) {
         //currently not required
     }
 
-    public void updateBinaryStream(final int columnIndex, final InputStream x, final int length) throws SQLException {
+    public void updateBinaryStream(final int columnIndex, final InputStream x, final int length) {
         //currently not required
     }
 
-    public void updateCharacterStream(final int columnIndex, final Reader x, final int length) throws SQLException {
+    public void updateCharacterStream(final int columnIndex, final Reader x, final int length) {
         //currently not required
     }
 
-    public void updateObject(final int columnIndex, final Object x, final int scale) throws SQLException {
+    public void updateObject(final int columnIndex, final Object x, final int scale) {
         //currently not required
     }
 
-    public void updateObject(final int columnIndex, final Object x) throws SQLException {
+    public void updateObject(final int columnIndex, final Object x) {
         //currently not required
     }
 
-    public void updateNull(final String columnName) throws SQLException {
+    public void updateNull(final String columnName) {
         //currently not required
     }
 
-    public void updateByte(final String columnName, final byte x) throws SQLException {
+    public void updateByte(final String columnName, final byte x) {
         //currently not required
     }
 
-    public void updateShort(final String columnName, final short x) throws SQLException {
+    public void updateShort(final String columnName, final short x) {
         //currently not required
     }
 
-    public void updateInt(final String columnName, final int x) throws SQLException {
+    public void updateInt(final String columnName, final int x) {
         //currently not required
     }
 
-    public void updateLong(final String columnName, final long x) throws SQLException {
+    public void updateLong(final String columnName, final long x) {
         //currently not required
     }
 
-    public void updateFloat(final String columnName, final float x) throws SQLException {
+    public void updateFloat(final String columnName, final float x) {
         //currently not required
     }
 
-    public void updateDouble(final String columnName, final double x) throws SQLException {
+    public void updateDouble(final String columnName, final double x) {
         //currently not required
     }
 
-    public void updateBigDecimal(final String columnName, final BigDecimal x) throws SQLException {
+    public void updateBigDecimal(final String columnName, final BigDecimal x) {
         //currently not required
     }
 
-    public void updateString(final String columnName, final String x) throws SQLException {
+    public void updateString(final String columnName, final String x) {
         //currently not required
     }
 
-    public void updateBytes(final String columnName, final byte[] x) throws SQLException {
+    public void updateBytes(final String columnName, final byte[] x) {
         //currently not required
     }
 
-    public void updateDate(final String columnName, final Date x) throws SQLException {
+    public void updateDate(final String columnName, final Date x) {
         //currently not required
     }
 
-    public void updateTime(final String columnName, final Time x) throws SQLException {
+    public void updateTime(final String columnName, final Time x) {
         //currently not required
     }
 
-    public void updateTimestamp(final String columnName, final Timestamp x) throws SQLException {
+    public void updateTimestamp(final String columnName, final Timestamp x) {
         //currently not required
     }
 
-    public void updateAsciiStream(final String columnName, final InputStream x, final int length) throws SQLException {
+    public void updateAsciiStream(final String columnName, final InputStream x, final int length) {
         //currently not required
     }
 
-    public void updateBinaryStream(final String columnName, final InputStream x, final int length) throws SQLException {
+    public void updateBinaryStream(final String columnName, final InputStream x, final int length) {
         //currently not required
     }
 
-    public void updateCharacterStream(final String columnName, final Reader reader, final int length) throws SQLException {
+    public void updateCharacterStream(final String columnName, final Reader reader, final int length) {
         //currently not required
     }
 
-    public void updateObject(final String columnName, final Object x, final int scale) throws SQLException {
+    public void updateObject(final String columnName, final Object x, final int scale) {
         //currently not required
     }
 
-    public void updateObject(final String columnName, final Object x) throws SQLException {
+    public void updateObject(final String columnName, final Object x) {
         //currently not required
     }
 
-    public void insertRow() throws SQLException {
+    public void insertRow() {
         //currently not required
     }
 
-    public void updateRow()throws SQLException {
+    public void updateRow() {
         //currently not required
     }
 
-    public void deleteRow()  throws SQLException {
+    public void deleteRow() {
         //currently not required
     }
 
-    public void refreshRow()  throws SQLException {
+    public void refreshRow() {
         //currently not required
     }
 
-    public void cancelRowUpdates() throws SQLException {
+    public void cancelRowUpdates() {
         //currently not required
     }
 
-    public void moveToInsertRow() throws SQLException {
+    public void moveToInsertRow() {
         //currently not required
     }
 
-    public void moveToCurrentRow() throws SQLException {
+    public void moveToCurrentRow() {
         //currently not required
     }
 
-    public Statement getStatement()  throws SQLException {
+    public Statement getStatement() {
         return statement;
     }
 
@@ -544,42 +547,42 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     @Override
-    public void updateRef(final int columnIndex, final Ref x) throws SQLException  {
+    public void updateRef(final int columnIndex, final Ref x) {
         //currently not required
     }
 
     @Override
-    public void updateRef(final String columnLabel, final Ref x) throws SQLException  {
+    public void updateRef(final String columnLabel, final Ref x) {
         //currently not required
     }
 
     @Override
-    public void updateBlob(final int columnIndex, final Blob x) throws SQLException  {
+    public void updateBlob(final int columnIndex, final Blob x) {
         //currently not required
     }
 
     @Override
-    public void updateBlob(final String columnLabel, final Blob x) throws SQLException  {
+    public void updateBlob(final String columnLabel, final Blob x) {
         //currently not required
     }
 
     @Override
-    public void updateClob(final int columnIndex, final Clob x) throws SQLException  {
+    public void updateClob(final int columnIndex, final Clob x) {
         //currently not required
     }
 
     @Override
-    public void updateClob(final String columnLabel, final Clob x) throws SQLException  {
+    public void updateClob(final String columnLabel, final Clob x) {
         //currently not required
     }
 
     @Override
-    public void updateArray(final int columnIndex, final Array x) throws SQLException  {
+    public void updateArray(final int columnIndex, final Array x) {
         //currently not required
     }
 
     @Override
-    public void updateArray(final String columnLabel, final Array x) throws SQLException  {
+    public void updateArray(final String columnLabel, final Array x) {
         //currently not required
     }
 
@@ -594,12 +597,12 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     @Override
-    public void updateRowId(final int columnIndex, final RowId x) throws SQLException  {
+    public void updateRowId(final int columnIndex, final RowId x) {
         //currently not required
     }
 
     @Override
-    public void updateRowId(final String columnLabel, final RowId x) throws SQLException  {
+    public void updateRowId(final String columnLabel, final RowId x) {
         //currently not required
     }
 
@@ -609,27 +612,27 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     @Override
-    public boolean isClosed() throws SQLException {
+    public boolean isClosed() {
         return closed;
     }
 
     @Override
-    public void updateNString(final int columnIndex, final String nString) throws SQLException  {
+    public void updateNString(final int columnIndex, final String nString) {
         //currently not required
     }
 
     @Override
-    public void updateNString(final String columnLabel, final String nString) throws SQLException  {
+    public void updateNString(final String columnLabel, final String nString) {
         //currently not required
     }
 
     @Override
-    public void updateNClob(final int columnIndex, final NClob nClob) throws SQLException  {
+    public void updateNClob(final int columnIndex, final NClob nClob) {
         //currently not required
     }
 
     @Override
-    public void updateNClob(final String columnLabel, final NClob nClob) throws SQLException  {
+    public void updateNClob(final String columnLabel, final NClob nClob) {
         //currently not required
     }
 
@@ -654,12 +657,12 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     @Override
-    public void updateSQLXML(final int columnIndex, final SQLXML xmlObject) throws SQLException  {
+    public void updateSQLXML(final int columnIndex, final SQLXML xmlObject) {
         //currently not required
     }
 
     @Override
-    public void updateSQLXML(final String columnLabel, final SQLXML xmlObject) throws SQLException  {
+    public void updateSQLXML(final String columnLabel, final SQLXML xmlObject) {
         //currently not required
     }
 
@@ -684,142 +687,142 @@ public class JdbcResultSet implements java.sql.ResultSet {
     }
 
     @Override
-    public void updateNCharacterStream(final int columnIndex, final Reader x, final long length) throws SQLException  {
+    public void updateNCharacterStream(final int columnIndex, final Reader x, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) throws SQLException  {
+    public void updateNCharacterStream(final String columnLabel, final Reader reader, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x, final long length) throws SQLException  {
+    public void updateAsciiStream(final int columnIndex, final InputStream x, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x, final long length) throws SQLException  {
+    public void updateBinaryStream(final int columnIndex, final InputStream x, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x, final long length) throws SQLException  {
+    public void updateCharacterStream(final int columnIndex, final Reader x, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) throws SQLException  {
+    public void updateAsciiStream(final String columnLabel, final InputStream x, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) throws SQLException  {
+    public void updateBinaryStream(final String columnLabel, final InputStream x, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) throws SQLException  {
+    public void updateCharacterStream(final String columnLabel, final Reader reader, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) throws SQLException  {
+    public void updateBlob(final int columnIndex, final InputStream inputStream, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) throws SQLException  {
+    public void updateBlob(final String columnLabel, final InputStream inputStream, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateClob(final int columnIndex, final Reader reader, final long length) throws SQLException  {
+    public void updateClob(final int columnIndex, final Reader reader, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateClob(final String columnLabel, final Reader reader, final long length) throws SQLException  {
+    public void updateClob(final String columnLabel, final Reader reader, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateNClob(final int columnIndex, final Reader reader, final long length) throws SQLException  {
+    public void updateNClob(final int columnIndex, final Reader reader, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateNClob(final String columnLabel, final Reader reader, final long length) throws SQLException  {
+    public void updateNClob(final String columnLabel, final Reader reader, final long length) {
         //currently not required
     }
 
     @Override
-    public void updateNCharacterStream(final int columnIndex, final Reader x) throws SQLException  {
+    public void updateNCharacterStream(final int columnIndex, final Reader x) {
         //currently not required
     }
 
     @Override
-    public void updateNCharacterStream(final String columnLabel, final Reader reader) throws SQLException  {
+    public void updateNCharacterStream(final String columnLabel, final Reader reader) {
         //currently not required
     }
 
     @Override
-    public void updateAsciiStream(final int columnIndex, final InputStream x) throws SQLException  {
+    public void updateAsciiStream(final int columnIndex, final InputStream x) {
         //currently not required
     }
 
     @Override
-    public void updateBinaryStream(final int columnIndex, final InputStream x) throws SQLException  {
+    public void updateBinaryStream(final int columnIndex, final InputStream x) {
         //currently not required
     }
 
     @Override
-    public void updateCharacterStream(final int columnIndex, final Reader x) throws SQLException  {
+    public void updateCharacterStream(final int columnIndex, final Reader x) {
         //currently not required
     }
 
     @Override
-    public void updateAsciiStream(final String columnLabel, final InputStream x) throws SQLException  {
+    public void updateAsciiStream(final String columnLabel, final InputStream x) {
         //currently not required
     }
 
     @Override
-    public void updateBinaryStream(final String columnLabel, final InputStream x) throws SQLException  {
+    public void updateBinaryStream(final String columnLabel, final InputStream x) {
         //currently not required
     }
 
     @Override
-    public void updateCharacterStream(final String columnLabel, final Reader reader) throws SQLException  {
+    public void updateCharacterStream(final String columnLabel, final Reader reader) {
         //currently not required
     }
 
     @Override
-    public void updateBlob(final int columnIndex, final InputStream inputStream) throws SQLException  {
+    public void updateBlob(final int columnIndex, final InputStream inputStream) {
         //currently not required
     }
 
     @Override
-    public void updateBlob(final String columnLabel, final InputStream inputStream) throws SQLException  {
+    public void updateBlob(final String columnLabel, final InputStream inputStream) {
         //currently not required
     }
 
     @Override
-    public void updateClob(final int columnIndex, final Reader reader) throws SQLException  {
+    public void updateClob(final int columnIndex, final Reader reader) {
         //currently not required
     }
 
     @Override
-    public void updateClob(final String columnLabel, final Reader reader) throws SQLException  {
+    public void updateClob(final String columnLabel, final Reader reader) {
         //currently not required
     }
 
     @Override
-    public void updateNClob(final int columnIndex, final Reader reader) throws SQLException {
+    public void updateNClob(final int columnIndex, final Reader reader) {
         //currently not required
     }
 
     @Override
-    public void updateNClob(final String columnLabel, final Reader reader) throws SQLException  {
+    public void updateNClob(final String columnLabel, final Reader reader) {
         //currently not required
     }
 
@@ -833,16 +836,16 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function '(String, Class<T>)'");
     }
 
-    public boolean wasNull()throws SQLException {
+    public boolean wasNull() {
         return row.getLastValue() == null;
     }
 
-    public void updateBoolean(final String columnName, final boolean x) throws SQLException {
+    public void updateBoolean(final String columnName, final boolean x) {
         //currently not required
     }
 
 
-    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) throws SQLException {
+    public void updateAsciiStream(final int columnIndex, final InputStream x, final int length) {
         //currently not required
     }
 
@@ -854,12 +857,14 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getRef'");
     }
 
-    public Blob getBlob(final int i) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getBlob'");
+    public Blob getBlob(final int i) {
+        final String string = getString(i);
+        return createBlob(string);
     }
 
-    public Clob getClob(final int i) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getClob'");
+    public Clob getClob(final int i) {
+        final String string = getString(i);
+        return createClob(string);
     }
 
     public Array getArray(final int i) throws SQLException {
@@ -874,19 +879,34 @@ public class JdbcResultSet implements java.sql.ResultSet {
         throw new SQLException("Not supported JDBC result set function 'getRef'");
     }
 
-    public Blob getBlob(final String colName) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getBlob'");
+    public Blob getBlob(final String colName) {
+        final String string = getString(colName);
+        return createBlob(string);
     }
 
-    public Clob getClob(final String colName) throws SQLException {
-        throw new SQLException("Not supported JDBC result set function 'getClob'");
+    public Clob getClob(final String colName) {
+        final String string = getString(colName);
+        return createClob(string);
     }
+
     public Array getArray(final String colName) throws SQLException {
         throw new SQLException("Not supported JDBC result set function 'getArray'");
     }
 
     private boolean rowModified() {
         return !dataSet.getRows().isEmpty();
+    }
+
+    private CitrusClob createClob(final String clobContent) {
+        final CitrusClob citrusClob = new CitrusClob();
+        citrusClob.setString(1, clobContent);
+        return citrusClob;
+    }
+
+    private Blob createBlob(final String blobContent) {
+        final CitrusBlob citrusBlob = new CitrusBlob();
+        citrusBlob.setBytes(1, Base64.decodeBase64(blobContent.getBytes()));
+        return citrusBlob;
     }
 
     @Override

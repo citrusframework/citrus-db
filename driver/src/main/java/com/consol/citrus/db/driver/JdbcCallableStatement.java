@@ -16,6 +16,9 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
+import com.consol.citrus.db.driver.data.CitrusClob;
+import com.consol.citrus.db.driver.utils.LobUtils;
 import org.apache.http.client.HttpClient;
 
 import java.io.InputStream;
@@ -42,11 +45,22 @@ import java.util.Map;
 
 public final class JdbcCallableStatement extends JdbcPreparedStatement implements CallableStatement {
 
+    private LobUtils lobUtils = new LobUtils();
+
     public JdbcCallableStatement(final HttpClient httpClient,
                                  final String callableStatement,
                                  final String serverUrl,
                                  final JdbcConnection connection) {
         super(httpClient, callableStatement, serverUrl, connection);
+    }
+
+    JdbcCallableStatement(final HttpClient httpClient,
+                          final String callableStatement,
+                          final String serverUrl,
+                          final JdbcConnection connection,
+                          final LobUtils lobUtils) {
+        this(httpClient, callableStatement, serverUrl, connection);
+        this.lobUtils = lobUtils;
     }
 
     @Override
@@ -167,15 +181,15 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public Blob getBlob(final int parameterIndex) throws SQLException {
-        notSupported("getBlob(int parameterIndex)");
-        return null;
+    public Blob getBlob(final int parameterIndex) {
+        prepareResultSet();
+        return resultSet.getBlob(parameterIndex);
     }
 
     @Override
-    public Clob getClob(final int parameterIndex) throws SQLException {
-        notSupported("getClob(int parameterIndex)");
-        return null;
+    public Clob getClob(final int parameterIndex) {
+        prepareResultSet();
+        return resultSet.getClob(parameterIndex);
     }
 
     @Override
@@ -451,14 +465,14 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public Blob getBlob(final String parameterName) throws SQLException {
-        notSupported("getBlob(String parameterName)");
-        return null;
+        prepareResultSet();
+        return resultSet.getBlob(parameterName);
     }
 
     @Override
-    public Clob getClob(final String parameterName) throws SQLException {
-        notSupported("getClob(String parameterName)");
-        return null;
+    public Clob getClob(final String parameterName) {
+        prepareResultSet();
+        return resultSet.getClob(parameterName);
     }
 
     @Override
@@ -520,17 +534,23 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setNClob(final String parameterName, final NClob value) throws SQLException {
-        notSupported("setClob(String parameterName, NClob value)");
+        notSupported("setNClob(String parameterName, NClob value)");
     }
 
     @Override
     public void setClob(final String parameterName, final Reader reader, final long length) throws SQLException {
-        notSupported("setClob(String parameterName, Reader reader, long length)");
+        if(lobUtils.fitsInInt(length)){
+            final CitrusClob clobFromReader = lobUtils.createClobFromReader(reader, (int) length);
+            setParameter(parameterName, clobFromReader);
+        }
     }
 
     @Override
     public void setBlob(final String parameterName, final InputStream inputStream, final long length) throws SQLException {
-        notSupported("setBlob(String parameterName, InputStream inputStream, long length)");
+        if(lobUtils.fitsInInt(length)){
+            final CitrusBlob blobFromInputStream = lobUtils.createBlobFromInputStream(inputStream, (int) length);
+            setParameter(parameterName, blobFromInputStream);
+        }
     }
 
     @Override
@@ -605,13 +625,13 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
     }
 
     @Override
-    public void setBlob(final String parameterName, final Blob x) throws SQLException {
-        notSupported("setBlob(String parameterName,  Blob x)");
+    public void setBlob(final String parameterName, final Blob x) {
+        setParameter(parameterName, x);
     }
 
     @Override
-    public void setClob(final String parameterName, final Clob x) throws SQLException {
-        notSupported("setClob(String parameterName,  Clob x)");
+    public void setClob(final String parameterName, final Clob x) {
+        setParameter(parameterName, x);
     }
 
     @Override
@@ -651,12 +671,14 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
 
     @Override
     public void setClob(final String parameterName, final Reader reader) throws SQLException {
-        notSupported("setClob(String parameterName, Reader reader)");
+        final CitrusClob citrusClob = lobUtils.createClobFromReader(reader, -1);
+        setParameter(parameterName, citrusClob);
     }
 
     @Override
     public void setBlob(final String parameterName, final InputStream inputStream) throws SQLException {
-        notSupported("setBlob(String parameterName, InputStream inputStream)");
+        final CitrusBlob citrusBlob = lobUtils.createBlobFromInputStream(inputStream, -1);
+        setParameter(parameterName, citrusBlob);
     }
 
     @Override
@@ -714,7 +736,7 @@ public final class JdbcCallableStatement extends JdbcPreparedStatement implement
         setParameter(parameterName, "?");
     }
 
-    private void prepareResultSet() throws SQLException {
+    private void prepareResultSet() {
         if(resultSet.getRow() == 0){
             resultSet.next();
         }

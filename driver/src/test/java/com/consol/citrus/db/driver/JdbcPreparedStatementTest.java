@@ -1,6 +1,9 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
+import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.utils.LobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -9,11 +12,19 @@ import org.powermock.api.mockito.PowerMockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.SQLException;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -22,18 +33,21 @@ import static org.testng.Assert.assertEquals;
 @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class JdbcPreparedStatementTest {
 
-    private HttpClient httpClientMock = mock(HttpClient.class);
-    private JdbcConnection jdbcConnectionMock = mock(JdbcConnection.class);
+    private final HttpClient httpClientMock = mock(HttpClient.class);
+    private final JdbcConnection jdbcConnectionMock = mock(JdbcConnection.class);
+    private LobUtils lobUtils;
 
     private JdbcPreparedStatement jdbcPreparedStatement;
 
     @BeforeMethod
     public void setUp() {
+        lobUtils = PowerMockito.mock(LobUtils.class);
         jdbcPreparedStatement = spy(new JdbcPreparedStatement(
                 httpClientMock,
                 "SELECT id, name FROM airports WHERE name = ?",
                 "url",
-                jdbcConnectionMock));
+                jdbcConnectionMock,
+                lobUtils));
     }
 
 
@@ -79,6 +93,21 @@ public class JdbcPreparedStatementTest {
     }
 
     @Test
+    public void testParameterOrderIsPreserved(){
+
+        //GIVEN
+
+        //WHEN
+        jdbcPreparedStatement.setParameter(2, 42);
+        jdbcPreparedStatement.setParameter(1, 2);
+
+        //THEN
+        assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get("0"), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get("1"), 42);
+    }
+
+    @Test
     public void textExecuteBatchedPreparedStatements() throws SQLException {
 
         //GIVEN
@@ -113,8 +142,116 @@ public class JdbcPreparedStatementTest {
     }
 
     @Test
+    public void testSetClobWithParameterIndexAndClob() {
+
+        //GIVEN
+        final Clob clob = mock(Clob.class);
+
+        //WHEN
+        jdbcPreparedStatement.setClob(5, clob);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(5, clob);
+    }
+
+    @Test
+    public void testSetLimitedClobFromReader() throws Exception {
+
+        //GIVEN
+        final long desiredLength = 13L;
+        when(lobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusClob expectedClob = mock(CitrusClob.class);
+        final StringReader stringReaderMock = mock(StringReader.class);
+        when(lobUtils.createClobFromReader(stringReaderMock, (int)desiredLength)).thenReturn(expectedClob);
+
+        //WHEN
+        jdbcPreparedStatement.setClob(12, stringReaderMock, desiredLength);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(12, expectedClob);
+    }
+
+    @Test
+    public void TestNoopIfLengthExceedsInt() throws Exception {
+
+        //GIVEN
+        PowerMockito.when(lobUtils.fitsInInt(anyLong())).thenReturn(false);
+
+        //WHEN
+        jdbcPreparedStatement.setClob(12, PowerMockito.mock(Reader.class), Long.MAX_VALUE);
+
+        //THEN
+        verify(lobUtils, never()).createClobFromReader(any(Reader.class), anyInt());
+    }
+
+    @Test
+    public void setClobFromReader() throws Exception {
+
+        //GIVEN
+        final Reader readerMock = mock(Reader.class);
+        final CitrusClob citrusClobMock = mock(CitrusClob.class);
+        when(lobUtils.createClobFromReader(readerMock, -1)).thenReturn(citrusClobMock);
+
+        //WHEN
+        jdbcPreparedStatement.setClob(5, readerMock);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(5, citrusClobMock);
+    }
+
+    @Test
+    public void testSetBlobWithParameterIndexAndClob() {
+
+        //GIVEN
+        final Blob blob = mock(Blob.class);
+
+        //WHEN
+        jdbcPreparedStatement.setBlob(5, blob);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(5, blob);
+    }
+
+    @Test
+    public void testSetLimitedBlobFromInputStream() throws Exception {
+
+        //GIVEN
+        final long desiredLength = 13L;
+        when(lobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusBlob expectedBlob = mock(CitrusBlob.class);
+        final InputStream inputStreamMock = mock(InputStream.class);
+        when(lobUtils.createBlobFromInputStream(inputStreamMock, (int)desiredLength)).thenReturn(expectedBlob);
+
+        //WHEN
+        jdbcPreparedStatement.setBlob(12, inputStreamMock, desiredLength);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(12, expectedBlob);
+    }
+
+    @Test
+    public void setBlobFromInputStream() throws Exception {
+
+        //GIVEN
+        final InputStream inputStreamMock = mock(InputStream.class);
+        final CitrusBlob citrusBlobMock = mock(CitrusBlob.class);
+        when(lobUtils.createBlobFromInputStream(inputStreamMock, -1)).thenReturn(citrusBlobMock);
+
+        //WHEN
+        jdbcPreparedStatement.setBlob(5, inputStreamMock);
+
+        //THEN
+        verify(jdbcPreparedStatement).setParameter(5, citrusBlobMock);
+    }
+
+    @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcPreparedStatement.class).verify();
+        ToStringVerifier
+                .forClass(JdbcPreparedStatement.class)
+                .withIgnoredFields("lobUtils")//stateless
+                .verify();
     }
 
     @Test
@@ -127,6 +264,7 @@ public class JdbcPreparedStatementTest {
                 .withRedefinedSuperclass()
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
+                .withIgnoredFields("lobUtils")//stateless
                 .verify();
     }
 }

@@ -1,17 +1,26 @@
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
+import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.utils.LobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.apache.http.client.HttpClient;
+import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.Date;
 import java.sql.JDBCType;
 import java.sql.SQLException;
@@ -19,6 +28,10 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -32,6 +45,7 @@ public class JdbcCallableStatementTest{
     private JdbcConnection jdbcConnection;
     private final int TEST_VALUE_INDEX = 2;
     private final String TEST_VALUE_NAME = "col2";
+    private LobUtils lobUtils;
     private JdbcCallableStatement callableStatement;
 
     private JdbcResultSet resultSetSpy;
@@ -40,8 +54,10 @@ public class JdbcCallableStatementTest{
     public void setup(){
         httpClient = mock(HttpClient.class);
         jdbcConnection = mock(JdbcConnection.class);
+        lobUtils = mock(LobUtils.class);
 
         callableStatement = generateCallableStatement();
+
         resultSetSpy = mock(JdbcResultSet.class);
         callableStatement.resultSet = resultSetSpy;
     }
@@ -86,7 +102,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testRegisterOutParameterByName() throws SQLException {
+    public void testRegisterOutParameterByName() {
 
         //GIVEN
         final String parameterName = "foo";
@@ -100,7 +116,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testRegisterOutParameterByNameWithScale() throws SQLException {
+    public void testRegisterOutParameterByNameWithScale() {
 
         //GIVEN
         final String parameterName = "foo";
@@ -114,7 +130,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testRegisterOutParameterByNameWithTypeName() throws SQLException {
+    public void testRegisterOutParameterByNameWithTypeName() {
 
         //GIVEN
         final String parameterName = "foo";
@@ -205,7 +221,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetUrlWithName() throws SQLException, MalformedURLException {
+    public void testSetUrlWithName() throws MalformedURLException {
 
         //GIVEN
         final String parameterName = "MyUrl";
@@ -220,7 +236,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetNullWithName() throws SQLException {
+    public void testSetNullWithName(){
 
         //GIVEN
         final String parameterName = "myNull";
@@ -234,7 +250,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetBooleanWithName() throws SQLException {
+    public void testSetBooleanWithName(){
 
         //GIVEN
         final String parameterName = "myBoolean";
@@ -248,7 +264,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetByteWithName() throws SQLException {
+    public void testSetByteWithName() {
 
         //GIVEN
         final String parameterName = "myByte";
@@ -263,7 +279,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetShortWithName() throws SQLException {
+    public void testSetShortWithName() {
 
         //GIVEN
         final String parameterName = "myShort";
@@ -278,7 +294,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetIntWithName() throws SQLException {
+    public void testSetIntWithName() {
 
         //GIVEN
         final String parameterName = "myInt";
@@ -293,7 +309,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetLongWithName() throws SQLException {
+    public void testSetLongWithName() {
 
         //GIVEN
         final String parameterName = "myLong";
@@ -308,7 +324,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetFloatWithName() throws SQLException {
+    public void testSetFloatWithName() {
 
         //GIVEN
         final String parameterName = "myFloat";
@@ -323,7 +339,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetDoubleWithName() throws SQLException {
+    public void testSetDoubleWithName() {
 
         //GIVEN
         final String parameterName = "myDouble";
@@ -338,7 +354,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetBigDecimalWithName() throws SQLException {
+    public void testSetBigDecimalWithName() {
 
         //GIVEN
         final String parameterName = "myBigDecimal";
@@ -353,7 +369,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetStringWithName() throws SQLException {
+    public void testSetStringWithName() {
 
         //GIVEN
         final String parameterName = "myString";
@@ -367,7 +383,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetBytesWithName() throws SQLException {
+    public void testSetBytesWithName() {
 
         //GIVEN
         final String parameterName = "myBytes";
@@ -382,7 +398,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetDateWithName() throws SQLException {
+    public void testSetDateWithName() {
 
         //GIVEN
         final String parameterName = "myDate";
@@ -397,7 +413,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetTimeWithName() throws SQLException {
+    public void testSetTimeWithName() {
 
         //GIVEN
         final String parameterName = "myTime";
@@ -412,7 +428,7 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    public void testSetTimeStampWithName() throws SQLException {
+    public void testSetTimeStampWithName() {
 
         //GIVEN
         final String parameterName = "myTimeStamp";
@@ -427,97 +443,106 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetStringByIndex() throws SQLException {
+    public void testGetStringByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getString(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getString(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetBooleanByIndex() throws SQLException {
+    public void testGetBooleanByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getBoolean(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBoolean(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetByteByIndex() throws SQLException {
+    public void testGetByteByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getByte(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getByte(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetBytesByIndex() throws SQLException {
+    public void testGetBytesByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getBytes(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBytes(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetShortByIndex() throws SQLException {
+    public void testGetShortByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getShort(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getShort(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetIntByIndex() throws SQLException {
+    public void testGetIntByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getInt(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getInt(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetLongByIndex() throws SQLException {
+    public void testGetLongByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getLong(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getLong(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetFloatByIndex() throws SQLException {
+    public void testGetFloatByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getFloat(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getFloat(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetDoubleByIndex() throws SQLException {
+    public void testGetDoubleByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getDouble(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDouble(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetBigDecimalByIndexWithScale() throws Exception {
+    public void testGetBigDecimalByIndexWithScale() throws Exception {
 
         //GIVEN
         final BigDecimal bigDecimalMock = mock(BigDecimal.class);
@@ -527,32 +552,35 @@ public class JdbcCallableStatementTest{
         callableStatement.getBigDecimal(TEST_VALUE_INDEX, 2);
 
         //THEN
+        verify(resultSetSpy).next();
         //noinspection ResultOfMethodCallIgnored
         verify(bigDecimalMock).setScale(2, RoundingMode.HALF_UP);
     }
 
     @Test
-    void testGetStringByName() throws SQLException {
+    public void testGetStringByName() throws SQLException {
 
         //WHEN
         callableStatement.getString(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getString(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetBooleanByName() throws SQLException {
+    public void testGetBooleanByName() throws SQLException {
 
         //WHEN
         callableStatement.getBoolean(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBoolean(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetByteByName() throws SQLException {
+    public void testGetByteByName() throws SQLException {
 
         //WHEN
         callableStatement.getByte(TEST_VALUE_NAME);
@@ -562,87 +590,95 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetShortByName() throws SQLException {
+    public void testGetShortByName() throws SQLException {
 
         //WHEN
         callableStatement.getShort(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getShort(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetIntByName() throws SQLException {
+    public void testGetIntByName() throws SQLException {
 
         //WHEN
         callableStatement.getInt(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getInt(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetLongByName() throws SQLException {
+    public void testGetLongByName() throws SQLException {
 
         //WHEN
         callableStatement.getLong(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getLong(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetFloatByName() throws SQLException {
+    public void testGetFloatByName() throws SQLException {
 
         //WHEN
         callableStatement.getFloat(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getFloat(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetDoubleByName() throws SQLException {
+    public void testGetDoubleByName() throws SQLException {
 
         //WHEN
         callableStatement.getDouble(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDouble(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetBytesByName() throws SQLException {
+    public void testGetBytesByName() throws SQLException {
 
         //WHEN
         callableStatement.getBytes(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBytes(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetObjectByName() throws SQLException {
+    public void testGetObjectByName() throws SQLException {
 
         //WHEN
         callableStatement.getObject(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getObject(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetBigDecimalByName() throws SQLException {
+    public void testGetBigDecimalByName() throws SQLException {
 
         //WHEN
         callableStatement.getBigDecimal(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getBigDecimal(TEST_VALUE_NAME);
     }
 
     @Test
-    void testDelegateWasNull() throws SQLException {
+    public void testDelegateWasNull() throws SQLException {
 
 
         //WHEN
@@ -653,77 +689,84 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
-    void testGetDateByIndex() throws SQLException {
+    public void testGetDateByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getDate(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDate(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetTimeByIndex() throws SQLException {
+    public void testGetTimeByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getTime(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTime(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetTimestampByIndex() throws SQLException {
+    public void testGetTimestampByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getTimestamp(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTimestamp(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetObjectByIndex() throws SQLException {
+    public void testGetObjectByIndex() throws SQLException {
 
         //WHEN
         callableStatement.getObject(TEST_VALUE_INDEX);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getObject(TEST_VALUE_INDEX);
     }
 
     @Test
-    void testGetDateByName() throws SQLException {
+    public void testGetDateByName() throws SQLException {
 
         //WHEN
         callableStatement.getDate(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getDate(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetTimeByName() throws SQLException {
+    public void testGetTimeByName() throws SQLException {
 
         //WHEN
         callableStatement.getTime(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTime(TEST_VALUE_NAME);
     }
 
     @Test
-    void testGetTimestampByName() throws SQLException {
+    public void testGetTimestampByName() throws SQLException {
 
         //WHEN
         callableStatement.getTimestamp(TEST_VALUE_NAME);
 
         //THEN
+        verify(resultSetSpy).next();
         verify(resultSetSpy).getTimestamp(TEST_VALUE_NAME);
     }
 
     @Test
-    void verifyResultSetHandling() throws SQLException {
+    public void testVerifyResultSetHandling() throws SQLException {
 
         //GIVEN
         when(resultSetSpy.getRow()).thenReturn(0).thenReturn(1);
@@ -739,8 +782,176 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
+    public void testSetLimitedClobFromReader() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myClob";
+        final JdbcCallableStatement callableStatement = generateCallableStatementWithParameter(parameterName);
+
+        final long desiredLength = 13L;
+        when(lobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusClob expectedClob = mock(CitrusClob.class);
+        final StringReader stringReaderMock = mock(StringReader.class);
+        when(lobUtils.createClobFromReader(stringReaderMock, (int)desiredLength)).thenReturn(expectedClob);
+
+        //WHEN
+        callableStatement.setClob(parameterName, stringReaderMock, desiredLength);
+
+        //THEN
+        final Clob storedClob = (Clob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedClob);
+    }
+
+    @Test
+    public void testNoopIfLengthExceedsInt() throws Exception {
+
+        //GIVEN
+        when(lobUtils.fitsInInt(anyLong())).thenReturn(false);
+
+        //WHEN
+        callableStatement.setClob("", mock(Reader.class), Long.MAX_VALUE);
+
+        //THEN
+        verify(lobUtils, never()).createClobFromReader(any(Reader.class), anyInt());
+    }
+
+    @Test
+    public void testSetClob() {
+
+        //GIVEN
+        final String parameterName = "myClob";
+        final CitrusClob expectedClob = mock(CitrusClob.class);
+
+        //WHEN
+        callableStatement.setClob(parameterName, expectedClob);
+
+        //THEN
+        final CitrusClob storedClob = (CitrusClob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedClob);
+    }
+
+    @Test
+    public void testSetClobFromReader() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myClob";
+        final Reader readerMock = Mockito.mock(Reader.class);
+        final CitrusClob expectedClob = Mockito.mock(CitrusClob.class);
+        Mockito.when(lobUtils.createClobFromReader(readerMock, -1)).thenReturn(expectedClob);
+
+        //WHEN
+        callableStatement.setClob(parameterName, readerMock);
+
+        //THEN
+        final CitrusClob storedClob = (CitrusClob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedClob);
+    }
+
+    @Test
+    public void testGetClobByIndex() {
+
+        //WHEN
+        callableStatement.getClob(TEST_VALUE_INDEX);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getClob(TEST_VALUE_INDEX);
+    }
+
+    @Test
+    public void testGetClobByName() {
+
+        //WHEN
+        callableStatement.getClob(TEST_VALUE_NAME);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getClob(TEST_VALUE_NAME);
+    }
+
+    @Test
+    public void testGetBlobByIndex() {
+
+        //WHEN
+        callableStatement.getBlob(TEST_VALUE_INDEX);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getBlob(TEST_VALUE_INDEX);
+    }
+
+    @Test
+    public void testGetBlobByName() throws SQLException  {
+
+        //WHEN
+        callableStatement.getBlob(TEST_VALUE_NAME);
+
+        //THEN
+        verify(resultSetSpy).next();
+        verify(resultSetSpy).getBlob(TEST_VALUE_NAME);
+    }
+
+    @Test
+    public void testSetBlob() {
+
+        //GIVEN
+        final String parameterName = "myBlob";
+        final CitrusBlob expectedBlob = mock(CitrusBlob.class);
+
+        //WHEN
+        callableStatement.setBlob(parameterName, expectedBlob);
+
+        //THEN
+        final CitrusBlob storedBlob = (CitrusBlob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedBlob, expectedBlob);
+    }
+
+    @Test
+    public void testSetLimitedBlobFromStreamByName() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myBlob";
+        final JdbcCallableStatement callableStatement = generateCallableStatementWithParameter(parameterName);
+        final InputStream inputStreamMock = mock(InputStream.class);
+
+        final long desiredLength = 13L;
+        when(lobUtils.fitsInInt(desiredLength)).thenReturn(true);
+
+        final CitrusBlob expectedBlob = mock(CitrusBlob.class);
+        when(lobUtils.createBlobFromInputStream(inputStreamMock, (int)desiredLength)).thenReturn(expectedBlob);
+
+        //WHEN
+        callableStatement.setBlob(parameterName, inputStreamMock, desiredLength);
+
+        //THEN
+        final Blob storedClob = (Blob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedBlob);
+    }
+
+    @Test
+    public void testSetBlobFromInputStream() throws Exception {
+
+        //GIVEN
+        final String parameterName = "myBlob";
+        final InputStream inputStreamMock = Mockito.mock(InputStream.class);
+        final CitrusBlob expectedBlob = Mockito.mock(CitrusBlob.class);
+        Mockito.when(lobUtils.createBlobFromInputStream(inputStreamMock, -1)).thenReturn(expectedBlob);
+
+        //WHEN
+        callableStatement.setBlob(parameterName, inputStreamMock);
+
+        //THEN
+        final CitrusBlob storedClob = (CitrusBlob) callableStatement.getParameters().get(parameterName);
+        assertEquals(storedClob, expectedBlob);
+    }
+
+    @Test
     public void testToString(){
-        ToStringVerifier.forClass(JdbcCallableStatement.class).verify();
+        ToStringVerifier
+                .forClass(JdbcCallableStatement.class)
+                .withIgnoredFields("lobUtils")//stateless
+                .verify();
     }
 
     @Test
@@ -752,16 +963,17 @@ public class JdbcCallableStatementTest{
                         new JdbcResultSet(mock(DataSet.class), mock(JdbcStatement.class)))
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
+                .withIgnoredFields("lobUtils")//stateless
                 .verify();
     }
 
     private JdbcCallableStatement generateCallableStatement() {
         final String statement = "CALL myFunction(?,?)";
-        return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection);
+        return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection, lobUtils);
     }
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName) {
         final String statement = "CALL myFunction("+parameterName+",?)";
-        return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection);
+        return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, lobUtils);
     }
 
 }

@@ -16,6 +16,8 @@
 
 package com.consol.citrus.db.driver;
 
+import com.consol.citrus.db.driver.data.CitrusBlob;
+import com.consol.citrus.db.driver.data.CitrusClob;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
@@ -354,13 +356,13 @@ public class JdbcConnection implements Connection {
     }
 
     @Override
-    public Clob createClob() throws SQLException {
-        throw new SQLException("Not supported JDBC connection function 'createClob'");
+    public Clob createClob() {
+        return new CitrusClob();
     }
 
     @Override
-    public Blob createBlob() throws SQLException {
-        throw new SQLException("Not supported JDBC connection function 'createBlob'");
+    public Blob createBlob() {
+        return new CitrusBlob();
     }
 
     @Override

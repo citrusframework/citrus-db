@@ -45,7 +45,7 @@ public class DataSet {
 
     /**
      * Gets next row in this data set based on cursor position.
-     * If there is no further row, the index cursor position stays untouched
+     * If there is no further row, the index cursor position stays untouched.
      * @return The next row of the dataset or null if no further row is available
      */
     @JsonIgnore

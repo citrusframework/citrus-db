@@ -28,22 +28,25 @@ public class DataSetTest {
     }
 
     @Test
-    public void testCursorPositionIsPreservationInCaseOfNoData(){
+    public void testCursorPositionIsPreservationInCaseOfNoMoreData(){
 
-        //WHEN
+        //GIVEN
+        final DataSet dataSet = createTestDataSet();
         dataSet.getNextRow();
 
+        //WHEN
+        final Row nextRow = dataSet.getNextRow();
+
         //THEN
-        assertEquals(dataSet.getCursor(), 0);
+        assertEquals(dataSet.getCursor(), 1);
+        assertNull(nextRow);
     }
 
     @Test
     public void testCursorPositionMovesInCaseOfMoreData(){
 
         //GIVEN
-        final Map<String, Object> testData = Collections.singletonMap("foo","bar");
-        final List<Row> testDataRows = Lists.newArrayList(new Row(testData));
-        final DataSet dataSet = new DataSet(testDataRows);
+        final DataSet dataSet = createTestDataSet();
 
         //WHEN
         dataSet.getNextRow();
@@ -63,5 +66,11 @@ public class DataSetTest {
                 .forClass(DataSet.class)
                 .withIgnoredFields("cursor")
                 .verify();
+    }
+
+    private DataSet createTestDataSet() {
+        final Map<String, Object> testData = Collections.singletonMap("foo", "bar");
+        final List<Row> testDataRows = Lists.newArrayList(new Row(testData));
+        return new DataSet(testDataRows);
     }
 }

@@ -45,12 +45,14 @@ public class DataSet {
 
     /**
      * Gets next row in this data set based on cursor position.
+     * If there is no further row, the index cursor position stays untouched.
      * @return The next row of the dataset or null if no further row is available
      */
     @JsonIgnore
     public Row getNextRow(){
         final int index = cursor.getAndIncrement();
         if(rows.size() <= index){
+            cursor.set(cursor.get()-1);
             return null;
         }
 

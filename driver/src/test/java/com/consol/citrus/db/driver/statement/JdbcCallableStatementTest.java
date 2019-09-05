@@ -973,13 +973,13 @@ public class JdbcCallableStatementTest{
     public void testNamedParametersAreOrderedCorrectly() {
 
         //GIVEN
-        final String parameter1 = "z-param";
-        final String parameter2 = "a-param";
+        final String parameter1 = "zParam";
+        final String parameter2 = "aParam";
         final JdbcCallableStatement callableStatement =
                 generateCallableStatementWithParameter(parameter1, parameter2);
         callableStatement.registerOutParameter(parameter1, Types.VARCHAR);
         callableStatement.registerOutParameter(parameter2, Types.VARCHAR);
-        final String expectedStatement = "CALL myFunction(z-param=>?,a-param=>?) - (foo,bar)";
+        final String expectedStatement = "CALL myFunction(:zParam,:aParam) - (foo,bar)";
 
         //WHEN
         callableStatement.setString(parameter1,"foo");
@@ -999,7 +999,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(2, Types.VARCHAR);
         callableStatement.registerOutParameter(parameterName, Types.VARCHAR);
 
-        final String expectedStatement = "CALL myFunction(foo=>?,?) - (foobar, bar)";
+        final String expectedStatement = "CALL myFunction(:foo,?) - (foobar, bar)";
 
         //WHEN
         callableStatement.setParameter(2, "bar");
@@ -1056,12 +1056,12 @@ public class JdbcCallableStatementTest{
     }
 
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName) {
-        final String statement = "CALL myFunction("+parameterName+"=>?,?)";
+        final String statement = "CALL myFunction(:"+parameterName+",?)";
         return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, lobUtils);
     }
 
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName, final String parameterNameTwo) {
-        final String statement = "CALL myFunction("+parameterName+"=>?,"+parameterNameTwo+"=>?)";
+        final String statement = "CALL myFunction(:"+parameterName+",:"+parameterNameTwo+")";
         return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, lobUtils);
     }
 }

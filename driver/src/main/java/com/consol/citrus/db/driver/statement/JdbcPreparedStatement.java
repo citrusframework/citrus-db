@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver;
+package com.consol.citrus.db.driver.statement;
 
+import com.consol.citrus.db.driver.JdbcConnection;
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.utils.LobUtils;
@@ -43,13 +44,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 
 public class JdbcPreparedStatement extends JdbcStatement implements PreparedStatement {
@@ -58,14 +55,16 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     private final String preparedStatement;
 
     /** The parameters to add to the statement */
-    private final Map<String, Object> parameters = new TreeMap<>();
+    private final StatementParameters parameters = new StatementParameters();
 
     /** A list of parameter sets for batch execution purposes */
-    private final List<Map<String, Object>> batchParameters = new LinkedList<>();
+    private final List<StatementParameters> batchParameters = new LinkedList<>();
 
     private LobUtils lobUtils = new LobUtils();
 
-    JdbcPreparedStatement(final HttpClient httpClient,
+    private StatementComposer statementComposer = new StatementComposer();
+
+    public JdbcPreparedStatement(final HttpClient httpClient,
                           final String preparedStatement,
                           final String serverUrl,
                           final JdbcConnection connection) {
@@ -199,15 +198,15 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void addBatch() {
-        batchParameters.add(new HashMap<>(parameters));
+        batchParameters.add(new StatementParameters(parameters));
         parameters.clear();
     }
 
     @Override
     public int[] executeBatch() throws SQLException {
         final ArrayList<Integer> arrayList = new ArrayList<>();
-        for (final Map<String, Object> statementParameters : batchParameters){
-            execute(composeStatement(statementParameters));
+        for (final StatementParameters statementParameters : batchParameters){
+            execute(statementComposer.composeStatement(preparedStatement, statementParameters));
             arrayList.add(getUpdateCount());
         }
         return ArrayUtils.toPrimitive(arrayList.toArray(new Integer[0]));
@@ -382,22 +381,18 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     void setParameter(final int parameterIndex, final Object value){
-        setParameter(String.valueOf(parameterIndex - 1), value);
+        parameters.setParameter(parameterIndex, value);
     }
 
     void setParameter(final String parameterName, final Object value){
-        parameters.put(parameterName, value);
+        parameters.setParameter(parameterName, value);
     }
 
     String composeStatement() {
-        return composeStatement(parameters);
+        return statementComposer.composeStatement(preparedStatement, parameters);
     }
 
-    private String composeStatement(final Map<String, Object> parameters) {
-        return preparedStatement + " - (" + parameters.values().stream().map(param -> param != null ? param.toString() : "null").collect(Collectors.joining(",")) + ")";
-    }
-
-    Map<String, Object> getParameters() {
+    StatementParameters getParameters() {
         return parameters;
     }
 

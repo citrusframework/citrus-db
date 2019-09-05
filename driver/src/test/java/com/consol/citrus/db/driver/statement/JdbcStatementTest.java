@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver;
+package com.consol.citrus.db.driver.statement;
 
+import com.consol.citrus.db.driver.JdbcConnection;
+import com.consol.citrus.db.driver.JdbcResultSet;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.statement.JdbcPreparedStatement;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;

@@ -1,8 +1,12 @@
-package com.consol.citrus.db.driver;
+package com.consol.citrus.db.driver.statement;
 
+import com.consol.citrus.db.driver.JdbcConnection;
+import com.consol.citrus.db.driver.JdbcResultSet;
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.statement.JdbcPreparedStatement;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import com.consol.citrus.db.driver.utils.LobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -62,7 +66,7 @@ public class JdbcPreparedStatementTest {
         jdbcPreparedStatement.setParameter(1, 2);
 
         //THEN
-        assertEquals(jdbcPreparedStatement.getParameters().get("0"), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
     }
 
     @Test
@@ -76,8 +80,8 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get("0"), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get("1"), 42);
+        assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get(1), 42);
     }
 
     @Test
@@ -91,7 +95,7 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         assertEquals(jdbcPreparedStatement.getParameters().size(), 1);
-        assertEquals(jdbcPreparedStatement.getParameters().get("0"), 42);
+        assertEquals(jdbcPreparedStatement.getParameters().get(0), 42);
     }
 
     @Test
@@ -105,8 +109,8 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get("0"), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get("1"), 42);
+        assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get(1), 42);
     }
 
     @Test
@@ -259,14 +263,14 @@ public class JdbcPreparedStatementTest {
         jdbcPreparedStatement.setString(11, "bar");
 
         //THEN
-        assertEquals(jdbcPreparedStatement.getParameters().values(), expectedParameter);
+        assertEquals(jdbcPreparedStatement.getParameters().getParametersAsList(), expectedParameter);
     }
 
     @Test
     public void testToString(){
         ToStringVerifier
                 .forClass(JdbcPreparedStatement.class)
-                .withIgnoredFields("lobUtils")//stateless
+                .withIgnoredFields("lobUtils", "statementComposer")//stateless
                 .verify();
     }
 
@@ -281,6 +285,7 @@ public class JdbcPreparedStatementTest {
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
                 .withIgnoredFields("lobUtils")//stateless
+                .withIgnoredFields("statementComposer")//stateless
                 .verify();
     }
 }

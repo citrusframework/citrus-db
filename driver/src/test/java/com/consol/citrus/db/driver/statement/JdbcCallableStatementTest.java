@@ -1,8 +1,12 @@
-package com.consol.citrus.db.driver;
+package com.consol.citrus.db.driver.statement;
 
+import com.consol.citrus.db.driver.JdbcConnection;
+import com.consol.citrus.db.driver.JdbcResultSet;
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.statement.JdbcCallableStatement;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import com.consol.citrus.db.driver.utils.LobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -74,7 +78,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("1"), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -87,7 +91,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER, 2);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("1"), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -100,7 +104,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER, "STRUCT");
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("1"), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -154,7 +158,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("0"), "?");
+        assertEquals(callableStatement.getParameters().get(0), "?");
     }
 
     @Test
@@ -166,7 +170,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, 2);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("0"), "?");
+        assertEquals(callableStatement.getParameters().get(0), "?");
     }
 
     @Test
@@ -177,7 +181,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, "STRUCT");
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("0"), "?");
+        assertEquals(callableStatement.getParameters().get(0), "?");
     }
 
     @Test
@@ -962,7 +966,7 @@ public class JdbcCallableStatementTest{
         callableStatement.setString(11, "bar");
 
         //THEN
-        assertEquals(callableStatement.getParameters().values(), expectedParameter);
+        assertEquals(callableStatement.getParameters().getParametersAsList(), expectedParameter);
     }
 
     @Test
@@ -975,7 +979,7 @@ public class JdbcCallableStatementTest{
                 generateCallableStatementWithParameter(parameter1, parameter2);
         callableStatement.registerOutParameter(parameter1, Types.VARCHAR);
         callableStatement.registerOutParameter(parameter2, Types.VARCHAR);
-        final String expectedStatement = "CALL myFunction(z-param=>?,a-param=>?) - (foo, bar)";
+        final String expectedStatement = "CALL myFunction(z-param=>?,a-param=>?) - (foo,bar)";
 
         //WHEN
         callableStatement.setString(parameter1,"foo");
@@ -1014,7 +1018,7 @@ public class JdbcCallableStatementTest{
         final JdbcCallableStatement callableStatement = generateCallableStatement();
         callableStatement.registerOutParameter(parameter1, Types.VARCHAR);
         callableStatement.registerOutParameter(parameter2, Types.VARCHAR);
-        final String expectedStatement = "CALL myFunction(?,?) - (foo, bar)";
+        final String expectedStatement = "CALL myFunction(?,?) - (foo,bar)";
 
         //WHEN
         callableStatement.setString(parameter1,"foo");
@@ -1028,7 +1032,7 @@ public class JdbcCallableStatementTest{
     public void testToString(){
         ToStringVerifier
                 .forClass(JdbcCallableStatement.class)
-                .withIgnoredFields("lobUtils")//stateless
+                .withIgnoredFields("lobUtils", "statementComposer")//stateless
                 .verify();
     }
 
@@ -1042,6 +1046,7 @@ public class JdbcCallableStatementTest{
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
                 .withIgnoredFields("lobUtils")//stateless
+                .withIgnoredFields("statementComposer")//stateless
                 .verify();
     }
 

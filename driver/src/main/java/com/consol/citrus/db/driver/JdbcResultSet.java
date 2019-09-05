@@ -20,6 +20,7 @@ import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -63,7 +64,7 @@ public class JdbcResultSet implements java.sql.ResultSet {
     /**
      * Constructor using remote result set.
      */
-    JdbcResultSet(final DataSet dataSet, final JdbcStatement statement) {
+    public JdbcResultSet(final DataSet dataSet, final JdbcStatement statement) {
         this.dataSet = dataSet;
         this.statement = statement;
     }

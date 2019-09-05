@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver;
+package com.consol.citrus.db.driver.statement;
 
+import com.consol.citrus.db.driver.JdbcConnection;
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.utils.LobUtils;

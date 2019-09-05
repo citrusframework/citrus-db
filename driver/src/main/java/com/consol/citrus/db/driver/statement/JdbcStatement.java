@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package com.consol.citrus.db.driver;
+package com.consol.citrus.db.driver.statement;
 
+import com.consol.citrus.db.driver.JdbcConnection;
+import com.consol.citrus.db.driver.JdbcResultSet;
 import com.consol.citrus.db.driver.exchange.DatabaseResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.ArrayUtils;
@@ -62,7 +64,7 @@ public class JdbcStatement implements Statement {
      * @param httpClient The http client to use for the db communication
      * @param serverUrl Thr url of the server
      */
-    JdbcStatement(final HttpClient httpClient, final String serverUrl, final JdbcConnection connection) {
+    public JdbcStatement(final HttpClient httpClient, final String serverUrl, final JdbcConnection connection) {
         this.httpClient = httpClient;
         this.serverUrl = serverUrl;
         this.connection = connection;

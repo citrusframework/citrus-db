@@ -999,30 +999,11 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(2, Types.VARCHAR);
         callableStatement.registerOutParameter(parameterName, Types.VARCHAR);
 
-        final String expectedStatement = "CALL myFunction(:foo,?) - (foobar, bar)";
+        final String expectedStatement = "CALL myFunction(:foo,?) - (foobar,bar)";
 
         //WHEN
         callableStatement.setParameter(2, "bar");
         callableStatement.setParameter(parameterName, "foobar");
-
-        //THEN
-        assertEquals(callableStatement.composeStatement(), expectedStatement);
-    }
-
-    @Test
-    public void testAnonymousNamedParametersAreOrderedCorrectly() {
-
-        //GIVEN
-        final String parameter1 = "z-param";
-        final String parameter2 = "a-param";
-        final JdbcCallableStatement callableStatement = generateCallableStatement();
-        callableStatement.registerOutParameter(parameter1, Types.VARCHAR);
-        callableStatement.registerOutParameter(parameter2, Types.VARCHAR);
-        final String expectedStatement = "CALL myFunction(?,?) - (foo,bar)";
-
-        //WHEN
-        callableStatement.setString(parameter1,"foo");
-        callableStatement.setString(parameter2, "bar");
 
         //THEN
         assertEquals(callableStatement.composeStatement(), expectedStatement);

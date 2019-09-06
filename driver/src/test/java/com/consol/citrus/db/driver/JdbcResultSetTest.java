@@ -792,6 +792,24 @@ public class JdbcResultSetTest {
     }
 
     @Test
+    public void testRowIsPreservedInCaseOfNoDataFromDataSet() {
+
+        //GIVEN
+        final String expectedString = "bar";
+        final JdbcResultSet resultSet = generateResultSet(expectedString);
+        resultSet.next();
+        resultSet.next();
+
+        //WHEN
+        final boolean nextRowContainsNewData = resultSet.next();
+
+        //THEN
+        final String string = resultSet.getString(TEST_VALUE_INDEX_JDBC);
+        assertEquals(string, expectedString);
+        assertFalse(nextRowContainsNewData);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier.forClass(JdbcResultSet.class).verify();
     }

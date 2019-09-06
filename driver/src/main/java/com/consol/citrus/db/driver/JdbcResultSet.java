@@ -71,8 +71,12 @@ public class JdbcResultSet implements java.sql.ResultSet {
 
     @Override
     public boolean next() {
-        row = dataSet.getNextRow();
-        return row != null;
+        final Row nextRow = dataSet.getNextRow();
+        final boolean nextRowContainsData = nextRow != null;
+        if(nextRowContainsData){
+            this.row = nextRow;
+        }
+        return nextRowContainsData;
     }
 
     @Override

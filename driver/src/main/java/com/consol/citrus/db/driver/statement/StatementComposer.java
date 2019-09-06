@@ -23,7 +23,7 @@ class StatementComposer {
 
         final LinkedList<Object> orderedParameterList = new LinkedList<>();
 
-        for(int matchIndex = 0; parameterMatcher.find(); matchIndex++){
+        for(int matchIndex = 1; parameterMatcher.find(); matchIndex++){
             final String parameter = parameterMatcher.group(1);
             if(parameter != null) {
                 if(parameter.startsWith(":")){

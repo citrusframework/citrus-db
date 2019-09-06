@@ -66,7 +66,7 @@ public class JdbcPreparedStatementTest {
         jdbcPreparedStatement.setParameter(1, 2);
 
         //THEN
-        assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get(1), 2);
     }
 
     @Test
@@ -80,8 +80,8 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get(1), 42);
+        assertEquals(jdbcPreparedStatement.getParameters().get(1), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get(2), 42);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         assertEquals(jdbcPreparedStatement.getParameters().size(), 1);
-        assertEquals(jdbcPreparedStatement.getParameters().get(0), 42);
+        assertEquals(jdbcPreparedStatement.getParameters().get(1), 42);
     }
 
     @Test
@@ -109,8 +109,8 @@ public class JdbcPreparedStatementTest {
 
         //THEN
         assertEquals(jdbcPreparedStatement.getParameters().size(), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get(0), 2);
-        assertEquals(jdbcPreparedStatement.getParameters().get(1), 42);
+        assertEquals(jdbcPreparedStatement.getParameters().get(1), 2);
+        assertEquals(jdbcPreparedStatement.getParameters().get(2), 42);
     }
 
     @Test
@@ -256,14 +256,16 @@ public class JdbcPreparedStatementTest {
     public void testParametersAreOrderedCorrectly() {
 
         //GIVEN
-        final List<String> expectedParameter = Arrays.asList("foo", "bar");
+        final StatementParameters expectedParameter = new StatementParameters();
+        expectedParameter.setParameter(3, "foo");
+        expectedParameter.setParameter(11, "bar");
 
         //WHEN
         jdbcPreparedStatement.setString(3,"foo");
         jdbcPreparedStatement.setString(11, "bar");
 
         //THEN
-        assertEquals(jdbcPreparedStatement.getParameters().getParametersAsList(), expectedParameter);
+        assertEquals(jdbcPreparedStatement.getParameters(), expectedParameter);
     }
 
     @Test

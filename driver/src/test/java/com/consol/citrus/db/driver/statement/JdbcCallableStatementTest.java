@@ -78,7 +78,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get(1), "?");
+        assertEquals(callableStatement.getParameters().get(2), "?");
     }
 
     @Test
@@ -91,7 +91,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER, 2);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get(1), "?");
+        assertEquals(callableStatement.getParameters().get(2), "?");
     }
 
     @Test
@@ -104,7 +104,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER, "STRUCT");
 
         //THEN
-        assertEquals(callableStatement.getParameters().get(1), "?");
+        assertEquals(callableStatement.getParameters().get(2), "?");
     }
 
     @Test
@@ -158,7 +158,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get(0), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -170,7 +170,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, 2);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get(0), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -181,7 +181,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, "STRUCT");
 
         //THEN
-        assertEquals(callableStatement.getParameters().get(0), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -959,14 +959,16 @@ public class JdbcCallableStatementTest{
         final JdbcCallableStatement callableStatement = generateCallableStatement();
         callableStatement.registerOutParameter(3, Types.VARCHAR);
         callableStatement.registerOutParameter(11, Types.VARCHAR);
-        final List<String> expectedParameter = Arrays.asList("foo", "bar");
+        final StatementParameters expectedParameter = new StatementParameters();
+        expectedParameter.setParameter(3, "foo");
+        expectedParameter.setParameter(11, "bar");
 
         //WHEN
         callableStatement.setString(3,"foo");
         callableStatement.setString(11, "bar");
 
         //THEN
-        assertEquals(callableStatement.getParameters().getParametersAsList(), expectedParameter);
+        assertEquals(callableStatement.getParameters(), expectedParameter);
     }
 
     @Test

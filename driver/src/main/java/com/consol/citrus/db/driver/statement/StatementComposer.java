@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2006-2019 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.consol.citrus.db.driver.statement;
 
 import java.util.Collection;
@@ -24,16 +40,30 @@ class StatementComposer {
         final LinkedList<Object> orderedParameterList = new LinkedList<>();
 
         for(int matchIndex = 1; parameterMatcher.find(); matchIndex++){
-            final String parameter = parameterMatcher.group(1);
-            if(parameter != null) {
-                if(parameter.startsWith(":")){
-                    final String parameterName = parameter.replace(":", "");
-                    orderedParameterList.add(parameters.get(parameterName));
-                }else
-                    orderedParameterList.add(parameters.get(matchIndex));
+            final String parameterPlaceholder = parameterMatcher.group(1);
+            if(parameterPlaceholder != null) {
+                orderedParameterList.add(
+                        getParameterValue(parameters, parameterPlaceholder, matchIndex));
             }
         }
-
         return orderedParameterList;
+    }
+
+    private Object getParameterValue(final StatementParameters parameters,
+                                     final String parameterPlaceholder,
+                                     final int matchIndex) {
+        final Object parameterValue;
+        if(parameterPlaceholder.startsWith(":")){
+            final String parameterName = parameterPlaceholder.replace(":", "");
+            parameterValue = parameters.get(parameterName);
+        }else{
+            parameterValue = parameters.get(matchIndex);
+        }
+
+        if(parameterValue != null){
+            return parameterValue;
+        }else{
+            return parameterPlaceholder;
+        }
     }
 }

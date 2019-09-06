@@ -77,4 +77,18 @@ public class StatementComposerTest {
         //THEN
         assertEquals(composedStatement, expectedComposedStatement);
     }
+
+    @Test
+    public void testNoVariableMappingPreservesPlaceholder(){
+
+        //GIVEN
+        final String statement = "SELECT * FROM table where value=:value or citrus=? and otherValue=:otherValue or a=?";
+        final String expectedComposedStatement = statement + " - (:value,?,:otherValue,?)";
+
+        //WHEN
+        final String composedStatement = statementComposer.composeStatement(statement, new StatementParameters());
+
+        //THEN
+        assertEquals(composedStatement, expectedComposedStatement);
+    }
 }

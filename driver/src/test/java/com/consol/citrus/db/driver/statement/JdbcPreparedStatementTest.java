@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2006-2019 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.consol.citrus.db.driver.statement;
 
 import com.consol.citrus.db.driver.JdbcConnection;
@@ -5,8 +21,6 @@ import com.consol.citrus.db.driver.JdbcResultSet;
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
-import com.consol.citrus.db.driver.statement.JdbcPreparedStatement;
-import com.consol.citrus.db.driver.statement.JdbcStatement;
 import com.consol.citrus.db.driver.utils.LobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -19,11 +33,14 @@ import org.testng.annotations.Test;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Clob;
+import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -42,18 +59,21 @@ public class JdbcPreparedStatementTest {
     private final HttpClient httpClientMock = mock(HttpClient.class);
     private final JdbcConnection jdbcConnectionMock = mock(JdbcConnection.class);
     private LobUtils lobUtils;
+    private StatementParameters statementParameters;
 
     private JdbcPreparedStatement jdbcPreparedStatement;
 
     @BeforeMethod
     public void setUp() {
         lobUtils = PowerMockito.mock(LobUtils.class);
+        statementParameters = spy(StatementParameters.class);
         jdbcPreparedStatement = spy(new JdbcPreparedStatement(
                 httpClientMock,
                 "SELECT id, name FROM airports WHERE name = ?",
                 "url",
                 jdbcConnectionMock,
-                lobUtils));
+                lobUtils,
+                statementParameters));
     }
 
 
@@ -269,6 +289,315 @@ public class JdbcPreparedStatementTest {
     }
 
     @Test
+    public void testSetNull(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+
+        //WHEN
+        jdbcPreparedStatement.setNull(index, Types.NULL);
+
+        //THEN
+        verify(statementParameters).setParameter(index, null);
+    }
+
+    @Test
+    public void testSetBoolean(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final boolean value = true;
+
+        //WHEN
+        jdbcPreparedStatement.setBoolean(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetByte(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final byte value = 8;
+
+        //WHEN
+        jdbcPreparedStatement.setByte(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetShort(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final short value = 7;
+
+        //WHEN
+        jdbcPreparedStatement.setShort(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetInt(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final int value = 42;
+
+        //WHEN
+        jdbcPreparedStatement.setInt(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetLong(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final long value = 84L;
+
+        //WHEN
+        jdbcPreparedStatement.setLong(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetFloat(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final float value = 42.42F;
+
+        //WHEN
+        jdbcPreparedStatement.setFloat(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetDouble(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final double value = 84.84;
+
+        //WHEN
+        jdbcPreparedStatement.setDouble(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetBigDecimal(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final BigDecimal value = new BigDecimal(Integer.MAX_VALUE);
+
+        //WHEN
+        jdbcPreparedStatement.setBigDecimal(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetString(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final String value = "42";
+
+        //WHEN
+        jdbcPreparedStatement.setString(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetBytes(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final byte[] value = "42".getBytes();
+
+        //WHEN
+        jdbcPreparedStatement.setBytes(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetDate(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final Date value = Date.valueOf("2019-09-09");
+
+        //WHEN
+        jdbcPreparedStatement.setDate(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetTime(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final Time value = Time.valueOf("09:25:00");
+
+        //WHEN
+        jdbcPreparedStatement.setTime(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetTimestamp(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final Timestamp value = Timestamp.valueOf("2019-09-09 09:25:00");
+
+        //WHEN
+        jdbcPreparedStatement.setTimestamp(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetAsciiStream() {
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final InputStream value = new InputStream() {
+            @Override
+            public int read() {
+                return 0;
+            }
+        };
+
+        //WHEN
+        jdbcPreparedStatement.setAsciiStream(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetAsciiStreamWithLength(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final InputStream value = new InputStream() {
+            @Override
+            public int read() {
+                return 0;
+            }
+        };
+
+        //WHEN
+        jdbcPreparedStatement.setAsciiStream(index, value, 42);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetUnicodeStreamWithLength(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final InputStream value = new InputStream() {
+            @Override
+            public int read() {
+                return 0;
+            }
+        };
+
+        //WHEN
+        jdbcPreparedStatement.setUnicodeStream(index, value, 42);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetBinaryStreamWithLength(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final InputStream value = new InputStream() {
+            @Override
+            public int read() {
+                return 0;
+            }
+        };
+
+        //WHEN
+        jdbcPreparedStatement.setBinaryStream(index, value, 42);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testClear(){
+
+        //WHEN
+        jdbcPreparedStatement.clearParameters();
+
+        //THEN
+        verify(statementParameters).clear();
+    }
+
+    @Test
+    public void testSetObjectWithIndex(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final Object value = new Object();
+
+        //WHEN
+        jdbcPreparedStatement.setObject(index, value, 42);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
+    public void testSetObject(){
+
+        //GIVEN
+        final int index = getRandomIndex();
+        final Object value = new Object();
+
+        //WHEN
+        jdbcPreparedStatement.setObject(index, value);
+
+        //THEN
+        verify(statementParameters).setParameter(index, value);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier
                 .forClass(JdbcPreparedStatement.class)
@@ -289,5 +618,9 @@ public class JdbcPreparedStatementTest {
                 .withIgnoredFields("lobUtils")//stateless
                 .withIgnoredFields("statementComposer")//stateless
                 .verify();
+    }
+
+    private int getRandomIndex() {
+        return (int)(Math.random()*10);
     }
 }

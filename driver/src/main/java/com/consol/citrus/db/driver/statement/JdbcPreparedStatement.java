@@ -1,17 +1,17 @@
 /*
- * Copyright 2006-2017 the original author or authors.
+ *  Copyright 2006-2019 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 
 package com.consol.citrus.db.driver.statement;
@@ -55,7 +55,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     private final String preparedStatement;
 
     /** The parameters to add to the statement */
-    private final StatementParameters parameters = new StatementParameters();
+    private StatementParameters parameters = new StatementParameters();
 
     /** A list of parameter sets for batch execution purposes */
     private final List<StatementParameters> batchParameters = new LinkedList<>();
@@ -76,9 +76,11 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
                           final String preparedStatement,
                           final String serverUrl,
                           final JdbcConnection connection,
-                          final LobUtils lobUtils) {
+                          final LobUtils lobUtils,
+                          final StatementParameters statementParameters) {
         this(httpClient, preparedStatement, serverUrl, connection);
         this.lobUtils = lobUtils;
+        this.parameters = statementParameters;
     }
 
     @Override
@@ -219,7 +221,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setCharacterStream(final int parameterIndex, final Reader reader, final int length) throws SQLException {
-        throw new SQLException("Not supported JDBC prepared statement function 'setCharacterStream'");
+        throw new SQLException(createFunctionNotSupportedMessage("setCharacterStream"));
     }
 
     @Override
@@ -294,7 +296,7 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     @Override
     public void setNClob(final int parameterIndex, final NClob value) throws SQLException {
-        throw new SQLException("Not supported JDBC prepared statement function 'setNClob'");
+        throw new SQLException(createFunctionNotSupportedMessage("setNClob"));
     }
 
     @Override
@@ -344,8 +346,8 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
     }
 
     @Override
-    public void setAsciiStream(final int parameterIndex, final InputStream x) throws SQLException {
-        throw new SQLException("Not supported JDBC prepared statement function 'setAsciiStream'");
+    public void setAsciiStream(final int parameterIndex, final InputStream x) {
+        setParameter(parameterIndex, x);
     }
 
     @Override
@@ -394,6 +396,10 @@ public class JdbcPreparedStatement extends JdbcStatement implements PreparedStat
 
     StatementParameters getParameters() {
         return parameters;
+    }
+
+    private String createFunctionNotSupportedMessage(final String methodName) {
+        return String.format("Not supported JDBC prepared statement function '%s'", methodName);
     }
 
     @Override

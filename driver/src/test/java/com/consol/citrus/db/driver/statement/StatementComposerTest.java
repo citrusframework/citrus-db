@@ -91,4 +91,35 @@ public class StatementComposerTest {
         //THEN
         assertEquals(composedStatement, expectedComposedStatement);
     }
+
+    @Test
+    public void TestCallableStatementParameterAreReplacedCorrectly(){
+
+        //GIVEN
+        final String statement = "CALL someClobFunction(?,:foo)";
+        final StatementParameters statementParameters = new StatementParameters();
+        statementParameters.setParameter("foo", "bar");
+        statementParameters.setParameter(1, "foobar");
+        final String expectedComposedStatement = statement + " - (foobar,bar)";
+
+        //WHEN
+        final String composedStatement = statementComposer.composeStatement(statement, statementParameters);
+
+        //THEN
+        assertEquals(composedStatement, expectedComposedStatement);
+    }
+
+    @Test
+    public void testReturnValuesOfCallableStatementsAreParsedCorrectly(){
+
+        //GIVEN
+        final String statement = "? = CALL someFunction(?)";
+        final String expectedComposedStatement = statement + " - (?)";
+
+        //WHEN
+        final String composedStatement = statementComposer.composeStatement(statement, new StatementParameters());
+
+        //THEN
+        assertEquals(composedStatement, expectedComposedStatement);
+    }
 }

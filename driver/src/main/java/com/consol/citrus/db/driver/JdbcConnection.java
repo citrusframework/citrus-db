@@ -18,6 +18,9 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
+import com.consol.citrus.db.driver.statement.JdbcCallableStatement;
+import com.consol.citrus.db.driver.statement.JdbcPreparedStatement;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;

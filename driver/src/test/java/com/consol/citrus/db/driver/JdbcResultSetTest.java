@@ -3,6 +3,7 @@ package com.consol.citrus.db.driver;
 import com.consol.citrus.db.driver.data.Row;
 import com.consol.citrus.db.driver.dataset.DataSet;
 import com.consol.citrus.db.driver.dataset.DataSetBuilder;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;

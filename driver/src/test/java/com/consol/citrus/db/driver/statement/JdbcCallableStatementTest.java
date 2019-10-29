@@ -1,8 +1,12 @@
-package com.consol.citrus.db.driver;
+package com.consol.citrus.db.driver.statement;
 
+import com.consol.citrus.db.driver.JdbcConnection;
+import com.consol.citrus.db.driver.JdbcResultSet;
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
 import com.consol.citrus.db.driver.dataset.DataSet;
+import com.consol.citrus.db.driver.statement.JdbcCallableStatement;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import com.consol.citrus.db.driver.utils.LobUtils;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -27,6 +31,8 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -72,7 +78,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("1"), "?");
+        assertEquals(callableStatement.getParameters().get(2), "?");
     }
 
     @Test
@@ -85,7 +91,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER, 2);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("1"), "?");
+        assertEquals(callableStatement.getParameters().get(2), "?");
     }
 
     @Test
@@ -98,7 +104,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(index, Types.INTEGER, "STRUCT");
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("1"), "?");
+        assertEquals(callableStatement.getParameters().get(2), "?");
     }
 
     @Test
@@ -152,7 +158,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("0"), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -164,7 +170,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, 2);
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("0"), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -175,7 +181,7 @@ public class JdbcCallableStatementTest{
         callableStatement.registerOutParameter(1, JDBCType.INTEGER, "STRUCT");
 
         //THEN
-        assertEquals(callableStatement.getParameters().get("0"), "?");
+        assertEquals(callableStatement.getParameters().get(1), "?");
     }
 
     @Test
@@ -947,10 +953,69 @@ public class JdbcCallableStatementTest{
     }
 
     @Test
+    public void testIndexedParametersAreOrderedCorrectly() throws SQLException {
+
+        //GIVEN
+        final JdbcCallableStatement callableStatement = generateCallableStatement();
+        callableStatement.registerOutParameter(3, Types.VARCHAR);
+        callableStatement.registerOutParameter(11, Types.VARCHAR);
+        final StatementParameters expectedParameter = new StatementParameters();
+        expectedParameter.setParameter(3, "foo");
+        expectedParameter.setParameter(11, "bar");
+
+        //WHEN
+        callableStatement.setString(3,"foo");
+        callableStatement.setString(11, "bar");
+
+        //THEN
+        assertEquals(callableStatement.getParameters(), expectedParameter);
+    }
+
+    @Test
+    public void testNamedParametersAreOrderedCorrectly() {
+
+        //GIVEN
+        final String parameter1 = "zParam";
+        final String parameter2 = "aParam";
+        final JdbcCallableStatement callableStatement =
+                generateCallableStatementWithParameter(parameter1, parameter2);
+        callableStatement.registerOutParameter(parameter1, Types.VARCHAR);
+        callableStatement.registerOutParameter(parameter2, Types.VARCHAR);
+        final String expectedStatement = "CALL myFunction(:zParam,:aParam) - (foo,bar)";
+
+        //WHEN
+        callableStatement.setString(parameter1,"foo");
+        callableStatement.setString(parameter2,"bar");
+
+        //THEN
+        assertEquals(callableStatement.composeStatement(), expectedStatement);
+
+    }
+
+    @Test
+    public void testParametersMixedParametersAreOrderedCorrectly() throws SQLException {
+
+        //GIVEN
+        final String parameterName = "foo";
+        final JdbcCallableStatement callableStatement = generateCallableStatementWithParameter(parameterName);
+        callableStatement.registerOutParameter(2, Types.VARCHAR);
+        callableStatement.registerOutParameter(parameterName, Types.VARCHAR);
+
+        final String expectedStatement = "CALL myFunction(:foo,?) - (foobar,bar)";
+
+        //WHEN
+        callableStatement.setParameter(2, "bar");
+        callableStatement.setParameter(parameterName, "foobar");
+
+        //THEN
+        assertEquals(callableStatement.composeStatement(), expectedStatement);
+    }
+
+    @Test
     public void testToString(){
         ToStringVerifier
                 .forClass(JdbcCallableStatement.class)
-                .withIgnoredFields("lobUtils")//stateless
+                .withIgnoredFields("lobUtils", "statementComposer")//stateless
                 .verify();
     }
 
@@ -964,6 +1029,7 @@ public class JdbcCallableStatementTest{
                 .suppress(Warning.NONFINAL_FIELDS)
                 .withIgnoredFields("resultSet")
                 .withIgnoredFields("lobUtils")//stateless
+                .withIgnoredFields("statementComposer")//stateless
                 .verify();
     }
 
@@ -971,9 +1037,14 @@ public class JdbcCallableStatementTest{
         final String statement = "CALL myFunction(?,?)";
         return new JdbcCallableStatement(httpClient, statement, serverUrl, jdbcConnection, lobUtils);
     }
+
     private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName) {
-        final String statement = "CALL myFunction("+parameterName+",?)";
+        final String statement = "CALL myFunction(:"+parameterName+",?)";
         return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, lobUtils);
     }
 
+    private JdbcCallableStatement generateCallableStatementWithParameter(final String parameterName, final String parameterNameTwo) {
+        final String statement = "CALL myFunction(:"+parameterName+",:"+parameterNameTwo+")";
+        return new JdbcCallableStatement(httpClient,statement, serverUrl, jdbcConnection, lobUtils);
+    }
 }

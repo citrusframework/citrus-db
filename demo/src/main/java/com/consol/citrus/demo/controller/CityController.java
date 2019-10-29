@@ -1,3 +1,19 @@
+/*
+ *  Copyright 2006-2019 the original author or authors.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
 package com.consol.citrus.demo.controller;
 
 import com.consol.citrus.demo.model.City;
@@ -10,7 +26,10 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.sql.CallableStatement;
 import java.sql.JDBCType;
@@ -94,7 +113,7 @@ public class CityController {
 
     private CallableStatementCreator createCallableStatement(final String name) {
         return con ->{
-                    final CallableStatement callableStatement = con.prepareCall("CALL findCityByName(?,?)");
+                    final CallableStatement callableStatement = con.prepareCall("CALL findCityByName(?,:name)");
                     callableStatement.registerOutParameter(2, JDBCType.INTEGER);
                     callableStatement.setString("name", name);
                     return callableStatement;

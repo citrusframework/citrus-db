@@ -18,6 +18,8 @@ package com.consol.citrus.db.driver;
 
 import com.consol.citrus.db.driver.data.CitrusBlob;
 import com.consol.citrus.db.driver.data.CitrusClob;
+import com.consol.citrus.db.driver.statement.JdbcPreparedStatement;
+import com.consol.citrus.db.driver.statement.JdbcStatement;
 import com.jparams.verifier.tostring.ToStringVerifier;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;

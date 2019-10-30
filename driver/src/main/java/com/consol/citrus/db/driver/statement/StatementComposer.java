@@ -39,18 +39,16 @@ class StatementComposer {
             The intended group to catch is the group of variables in the sql statement.
             In case of a callable statement, it is possible that the statement starts with a '? = '
             indicating a out parameter of the statement. This parameter should be ignored concerning variable
-            replacement. That is why the first group catches the '? = ' (if existing) and the second group catches
+            replacement. That is why the first non-catching group handles the '? = ' (if existing) and the second group catches
             named and unnamed variable references within the rest of the sql statement.
-            This is why the first group should be ignored due variable substitution while the second group contains all
-            variables to replace
          */
-        final Pattern parameterPattern = Pattern.compile("^(\\? ?=)+|(:[a-zA-Z]+|\\?)");
+        final Pattern parameterPattern = Pattern.compile("(?:\\? ?=)|(:[a-zA-Z]+|\\?)");
         final Matcher parameterMatcher = parameterPattern.matcher(statement);
 
         final LinkedList<Object> orderedParameterList = new LinkedList<>();
 
         for(int matchIndex = 1; parameterMatcher.find(); matchIndex++){
-            final String parameterPlaceholder = parameterMatcher.group(2);
+            final String parameterPlaceholder = parameterMatcher.group(1);
             if(parameterPlaceholder != null) {
                 orderedParameterList.add(
                         getParameterValue(parameters, parameterPlaceholder, matchIndex));

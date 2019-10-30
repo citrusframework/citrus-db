@@ -113,11 +113,13 @@ public class StatementComposerTest {
     public void testReturnValuesOfCallableStatementsAreParsedCorrectly(){
 
         //GIVEN
-        final String statement = "? = CALL someFunction(?)";
-        final String expectedComposedStatement = statement + " - (?)";
+        final String statement = "{? = CALL someFunction(?)}";
+        final StatementParameters statementParameters = new StatementParameters();
+        statementParameters.setParameter(2, "foobar");
+        final String expectedComposedStatement = statement + " - (foobar)";
 
         //WHEN
-        final String composedStatement = statementComposer.composeStatement(statement, new StatementParameters());
+        final String composedStatement = statementComposer.composeStatement(statement, statementParameters);
 
         //THEN
         assertEquals(composedStatement, expectedComposedStatement);

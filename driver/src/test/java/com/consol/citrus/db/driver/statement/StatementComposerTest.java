@@ -93,7 +93,7 @@ public class StatementComposerTest {
     }
 
     @Test
-    public void TestCallableStatementParameterAreReplacedCorrectly(){
+    public void testCallableStatementParameterAreReplacedCorrectly(){
 
         //GIVEN
         final String statement = "CALL someClobFunction(?,:foo)";

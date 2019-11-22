@@ -50,6 +50,22 @@ public class StatementParametersTest {
     }
 
     @Test
+    public void testNullValuesAreAccepted(){
+
+        //GIVEN
+        final String firstParameter = null;
+        final String secondParameter = null;
+        statementParameters.setParameter(1, firstParameter);
+        statementParameters.setParameter("secondParameter", secondParameter);
+
+        //WHEN
+        final StatementParameters copy = new StatementParameters(statementParameters);
+
+        //THEN
+        assertEquals(copy, statementParameters);
+    }
+
+    @Test
     public void testGetIndexedParameters(){
 
         //GIVEN

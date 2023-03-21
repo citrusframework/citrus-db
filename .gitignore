@@ -12,6 +12,9 @@ bin
 .codepro
 .pmd
 
+#shade plugin
+dependency-reduced-pom.xml
+
 ### Angular ###
 node_modules
 typings

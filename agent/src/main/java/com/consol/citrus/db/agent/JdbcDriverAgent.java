@@ -34,7 +34,7 @@ public class JdbcDriverAgent {
                 .with(AgentBuilder.RedefinitionStrategy.REDEFINITION)
                 .with(AgentBuilder.TypeStrategy.Default.REDEFINE)
                 .type(isSubTypeOf(Driver.class))
-                .transform((builder, type, classLoader, module) ->
+                .transform((builder, type, classLoader, module, protectionDomain) ->
                         builder.method(named("connect"))
                                 .intercept(MethodDelegation.to(JdbcDriverInterceptor.class))
                 );

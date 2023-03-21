@@ -20,58 +20,63 @@
 
   <groupId>com.consol.citrus</groupId>
   <artifactId>citrus-db</artifactId>
-  <name>${project.artifactId}</name>
-  <version>0.2.0-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <version>0.2.0-SNAPSHOT</version>
+  <name>Citrus DB</name>
   <description>Citrus JDBC database simulator</description>
-  <url>http://www.citrusframework.org</url>
+  <url>https://citrusframework.org</url>
   <inceptionYear>2017</inceptionYear>
 
   <properties>
     <!-- maven config -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <java.version>11</java.version>
+    <maven.compiler.release>${java.version}</maven.compiler.release>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
 
     <!-- dependencies -->
-    <slf4j.version>1.7.25</slf4j.version>
+    <slf4j.version>1.7.36</slf4j.version>
     <logback.classic.version>1.2.3</logback.classic.version>
-    <jackson.version>2.9.10.1</jackson.version>
-    <apache.http.client.version>4.5.7</apache.http.client.version>
-    <apache.http.core.version>4.4.11</apache.http.core.version>
+    <jackson.version>2.14.1</jackson.version>
+    <apache.http.client.version>4.5.14</apache.http.client.version>
+    <apache.http.core.version>4.4.16</apache.http.core.version>
     <spark.version>2.8.0</spark.version>
     <!-- https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy -->
-    <bytebuddy.version>1.9.9</bytebuddy.version>
+    <bytebuddy.version>1.12.22</bytebuddy.version>
     <testng.version>6.14.3</testng.version>
     <!-- https://mvnrepository.com/artifact/org.mockito/mockito-core -->
-    <mockito.version>2.24.0</mockito.version>
+    <mockito.version>3.12.4</mockito.version>
     <!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
-    <apache.commons.beanutils.version>1.9.3</apache.commons.beanutils.version>
-    <apache.commons.lang.version>3.8.1</apache.commons.lang.version>
+    <apache.commons.beanutils.version>1.9.4</apache.commons.beanutils.version>
+    <apache.commons.lang.version>3.9</apache.commons.lang.version>
     <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-    <apache.commons.io.version>2.6</apache.commons.io.version>
+    <apache.commons.io.version>2.7</apache.commons.io.version>
     <!-- https://mvnrepository.com/artifact/com.jparams/to-string-verifier -->
     <to.string.verifier.version>1.4.5</to.string.verifier.version>
     <!-- https://mvnrepository.com/artifact/nl.jqno.equalsverifier/equalsverifier -->
     <equals.verifier.version>3.1.6</equals.verifier.version>
     <!-- https://mvnrepository.com/artifact/org.powermock/powermock-module-testng -->
     <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito2 -->
-    <powermock.version>2.0.0</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
 
     <!-- maven plugins -->
+    <maven.compiler.plugin.version>3.10.1</maven.compiler.plugin.version>
     <maven.scm.plugin.version>1.11.1</maven.scm.plugin.version>
     <maven.resource.plugin.version>3.0.2</maven.resource.plugin.version>
     <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
     <maven.javadoc.plugin.version>2.10.4</maven.javadoc.plugin.version>
-    <maven.shade.plugin.version>3.1.1</maven.shade.plugin.version>
-    <maven.surefire.plugin.version>2.20.1</maven.surefire.plugin.version>
+    <maven.shade.plugin.version>3.4.1</maven.shade.plugin.version>
+    <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+    <maven.failsafe.plugin.version>2.22.2</maven.failsafe.plugin.version>
     <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
     <maven.release.plugin.version>2.5.3</maven.release.plugin.version>
     <apache.rat.plugin.version>0.12</apache.rat.plugin.version>
     <maven.jar.plugin.version>3.1.1</maven.jar.plugin.version>
-    <maven.deploy.plugin.version>3.0.0-M1</maven.deploy.plugin.version>
+    <maven.deploy.plugin.version>3.1.0</maven.deploy.plugin.version>
     <maven.assembly.plugin.version>3.1.1</maven.assembly.plugin.version>
+    <maven.nexus-staging.plugin.version>1.6.13</maven.nexus-staging.plugin.version>
 
     <!-- maven extensions -->
     <wagon.ssh.extension.version>2.7</wagon.ssh.extension.version>
@@ -98,12 +103,12 @@
   </licenses>
 
   <ciManagement>
-    <system>Jenkins</system>
-    <url>http://labs-build.consol.de/view/Citrus/</url>
+    <system>GitHub actions</system>
+    <url>https://github.com/citrusframework/citrus-db/actions</url>
     <notifiers>
       <notifier>
         <type>mail</type>
-        <address>citrus-dev-l@consol.de</address>
+        <address>citrus-dev@googlegroups.com</address>
       </notifier>
     </notifiers>
   </ciManagement>
@@ -112,6 +117,7 @@
     <module>driver</module>
     <module>agent</module>
     <module>server</module>
+    <module>endpoint</module>
     <module>demo</module>
     <module>docs</module>
   </modules>
@@ -120,9 +126,9 @@
     <developer>
       <id>christophd</id>
       <name>Christoph Deppisch</name>
-      <email>citrus-dev-l@consol.de</email>
-      <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>Red Hat</organization>
+      <organizationUrl>https://www.redhat.com/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
@@ -130,9 +136,9 @@
     <developer>
       <id>svettwer</id>
       <name>Sven Hettwer</name>
-      <email>citrus-dev-l@consol.de</email>
-      <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>IBM Deutschland Research and Development GmbH</organization>
+      <organizationUrl>https://www.ibm.com/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
@@ -140,9 +146,9 @@
     <developer>
       <id>s1hofmann</id>
       <name>Simon Hofmann</name>
-      <email>citrus-dev-l@consol.de</email>
-      <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <email>citrus-dev@googlegroups.com</email>
+      <organization>Instana</organization>
+      <organizationUrl>https://www.instana.com/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
@@ -150,9 +156,9 @@
     <developer>
       <id>tnobody</id>
       <name>Tim Keiner</name>
-      <email>citrus-dev-l@consol.de</email>
+      <email>citrus-dev@googlegroups.com</email>
       <organization>ConSol Software GmbH</organization>
-      <organizationUrl>http://www.consol.de/</organizationUrl>
+      <organizationUrl>https://www.consol.com/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
@@ -176,21 +182,22 @@
     </mailingList>
     <mailingList>
       <name>Project Development List</name>
-      <post>dev@citrusframework.org</post>
+      <post>citrus-dev@googlegroups.com</post>
     </mailingList>
     <mailingList>
       <name>Project User List</name>
-      <post>user@citrusframework.org</post>
-    </mailingList>
-    <mailingList>
-      <name>Internal Project Development List</name>
-      <post>citrus-dev-l@consol.de</post>
+      <post>citrus-users@googlegroups.com</post>
     </mailingList>
   </mailingLists>
 
   <dependencyManagement>
     <dependencies>
       <!-- Xml/Json -->
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-databind</artifactId>
@@ -356,6 +363,19 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven.compiler.plugin.version}</version>
+          <configuration>
+            <encoding>${project.build.sourceEncoding}</encoding>
+            <release>${java.version}</release>
+            <compilerArgs>
+              <arg>-Xlint:deprecation</arg>
+              <arg>-Xlint:unchecked</arg>
+            </compilerArgs>
+          </configuration>
+        </plugin>
         <!-- Required for citrus-db-docs because of pom packaging -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
@@ -390,11 +410,24 @@
             </execution>
           </executions>
         </plugin>
+
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>${maven.nexus-staging.plugin.version}</version>
+          <configuration>
+            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+            <serverId>sonatype-nexus-staging</serverId>
+            <stagingProgressTimeoutMinutes>120</stagingProgressTimeoutMinutes>
+            <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
+          </configuration>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven.deploy.plugin.version}</version>
         </plugin>
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
@@ -434,9 +467,9 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven.surefire.plugin.version}</version>
           <configuration>
-            <forkMode>once</forkMode>
             <failIfNoTests>false</failIfNoTests>
             <skipTests>${skip.unit.tests}</skipTests>
+            <workingDirectory>${project.build.directory}</workingDirectory>
             <excludes>
               <exclude>**/IT*.java</exclude>
               <exclude>**/*IT.java</exclude>
@@ -447,7 +480,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven.surefire.plugin.version}</version>
+          <version>${maven.failsafe.plugin.version}</version>
           <executions>
             <execution>
               <id>integration-tests</id>
@@ -509,9 +542,11 @@
     <!-- Default plugins for all modules -->
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
       </plugin>
       <plugin>
@@ -540,47 +575,34 @@
   <profiles>
     <profile>
       <id>release-central</id>
-      <distributionManagement>
-        <snapshotRepository>
-          <id>sonatype-nexus-snapshots</id>
-          <name>Sonatype Nexus Snapshots</name>
-          <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </snapshotRepository>
-        <repository>
-          <id>sonatype-nexus-staging</id>
-          <name>Nexus Release Repository</name>
-          <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-      </distributionManagement>
-
       <build>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-gpg-plugin</artifactId>
           </plugin>
-        </plugins>
-      </build>
-    </profile>
 
-    <profile>
-      <id>release-labs</id>
-      <distributionManagement>
-        <repository>
-          <id>consol-labs-release</id>
-          <url>scpexe://labs.consol.de/home/maven-repository/www/htdocs/repository</url>
-        </repository>
-        <snapshotRepository>
-          <id>consol-labs-snapshots</id>
-          <url>scpexe://labs.consol.de/home/maven-repository/www/htdocs/snapshots-repository</url>
-        </snapshotRepository>
-      </distributionManagement>
-
-      <build>
-        <plugins>
+          <!-- Deploy using the sonatype nexus staging maven plugin -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-gpg-plugin</artifactId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-deploy</id>
+                <phase>deploy</phase>
+                <goals>
+                  <goal>deploy</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

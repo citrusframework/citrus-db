@@ -1,6 +1,11 @@
 Citrus DB - JDBC server simulation ![Logo][1]
 ==============
-[![Build Status](https://travis-ci.com/citrusframework/citrus-db.svg?branch=master)](https://travis-ci.com/citrusframework/citrus-db) [![<Sonarcloud quality gate>](https://sonarcloud.io/api/project_badges/measure?project=citrus-db&metric=alert_status)](https://sonarcloud.io/dashboard?id=citrus-db)
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.consol.citrus/citrus-db/badge.svg?style=flat-square)](https://central.sonatype.com/search?q=g%253Acom.consol.citrus)
+[![build](https://github.com/citrusframework/citrus-db/workflows/build/badge.svg?branch=main)](https://github.com/citrusframework/citrus-db/actions)
+[![Javadocs](http://javadoc.io/badge/com.consol.citrus/citrus-db-server.svg)](http://javadoc.io/doc/com.consol.citrus/citrus-db-server)
+[![Licensed under Apache License version 2.0](https://img.shields.io/github/license/openshift/origin.svg?maxAge=2592000)](https://www.apache.org/licenses/LICENSE-2.0")
+[![Chat on Zulip](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://citrusframework.zulipchat.com)
 
 This library is used to simulate JDBC client-server communication. Usually the system under test (SUT) uses a JDBC driver in order to connect to a relational database such as MySQL, Oracle, DB2, or something else. The Citrus JDBC server is able to simulate the database server.
 
@@ -34,32 +39,21 @@ Consulting
 ---------
 
 Just in case you need professional support for Citrus have a look at
-'http://www.citrusframework.org/contact.html'.
-Contact user@citrusframework.org directly for any request or questions
-(or use the contact form at 'http://www.consol.com/contact/')
+[https://citrusframework.org/contact.html](https://citrusframework.org/contact.html).
+Contact `citrus-dev@googlegroups.com` directly for any request
 
 Bugs
 ---------
 
-Please report any bugs and/or feature requests to dev@citrusframework.org
-or directly to http://github.com/citrusframework/citrus-db/issues
+Please report any bugs and/or feature requests to `citrus-dev@googlegroups.com`
+or directly to [http://github.com/citrusframework/citrus-db/issues](http://github.com/citrusframework/citrus-db/issues)
   
-Team
----------
-
-```
-ConSol Software GmbH
-citrus-dev-l@consol.de
-
-http://www.citrusframework.org
-```
-
 Information
 ---------
 
 For more information on Citrus see [www.citrusframework.org][2], including
 a complete [reference manual][3].
 
- [1]: http://www.citrusframework.org/img/brand-logo.png "Citrus"
- [2]: http://www.citrusframework.org
- [3]: http://www.citrusframework.org/reference/html/
+ [1]: https://citrusframework.org/img/brand-logo.png "Citrus"
+ [2]: https://citrusframework.org
+ [3]: https://citrusframework.org/reference/html/
